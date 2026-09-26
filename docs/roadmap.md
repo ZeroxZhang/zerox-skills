@@ -14,7 +14,7 @@ AGENTS / README / registry / docs / templates 就位，13 个槽位全部「规�
 
 | 顺序 | skill | 触发条件 | 可参考的既有资产（只读） |
 |---|---|---|---|
-| 1 | `zerox-research` | 出现第一个需要完整证据链的真实调研任务 | forge 的 `evidence-ledger.md` |
+| 1 | `zerox-deep-research` | ✅ **已建**（2026-09-26） | forge 的 `evidence-ledger.md` |
 | 2 | `zerox-storyline` | 出现第一个需要成篇论证的任务 | deck 的 `storyline_method.md` |
 | 3 | `zerox-visual` | 出现第一个要交付 HTML+PDF 的任务 | deck 的 `chart_matching.md` / `typography_system.md` / `page_frame.md` |
 | 4 | `zerox-writing` | 成篇后措辞与摘要成为瓶颈 | — |

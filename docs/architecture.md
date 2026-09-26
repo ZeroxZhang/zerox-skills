@@ -11,8 +11,10 @@
 | 层 | 数量 | 职责 | 不做什么 |
 |---|---|---|---|
 | 路由 `zerox` | 1 | 意图识别、候选筛选、编排提示词生成 | 不执行业务逻辑；不自动调用子 skill |
-| 能力层 | 6 | 价值链一段的方法与标准，可单独交付中间产物 | 不端到端产出报告；不指名兄弟 skill |
+| 能力层 | 6 | 价值链一段的方法与标准；交付该段的产物（含该段自己的完整交付物，如调研报告） | 不承担其他能力段的方法；不指名兄弟 skill；不装配场景级商业报告 |
 | 流水线层 | 5 | 一类报告的场景流程与章节骨架，装配能力层方法 | 不重复维护方法正文；不越过任务契约 |
+
+**怎么读 `registry.md` 的职责栏**：它登记的是「这个技能能交付什么」，不是禁令清单。技能有能力提供的东西都算它的能力，调用方按需取用，不必裁剪。能力层与流水线层的分工只在**场景级商业报告**（行研 / 尽调 / 市调 / 汇报 deck / 营销方案）——那类是流水线层的装配产物，能力层不越过去做；能力层交付本段产物（含调研报告与建议）不受此限。
 
 ## 3. 命名空间
 
@@ -21,7 +23,7 @@
 代价与缓解（已知并接受）：机器上另有 4 个套件外的 `zerox-*` 个人 skill——`zerox-swarm`（深度调研系统）、`zerox-mp-writting`（公众号写作）、`zerox-content-advisor`（社媒文案）、`zerox-workflow-conventions`（工作流规则）——共享前缀但不属本套件。因此：
 
 - **成员资格以 `registry.md` 为准，不靠前缀判定**。路由发现候选只读注册表，不做前缀扫描。
-- **易混 skill 的 description 必写边界句**（`zerox-research` 对 `zerox-swarm`、`zerox-writing` 对 `zerox-mp-writting`／`zerox-content-advisor`），近邻任务不误触发。
+- **易混 skill 的 description 必写边界句**（`zerox-deep-research` 对 `zerox-swarm`、`zerox-writing` 对 `zerox-mp-writting`／`zerox-content-advisor`），近邻任务不误触发。其中 `zerox-deep-research` 与套件外的 `zerox-swarm`（深度调研系统）名字最近、任务面最重叠，消歧最严。
 - 目录名 == frontmatter `name`，小写连字符，少于 64 字符。
 
 ## 4. 布局约束（来自安装机制）
