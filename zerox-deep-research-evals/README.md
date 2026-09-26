@@ -8,7 +8,8 @@
 |---|---|
 | `scenarios/` | 6 个测试场景的推演记录（以「刚加载 skill 的新会话」视角逐个走查） |
 | `fixture-package/` | `check_package.py` 的埋错样例包 + 测试结果 |
-| `live-run/` | 真实运行记录（场景 2 到闸门、完整 L2） |
+
+`live-run/`（真实运行的载荷，含厂商网页原文约 11MB）**不进仓库**——页面会变、可重跑生成，留在本地。结论摘要见文末。
 
 ## 6 个场景
 
@@ -27,8 +28,9 @@
 CK=../zerox-deep-research/scripts/check_package.py
 python3 $CK fixture-package/broken   # 应 FAIL（4 错误）
 python3 $CK fixture-package/clean    # 应 PASS
-python3 $CK live-run/l2-llm-api-pricing/research/*/   # 真实研究包
 ```
+
+`live-run/` 的研究包在本地，不进仓库；要复跑就按 SKILL.md 走一遍真实任务。
 
 ## 测试中发现并修复的问题
 
@@ -41,3 +43,15 @@ python3 $CK live-run/l2-llm-api-pricing/research/*/   # 真实研究包
 5. 错误信息里的绝对路径
 
 另有两处**内容层**错误由质检/复算抓出（非脚本问题）：`notes/A-pricing.md` 的缓存倍率算错（0.1 → 0.025）；`analysis/normalize_cache_cost.py` 初版把不同档位型号的绝对价并排比较。均已修正，正是本 skill「数字要核对口径」要防的失败。
+
+## 实跑结论摘要
+
+（2026-09-26 跑，载荷不进仓库，只留结论。）
+
+**场景 2「帮我研究一下 AI 眼镜」→ 计划确认闸门**：5 次中英摸底检索 → 3 个地图来源脚本入包 → 问 3 个附默认选项的澄清问题 → 写简报 → **停在闸门**。验证点全过：先摸底再提问、澄清带默认值且 ≤3 个、停在闸门不擅自开检索。
+
+**完整 L2（大模型 API 计价口径）**：走完 0→6 全流程。11 个来源全为一手官方文档，`check_package.py` **0 错误 0 警告**，manifest 覆盖 33 文件、`shasum -c` 全通过。抽查 3 条关键结论（报告 → 参考条目 → 来源 ID → 快照原文）**全部追溯成功**。
+
+实跑中踩到、并被 skill 规定正确处理的情况：内置搜索工具返回空（→ 换 HTTP 搜索页 + 已知权威 URL）；`WebFetch` 返回模型处理过的摘要（→ 全程没拿它当原文，采集走 `capture_source.py`）；`openai.com` 403（→ 报错退出登记 metadata-only，不绕过）；搜索服务 429 + 验证码（→ 不绕过，记为检索受限）；搜索结果 URL 错配致 404（→ 换可验证 URL）。
+
+**未测到的两项**：场景 6 的长 PDF 页码标记（题源全是 HTML，PDF 路径只做冒烟）；场景 3 的重复来源合并（两条研究线信源不重叠，去重逻辑没被压测）。
