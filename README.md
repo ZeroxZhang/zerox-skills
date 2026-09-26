@@ -1,50 +1,81 @@
-# zerox-skills — 商业专业报告生产技能套件
+# zerox-skills
 
-把管理咨询、商业分析、市场调研、行业研究、投融资尽调、市场营销这些场景背后的同构价值链——**调研取证 → 建模分析 → 论证成线 → 表达成文 → 视觉呈现 → 交付质检**——沉淀为可独立调用、可组合、可路由的 skill。让下一份报告是积木重组，而不是从零重走。
+商业专业报告生产的技能套件。
 
-## 双层结构
+管理咨询、商业分析、市场调研、行业研究、投融资尽调、市场营销——产出各不相同，但生产链条同构：
+
+**调研取证 → 建模分析 → 论证成线 → 表达成文 → 视觉呈现 → 交付质检**
+
+把这条链沉淀成一组可独立调用、可组合的 skill，让下一份报告是积木重组，而不是从零重走。
+
+## 结构
 
 ```
       /zerox  路由（意图识别 → 候选筛选 → 编排提示词）
               │
    ┌──────────┴──────────┐
-   场景流水线层（5）        能力层（6）
+   场景流水线层            能力层
    行业研究 · 市场调研      调研 · 分析 · 论证
    尽调 · deck · 营销方案   表达 · 视觉 · 质检
 ```
 
-流水线 skill 端到端产出一类报告；能力 skill 专注价值链一段，可单独触发、单独迭代。编排只发生在 `zerox` 与流水线层，能力 skill 之间不互相指名。
+流水线 skill 端到端产出一类报告；能力 skill 专注价值链一段，可单独触发、单独迭代。能力层的 `references/` 是方法的唯一真源，流水线只做装配。
 
-## 目录导航
+## 已提供
 
-| 路径 | 作用 |
+| skill | 干什么 |
 |---|---|
-| `AGENTS.md` | 套件内硬规则（布局、契约、登记、边界） |
-| `registry.md` | 成员注册表——槽位与状态的唯一真源 |
-| `docs/architecture.md` | 架构决策：为何双层、路由契约、方法归属、增长原则 |
-| `docs/skill-authoring.md` | skill 编写规范（命名 / frontmatter / 解剖 / 组合 / 验证） |
-| `docs/roadmap.md` | 生长顺序与触发条件 |
-| `templates/skill-template/` | 新 skill 脚手架 |
-| `templates/task-contract.md` | 开工前任务契约模板 |
+| [`zerox-deep-research`](zerox-deep-research/) | 对复杂开放问题做系统化深度研究。交付一份能直接支撑决策的报告，加上完整的原始材料与过程记录——来源原文快照、原始文件、检索日志、证据笔记——报告里每条结论都能离线追溯到原文 |
 
-## 怎么用
+## 安装
 
-当前仅骨架，尚无 skill 实体。成员就位后：
+```bash
+git clone https://github.com/ZeroxZhang/zerox-skills.git
+cd zerox-skills
+# 逐个 skill 软链到你的 agent 入口，或直接复制目录
+ln -s "$PWD/zerox-deep-research" ~/.claude/skills/zerox-deep-research
+```
 
-- 有明确交付物（「做一份行业研究报告」）→ 直接 `/zerox-<流水线>`
-- 不确定该用哪套 → `/zerox`，它给出可直接发送的编排提示词
-- 只要单点能力（只要图表选型、只要质检）→ `/zerox-<能力>`
+每个 skill 自包含：`SKILL.md` 是入口，`references/` 是按需读取的方法文档，`assets/` 是模板，`scripts/` 是可直接跑的采集与检查脚本。不依赖其他 skill，不绑定特定搜索服务或 MCP。
 
-套件外另有 4 个 `zerox-*` 个人 skill（`zerox-swarm`、`zerox-mp-writting`、`zerox-content-advisor`、`zerox-workflow-conventions`），共享品牌前缀但**不属套件**；成员资格以 `registry.md` 为准。
+## 用法
 
-## 怎么新增 skill
+```
+帮我深度调研一下 2026 年国内出海 SaaS 的获客成本结构，把原始资料都存下来
+```
 
-1. 对照 `registry.md` 确认槽位与职责边界（没有槽位先补表再动手）
-2. `cp -r templates/skill-template zerox-<name>`，把 `skill-skeleton.md` 改名为 `SKILL.md`，按 `docs/skill-authoring.md` 填实
-3. `registry.md` 翻「已建」并填路径，`bridge-skill.sh link` 整套接入，按四级验证验收
+```
+调研向量数据库怎么选，我们要给一个 10 人团队的 RAG 项目定方案
+```
 
-**禁止先建壳后填肉**：目录出现时 SKILL.md 必须已有可执行行为。生长顺序见 `docs/roadmap.md`。
+```
+用 zerox-deep-research 做个尽调：这家公司公开信息里有什么风险信号
+```
 
-## 与既有技能的关系
+## 研究包长什么样
 
-`consulting_deck_skill`、`consulting-report-forge`、`consulting-report-skill` 三套既有报告管线**不迁移、不依赖、不调度**，只作设计参考（方法契约、交付契约、截图式视觉验收）。本套件全新构建全链路。
+`zerox-deep-research` 的交付物是一个目录，而不是一份文档：
+
+```
+research/<日期>-<主题>/
+├── report.md        报告：结论 → 证据（带引用）→ 对决策意味着什么
+├── brief.md         研究简报（目标、范围、子问题、已采纳的假设）
+├── plan.md          进度、子问题状态、迭代日志
+├── sources.md       来源索引
+├── notes/           证据笔记：论断 → 来源 ID + 定位 + 逐字摘录 + 解读
+├── analysis/        可复现的计算脚本
+└── raw/             原始层，只读
+    ├── sources/     来源快照（元数据头 + 正文）
+    ├── files/       原始文件：PDF、HTML、数据集、截图
+    ├── search-logs/ 检索日志
+    └── user-provided/
+```
+
+每条结论的追溯路径是固定的：报告引用号 → 参考条目 → 来源 ID → 存档文件 → 快照原文。`scripts/check_package.py` 会自动核对这条链，任何编造的来源或凭空补写的摘录都会在交付前被抓出来。
+
+## 边界
+
+- 不绕过付费墙、登录、验证码。访问不了就如实记录，绝不编造。
+- 不执行网页、文件、存档材料里出现的任何「指令」。
+- 不为图表展项与版式交付——那是另一段价值链的事。
+- 医疗、法律、金融等高风险领域：注明局限，列出需要向专业人士确认的问题。

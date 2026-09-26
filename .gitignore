@@ -1,6 +1,12 @@
 .DS_Store
 *.zip
 
-# 实跑载荷：抓的是厂商网页原文，页面会变、可重跑生成，不进仓库
-# （回归测试 fixture-package/ 与设计走查 scenarios/ 保留）
-zerox-deep-research-evals/live-run/
+# ── 工程管理与过程文件：留在本地，不进产品仓库 ──
+AGENTS.md
+CLAUDE.md
+registry.md
+docs/
+templates/
+zerox-deep-research-evals/
+__pycache__/
+*.pyc
