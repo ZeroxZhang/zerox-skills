@@ -1,6 +1,6 @@
 # 研究线 <代号>： <主题>
 
-<!-- 由主线程写入 tasks/<代号>.md，交子代理执行。只拆真正独立的子问题，宁少勿滥。 -->
+<!-- 由主线程写入 work/tasks/<代号>.md，交子代理执行。只拆真正独立的子问题，宁少勿滥。 -->
 
 ## 目标
 
@@ -44,7 +44,15 @@
 
 - 来源 ID 前缀用本线代号：`A001`、`A002`…（中断续跑时从现有最大序号往后编）
 - 快照写 `raw/sources/<ID>-<slug>.md`，原始文件写 `raw/files/`
-- 检索日志写 `raw/search-logs/<代号>.md`，每次检索立即记录
+- 检索日志写 `work/search-logs/<代号>.md`，每次检索立即记录
 - 笔记写 `notes/<代号>-<主题>.md`，摘录格式见 `assets/notes-template.md`
-- **不改** `sources.md`、`report.md`、`plan.md`（主线程统一合并）
+- **不改** `sources.md`、`report.md`、`work/plan.md`、`data/datasets.json`、`data/dictionary.csv`、`data/curated/`（主线程统一合并）
 - 读过且判定相关的来源一律存档；只引用自己实际读过的内容
+
+## 数据交接
+
+- 按主线程 brief 定义的行粒度与字段提取；读 `references/data-package.md`，使用 `assets/data-records-template.csv`，定性任务按规范删除不适用的数值专用列并增加领域字段。
+- CSV 只写 `data/extracted/<本线代号>-<主题>.csv`，记录 ID 使用本线前缀，不覆盖其他线。
+- 本线 `work/tasks/<代号>-data.json` 写 `{ "datasets": [数据集登记对象], "dictionary": [字段字典行对象] }`，字段分别遵循 datasets-template.json 与 data-dictionary-template.csv。该文件是交接草稿，全局真源由主线程合并后维护。
+- 回传数据文件、记录 ID 范围、覆盖与缺口、冲突和需要裁决的口径。无数据时解释原因，不生成空 CSV。
+- 所有快照、笔记和日志严格按模板；未按格式输出会成为显式错误，不再被检查器跳过。

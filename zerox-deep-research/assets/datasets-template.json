@@ -1,0 +1,10 @@
+[
+  {
+    "id": "revenue-extracted",
+    "path": "data/extracted/A-revenue.csv",
+    "stage": "extracted",
+    "grain": "某来源对某主体某期间收入的一项披露或估计",
+    "coverage": "填写实际覆盖与相对 brief 的缺口",
+    "limitations": "填写来源与口径限制"
+  }
+]

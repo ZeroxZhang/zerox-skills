@@ -25,7 +25,7 @@
 
 | skill | 干什么 |
 |---|---|
-| [`zerox-deep-research`](zerox-deep-research/) | 对复杂开放问题做系统化深度研究。交付一份能直接支撑决策的报告，加上完整的原始材料与过程记录——来源原文快照、原始文件、检索日志、证据笔记——报告里每条结论都能离线追溯到原文 |
+| [`zerox-deep-research`](zerox-deep-research/) | 对复杂开放问题做系统化深度研究。交付一份能直接支撑决策的报告，加上可复用的数据包、原始材料与过程记录。关键数据关联记录 ID，派生结果保留输入与方法，结论能追溯到原文 |
 
 ## 安装
 
@@ -56,22 +56,34 @@ ln -s "$PWD/zerox-deep-research" ~/.claude/skills/zerox-deep-research
 
 `zerox-deep-research` 的交付物是一个目录，而不是一份文档：
 
-```
+```text
 research/<日期>-<主题>/
-├── report.md        报告：结论 → 证据（带引用）→ 对决策意味着什么
-├── brief.md         研究简报（目标、范围、子问题、已采纳的假设）
-├── plan.md          进度、子问题状态、迭代日志
+├── package.json     包格式版本与数据/检索适用性
+├── README.md        报告、数据复用与证据核验入口
+├── report.md        主报告
 ├── sources.md       来源索引
-├── notes/           证据笔记：论断 → 来源 ID + 定位 + 逐字摘录 + 解读
-├── analysis/        可复现的计算脚本
-└── raw/             原始层，只读
-    ├── sources/     来源快照（元数据头 + 正文）
-    ├── files/       原始文件：PDF、HTML、数据集、截图
-    ├── search-logs/ 检索日志
-    └── user-provided/
+├── data/            数据集目录、字段字典、extracted/ 与 curated/
+├── notes/           证据摘录、冲突与解释
+├── analysis/        转换、计算、编码方法与复跑说明
+├── work/            brief.md、plan.md、tasks/、search-logs/
+├── qa/              人工核验、机器检查记录
+├── raw/             sources/、files/、user-provided/；采集后只读
+└── manifest-sha256.txt
 ```
 
-每条结论的追溯路径是固定的：报告引用号 → 参考条目 → 来源 ID → 存档文件 → 快照原文。`scripts/check_package.py` 会自动核对这条链，任何编造的来源或凭空补写的摘录都会在交付前被抓出来。
+数据资产包括数值表，也包括文献编码、政策事件、竞品矩阵等定性记录。开题时定义行粒度、覆盖、字段和缺口处理；不适用或完全不可得时说明原因，不交空表。
+
+证据链：报告引用号 → 来源 ID → 原文快照。数据链：报告记录 ID → 数据表 → 输入记录与计算方法（如有）→ 来源定位。检查器能检查结构、基础类型、摘录匹配、引用和数据关系；不能自动证明来源真实、口径可比或计算正确，必须另做人工复核。
+
+```bash
+python zerox-deep-research/scripts/check_package.py <研究包> --json
+# 实质复核后把指纹和核验依据写入 qa/review.json
+python zerox-deep-research/scripts/check_package.py <研究包> --review-digest
+python zerox-deep-research/scripts/check_package.py <研究包> --write-manifest
+python zerox-deep-research/scripts/check_package.py <研究包> --final
+```
+
+新包使用 schema_version=2；旧包只读诊断，不自动搬移或升级。详细契约见技能的 [数据规范](zerox-deep-research/references/data-package.md) 和 [文件生命周期](zerox-deep-research/references/package-lifecycle.md)。
 
 ## 边界
 

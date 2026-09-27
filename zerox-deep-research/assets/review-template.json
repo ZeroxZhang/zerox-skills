@@ -1,0 +1,10 @@
+{
+  "reviewer": "填写实际执行复核者",
+  "reviewed_digest": "完成实质复核后填入 --review-digest 输出",
+  "checks": {
+    "questions_answered": {"passed": false, "evidence": "逐项对照 brief，记录回答或明确缺口的位置"},
+    "evidence_support": {"passed": false, "evidence": "关键结论到原文的实际核验路径，来源独立性与反证"},
+    "data_semantics": {"passed": false, "evidence": "关键数据覆盖、原始值核对、口径可比性、计算复跑或独立代入结果；无数据时核验理由"},
+    "limitations": {"passed": false, "evidence": "假设、时效、不可得数据、无法存档与其他限制的披露位置"}
+  }
+}

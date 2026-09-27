@@ -13,7 +13,7 @@ conflict_of_interest: <none | 厂商自评 | 赞助研究 | 广告投放 | ...>
 capture_method: <script | browser | fetch-tool | snippet | metadata-only>
 completeness: <full | partial | summary | snippet-only | metadata-only>
 original_files: [<相对研究包根的路径>，无则 []]
-sha256: <原始文件的 SHA-256；无原始文件写 null>
+sha256: <第一个原始文件的 SHA-256；无原始文件写 null>
 research_line: <M | A | B | ...>
 subquestions: [<子问题编号>，无则 []]
 supersedes: <被本快照取代的旧来源 ID；无则 null>

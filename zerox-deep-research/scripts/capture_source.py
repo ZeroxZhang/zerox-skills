@@ -307,14 +307,8 @@ def yaml_scalar(v):
         return "true" if v else "false"
     if isinstance(v, (int, float)):
         return str(v)
-    s = str(v)
-    if s == "":
-        return '""'
-    needs = (s != s.strip() or any(c in s for c in ":#{}[]&*!|>'\"%@`,")
-             or "\n" in s or s.lower() in ("null", "true", "false", "yes", "no", "~"))
-    if needs:
-        return '"' + s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
-    return s
+    # JSON 字符串也是合法 YAML 标量；统一转义以便检查器可靠解析。
+    return json.dumps(str(v), ensure_ascii=False)
 
 
 def write_snapshot(path: Path, meta: dict, body: str):
@@ -335,7 +329,14 @@ def main(argv=None):
     kind = validate(args)
 
     pkg = Path(args.package).expanduser().resolve()
-    src_dir, files_dir = pkg / "raw" / "sources", pkg / "raw" / "files"
+    if (pkg / "manifest-sha256.txt").exists():
+        fail(3, "package_already_sealed", detail="已封包目录不可继续采集；请创建新版本工作目录")
+    src_dir = pkg / "raw" / "sources"
+    files_dir = pkg / "raw" / ("user-provided" if args.id.startswith("U") else "files")
+    # 一个 ID 永远对应同一份采集。重新采集须新 ID + supersedes，不能覆盖旧字节。
+    existing = [p for p in (pkg / "raw").rglob(args.id + "-*") if p.is_file()]
+    if existing:
+        fail(3, "id_already_exists", detail="来源 ID 已使用；请分配新 ID，旧版保留")
     src_dir.mkdir(parents=True, exist_ok=True)
     files_dir.mkdir(parents=True, exist_ok=True)
 
@@ -360,7 +361,8 @@ def main(argv=None):
         ext = guessed or ".bin"
     raw_name = "{}-{}{}".format(args.id, args.slug, ext)
     raw_path = files_dir / raw_name
-    raw_path.write_bytes(data)
+    with raw_path.open("xb") as out:
+        out.write(data)
     digest = hashlib.sha256(data).hexdigest()
 
     body, extractor, auto_note = extract_text(data, ctype, raw_path)
@@ -392,7 +394,7 @@ def main(argv=None):
         "conflict_of_interest": args.conflict_of_interest,
         "capture_method": args.capture_method,
         "completeness": completeness,
-        "original_files": ["raw/files/" + raw_name],
+        "original_files": [raw_path.relative_to(pkg).as_posix()],
         "sha256": digest,
         "research_line": args.research_line,
         "subquestions": [s.strip() for s in args.subquestions.split(",") if s.strip()],
@@ -408,7 +410,7 @@ def main(argv=None):
         "ok": True,
         "id": args.id,
         "snapshot": "raw/sources/" + snap_name,
-        "original": "raw/files/" + raw_name,
+        "original": raw_path.relative_to(pkg).as_posix(),
         "sha256": digest,
         "bytes": len(data),
         "status": status,

@@ -8,7 +8,7 @@
 | ID | 标题 | 作者/机构 | 发布 | 访问 | 层级 | 可信度 | 完整度 | 采集方式 | 本地文件 | URL | 引用号 | 备注 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | M001 | 示例标题 | 某机构 | 2025-03-15 | 2026-09-26 | 一手 | A | full | script | `raw/sources/M001-example.md` | https://example.com/a | [1][3] | |
-| U001 | 用户材料：访谈记录 | 内部 | 2026-09-01 | 2026-09-26 | 一手 | — | full | script | `raw/user-provided/interview.md` | file: …/interview.md | [2] | 内部资料 |
+| U001 | 用户材料：访谈记录 | 内部 | 2026-09-01 | 2026-09-26 | 一手 | — | full | script | `raw/sources/U001-interview.md` | file: …/interview.md | [2] | 内部资料；原件路径由快照 original_files 登记 |
 
 列说明：
 

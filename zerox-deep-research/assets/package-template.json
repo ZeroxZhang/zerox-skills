@@ -1,0 +1,10 @@
+{
+  "schema_version": 2,
+  "package_id": "YYYY-MM-DD-topic",
+  "topic": "填写研究主题",
+  "information_cutoff": "YYYY-MM-DD",
+  "data_status": "available",
+  "data_reason": "填写本次需要的数据资产；不可获得或不适用时填写理由并修改状态",
+  "search_status": "performed",
+  "search_reason": "填写检索范围；仅使用给定材料且未检索时说明并修改状态"
+}
