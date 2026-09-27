@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ZeroxZhang/zerox-skills/zerox-storyline/slides-schema.json",
+  "title": "zerox-storyline slides.json",
+  "description": "逐页内容（06_slides.md）的机器可读形态，字段一一对应，供下游 PPT 生成工具消费。所有事实必须来自内容稿或卡片库，本文件不新增信息。",
+  "type": "object",
+  "required": ["deck", "slides"],
+  "additionalProperties": false,
+  "properties": {
+    "deck": {
+      "type": "object",
+      "required": ["title", "kind", "language"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "description": "报告标题" },
+        "kind": {
+          "type": "string",
+          "enum": ["presentation", "reading"],
+          "description": "presentation=演讲型（页面精简，细节进讲者备注）；reading=阅读型（页面自解释）"
+        },
+        "language": { "type": "string", "description": "BCP 47，如 zh-CN / en-US" },
+        "audience": { "type": "string" },
+        "duration_minutes": { "type": "number", "minimum": 0 },
+        "page_limit": { "type": "integer", "minimum": 1 },
+        "content_page_count": { "type": "integer", "minimum": 0, "description": "不含封面/目录/过渡的内容页数" },
+        "closing_type": {
+          "type": "string",
+          "enum": ["recommendation", "next_steps", "decision_request"],
+          "description": "结尾页类型；不允许感谢页或 Q&A 页"
+        },
+        "generated_from": { "type": "string", "description": "母版内容稿文件名" },
+        "confidentiality": { "type": "string" }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["page", "type", "action_title"],
+        "additionalProperties": false,
+        "properties": {
+          "page": { "type": "integer", "minimum": 1 },
+          "section": { "type": "string", "description": "所属章节；封面/目录/过渡页留空" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "cover", "toc", "executive_summary", "section_divider",
+              "point_evidence", "data_chart", "comparison", "process",
+              "timeline", "matrix", "case", "recommendation",
+              "next_steps", "backup", "appendix"
+            ]
+          },
+          "action_title": {
+            "type": "string",
+            "description": "完整句子，表达结论而非话题；建议 ≤30 字、最多两行"
+          },
+          "body": {
+            "type": "array",
+            "description": "3–5 条要点，或 1 个核心图表页的结论条",
+            "items": {
+              "type": "object",
+              "required": ["text"],
+              "additionalProperties": false,
+              "properties": {
+                "text": { "type": "string", "description": "数字保留精确值、单位、时间与口径" },
+                "card_ids": {
+                  "type": "array",
+                  "items": { "type": "string", "pattern": "^C[0-9]{3,}$" },
+                  "description": "本条要点依据的卡片 ID"
+                }
+              }
+            }
+          },
+          "chart": {
+            "type": "object",
+            "description": "数据页必填；先定比较关系，再选图",
+            "required": ["relationship", "chart_type"],
+            "additionalProperties": false,
+            "properties": {
+              "relationship": {
+                "type": "string",
+                "enum": ["component", "item_ranking", "time_series", "frequency_distribution", "correlation"],
+                "description": "成分 / 项目排序 / 时间序列 / 频率分布 / 相关性"
+              },
+              "chart_type": { "type": "string", "description": "如 horizontal_bar / line / stacked_bar / scatter / waterfall" },
+              "rationale": { "type": "string", "description": "为什么这个类型匹配该比较关系" },
+              "data_fields": {
+                "type": "array",
+                "description": "所需数据字段与数值，具体到列名，供做片的人直接用",
+                "items": {
+                  "type": "object",
+                  "required": ["field", "value"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "field": { "type": "string" },
+                    "value": { "type": ["string", "number"] },
+                    "unit": { "type": "string" },
+                    "card_id": { "type": "string", "pattern": "^C[0-9]{3,}$" }
+                  }
+                }
+              },
+              "highlight": { "type": "string", "description": "需要读者看见的那个点/线/区间" },
+              "axis_notes": { "type": "string", "description": "轴、单位、口径、时间范围的标注要求" }
+            }
+          },
+          "notes": { "type": "string", "description": "讲者备注：可直接口述，含通往下一页的过渡语" },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["card_id"],
+              "additionalProperties": false,
+              "properties": {
+                "card_id": { "type": "string", "pattern": "^C[0-9]{3,}$" },
+                "locator": { "type": "string", "description": "如 S03-§2.1" }
+              }
+            }
+          },
+          "traceback": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "manuscript_section": { "type": "string", "description": "对应的稿件章节" },
+              "card_ids": { "type": "array", "items": { "type": "string", "pattern": "^C[0-9]{3,}$" } }
+            }
+          },
+          "backup": {
+            "type": "object",
+            "description": "备用页专属",
+            "additionalProperties": false,
+            "properties": {
+              "question": { "type": "string", "description": "预判受众会追问的那个问题" },
+              "trigger": { "type": "string", "description": "什么情况下翻到这一页" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

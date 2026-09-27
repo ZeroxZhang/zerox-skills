@@ -8,5 +8,6 @@ registry.md
 docs/
 templates/
 zerox-deep-research-evals/
+zerox-storyline-evals/
 __pycache__/
 *.pyc
