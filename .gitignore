@@ -11,3 +11,8 @@ zerox-deep-research-evals/
 zerox-storyline-evals/
 __pycache__/
 *.pyc
+
+# ── 跑出来的载荷：原始材料快照与研究包/内容包，版权与体积都不适合进公开仓库 ──
+# 技能默认输出目录，用户改到别处时自行判断要不要提交
+research/
+storyline/
