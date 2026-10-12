@@ -16,3 +16,7 @@ __pycache__/
 # 技能默认输出目录，用户改到别处时自行判断要不要提交
 research/
 storyline/
+
+# 图表技能的 docs 是运行方法与数据格式契约，必须随产品分发
+!zerox-thinkcell-charts/docs/
+!zerox-thinkcell-charts/docs/**

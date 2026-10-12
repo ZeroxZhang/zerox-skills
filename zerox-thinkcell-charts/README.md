@@ -1,0 +1,852 @@
+# zerox-thinkcell-charts
+
+**简体中文** · [English](README_EN.md)
+
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](scripts/requirements.txt) [![Chart types](https://img.shields.io/badge/Chart_types-55-00507D)](docs/CATALOG.md) [![Examples](https://img.shields.io/badge/Examples-61-6C89B4)](examples/catalog.json) [![Themes](https://img.shields.io/badge/Themes-8-18A98C)](docs/PALETTES.md) [![Output](https://img.shields.io/badge/Output-Editable_PPTX_%2B_PNG-E87722)](#quickstart) [![GitHub stars](https://img.shields.io/github/stars/ZeroxZhang/zerox-skills?style=flat&label=Suite%20stars)](https://github.com/ZeroxZhang/zerox-skills)
+
+**把表格数据变成咨询汇报图表：推荐图型、校验数据，生成可编辑的 PowerPoint 形状与 PNG 预览。**
+
+本技能是 [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) 套件的图表能力，支持 **55 种图表类型、11 个分类、61 个完整示例、8 套配色主题**。从瀑布桥、Mekko、堆叠柱，到甘特、敏感性分析、KPI 卡片，均可用一份 JSON 重复生成。
+
+PPTX 中的柱、线、文字、箭头和标注可在 PowerPoint 中逐个选中修改。它们是**可编辑形状**，不是带内嵌工作表的数据绑定图表；修改源数据后，应重新运行脚本。
+
+这是独立实现的开源项目，与 think-cell 无隶属、授权或背书关系。名称描述所参考的视觉风格；运行不依赖 think-cell 插件。
+
+[快速开始](#quickstart) · [能力与流程](#capabilities) · [输入与输出](#data-contract) · [配色](#themes) · [全部示例](#gallery) · [CLI](#cli) · [维护与验证](#maintenance) · [限制](#limitations) · [协议](#license)
+
+<a id="quickstart"></a>
+## 快速开始
+
+### 1. 获取真源并安装 Python 依赖
+
+```bash
+git clone https://github.com/ZeroxZhang/zerox-skills.git
+cd zerox-skills/zerox-thinkcell-charts
+python3 -m venv .venv
+.venv/bin/python -m pip install -r scripts/requirements.txt
+```
+
+| 依赖 | 用途 | 何时需要 |
+| --- | --- | --- |
+| Python 3.9+ | 运行脚本 | 必需 |
+| `python-pptx>=1.0` | 创建 PPTX 形状、文字与连接线 | 必需，已列入 requirements |
+| `openpyxl>=3.1` | 读取 `.xlsx` / `.xlsm` 表格 | Excel 推荐流程需要，已列入 requirements |
+| LibreOffice（`soffice`） | 将 PPTX 渲染成中间 PDF | 导出 PNG 或重建画廊时需要 |
+| Poppler（`pdftoppm`） | 将 PDF 转为 PNG | 导出 PNG 或重建画廊时需要 |
+| Arial 或兼容字体 | 稳定文字布局 | 建议；默认字体为 Arial，中文需要可用的中文回退字体 |
+
+仅生成 PPTX 时，无需安装 LibreOffice 和 Poppler。完整预览环境可按平台安装：
+
+```bash
+# macOS
+brew install --cask libreoffice
+brew install poppler
+
+# Ubuntu / Debian
+sudo apt install libreoffice-impress poppler-utils fonts-liberation
+```
+
+以上工具需在 `PATH` 中可用。LibreOffice、PowerPoint 和不同字体环境的文字排版可能存在差异。
+
+### 2. 渲染第一张图
+
+在本技能目录运行：
+
+```bash
+# 可编辑 PPTX + PNG 预览
+.venv/bin/python scripts/tc_render.py examples/waterfall.json \
+  -o out.pptx --png out_png/
+
+# 多个 JSON 按输入顺序合成一个演示文稿
+.venv/bin/python scripts/tc_render.py examples/waterfall.json examples/mekko_percent.json \
+  -o deck.pptx --png deck_png/ --theme consulting_navy
+```
+
+首条命令生成 `out.pptx` 和 `out_png/waterfall.png`。打开 PPTX 可逐个编辑形状；PNG 用于目检和嵌入文档。也可直接查看现成的 [完整示例 PPTX](gallery/thinkcell-gallery.pptx)、[PDF](gallery/thinkcell-gallery.pdf) 或下载后在浏览器打开 [HTML 画廊](gallery/index.html)。
+
+### 3. 通过软链接接入本机 Agent
+
+本仓库是维护真源；Agent 的技能目录只保留软链接，不复制代码或另建维护副本。使用已安装的 `dbs-bridge` 注册整个套件：
+
+```bash
+# 当前目录仍为 zerox-skills/zerox-thinkcell-charts
+SUITE_SOURCE="$(cd .. && pwd -P)"
+~/.claude/skills/dbs-bridge/scripts/bridge-skill.sh link "$SUITE_SOURCE"
+~/.claude/skills/dbs-bridge/scripts/bridge-skill.sh status "$SUITE_SOURCE"
+```
+
+桥接脚本管理公共入口 `~/.agents/skills/` 和已支持 Agent 的专属入口，处理路由、去重和冗余链接。各入口最终指向这里的 `zerox-thinkcell-charts/SKILL.md`；后续只需在真源修改并检查桥接状态。Agent 如果缓存技能清单，需要重新载入会话后再发现新名称。
+
+`dbs-bridge` 是本机技能管理工具，不包含在此子目录中。没有安装桥接工具时，仍可直接运行上述 CLI；接入其他宿主时，应使用其技能管理方式创建指向同一真源的软链接。
+
+可向支持 Agent Skills 的宿主这样描述任务：
+
+> 使用 zerox-thinkcell-charts，把这份收入明细做成瀑布图，配色用 consulting_navy，保留真实来源，交付可编辑 PPTX 和 PNG。
+
+<a id="capabilities"></a>
+## 能力与工作流程
+
+| 能力 | 具体行为 |
+| --- | --- |
+| 数据识别 | 识别维度、度量、时间序列、宽表、两层分类、起止桥、目标、区间、市场宽度、项目日期等结构 |
+| 图表推荐 | 结合数据形态与中英文表达意图，给出首选和最多两个备选，并附理由、结论候选、强调点和首选 spec 草稿 |
+| 数据校验 | 覆盖 55 种类型；检查必填结构、数字类型、列表长度、瀑布平衡、比例、日期、范围和可读性，返回问题、补法及替代图 |
+| PPTX 生成 | 每份 spec 生成一页 16:9 幻灯片；支持多个文件或 `slides` 数组合并为一个 PPTX |
+| 图表呈现 | 总计、段内标签、系列名、同比、目标、双轴、误差线、分类间隔、数值轴或类别轴破断，按图型启用 |
+| 说明与强调 | 结论式标题、单位、圈/框/箭头、callout、脚注、来源；支持 CAGR、总差、差值箭头及数值线 |
+| 配色 | 8 套语义主题；正向、负向、目标、重点和背景有分工，也可覆盖系列色板 |
+| 预览与复用 | PNG 预览、分类 PPTX/PDF 画廊、HTML 总览、逐图 JSON 示例和自动生成的图型目录 |
+
+推荐流程是：**准备数据 → 确定表达意图与图型 → 校验 → 选配色 → 渲染 → 目检 → 交付**。
+
+- **尚未选图**：运行 `tc_advise.py`。Agent 应结合业务含义判断，确认图表和要表达的结论，再完善草稿。规则引擎无法替代业务判断。
+- **已经指定图表**：从相应示例写 spec，运行 `tc_validate.py`。数据不足时补真实数据或说明替代方案，不编造数值。
+- **已经指定图型、结论或配色**：沿用用户明确选择；未指定配色时展示主题供选择，交由 Agent 决定时使用默认主题。
+- **渲染之后**：查看 PNG，检查标签重叠、标注位置、颜色语义与来源，再交付 PPTX。
+
+推荐器会暂时把草稿中的部分空值填为 `0`，`source` 也需要补写。草稿是起点，不可把占位数或自动推断的结论直接当成事实。
+
+```bash
+# 从现成 CSV 获取推荐、草稿和机器可读报告
+.venv/bin/python scripts/tc_advise.py tests/data/03_ebit_bridge.csv \
+  --intent "解释利润变化的驱动因素" -o draft.json --json advice.json
+
+# 校验一个或多个 spec
+.venv/bin/python scripts/tc_validate.py examples/waterfall.json examples/mekko_percent.json
+
+# JSON 格式校验结果，可用于自动化
+.venv/bin/python scripts/tc_validate.py examples/waterfall.json --json
+```
+
+校验结论分为「能做」「能做但有问题」「不能做」。`tc_validate.py` 对致命问题返回退出码 `2`，警告返回 `0`。渲染器自动校验：警告会显示并继续；致命问题会停止。`--force` 只允许尝试越过致命校验，不会修复数据，也不保证能渲染；`--no-validate` 完全跳过这一层检查。
+
+<a id="data-contract"></a>
+## 输入、输出与 JSON 结构
+
+### 原始数据与图表 spec 是两种输入
+
+| 入口 | 接受内容 | 产出 |
+| --- | --- | --- |
+| `tc_advise.py` | CSV、TSV、分号文本、Markdown 表格、多空格对齐文本；Excel `.xlsx` / `.xlsm` 的活动工作表；表格形态 JSON；`-` 从标准输入读取文本 | 中文说明报告、可选完整报告 JSON、可选首选图 spec 草稿 |
+| `tc_validate.py` | 单图 JSON、`{"slides":[...]}`、多个 spec 文件 | 人类可读或 JSON 格式的校验结果 |
+| `tc_render.py` | 单图 JSON、`{"slides":[...]}`、多个 spec 文件 | 一个 PPTX；可选每页一张 PNG |
+
+表格 JSON 支持对象列表、列名到数组的对象、含表头的二维数组，或 `{"columns":[...],"rows":[...]}`。Excel 使用已保存的公式缓存值，不会计算工作簿公式；建议先在表格软件中完成重算和保存。不支持旧版二进制 `.xls`。
+
+下面是可直接保存为 `revenue.json` 的最小完整示例。数字仅用于演示，`source` 已明确标注：
+
+```json
+{
+  "id": "revenue",
+  "type": "column",
+  "title": "Revenue grew 25% from 2024 to 2025",
+  "unit": "$M",
+  "source": "Illustrative data",
+  "theme": "consulting_navy",
+  "data": {
+    "categories": ["2024", "2025"],
+    "series": [{"name": "Revenue", "values": [100, 125]}]
+  },
+  "decorations": [{"type": "total_diff", "from": 0, "to": 1}],
+  "highlight": [{"category": "2025", "shape": "circle"}],
+  "footnote": "Example only; replace with verified business data"
+}
+```
+
+```bash
+.venv/bin/python scripts/tc_render.py revenue.json -o revenue.pptx --png revenue_png/
+```
+
+| 字段 | 所在位置与含义 |
+| --- | --- |
+| `type`、`data` | 单图对象的核心字段；`data` 的结构随类型变化，不能把所有图都套成 `categories + series` |
+| `id` | 单图标识，也是 PNG 文件名；省略时使用输入 JSON 文件名，不自动生成唯一页码 |
+| `title`、`subtitle`、`unit` | 顶层标题、补充信息与单位；交付时应有明确的结论标题和单位 |
+| `source`、`footnote` | 顶层来源与脚注；缺少来源时图上会出现提醒，应填写真实出处 |
+| `theme`、`palette` | 顶层主题；`palette` 可用预设名称或十六进制颜色数组覆盖系列色 |
+| `font_size` | 顶层图内文字字号，默认 14 pt；标题与脚注使用各自字号 |
+| `highlight`、`callouts` | 顶层重点圈选与解释气泡，可按标签或位置定位 |
+| `decorations` | 顶层计算标记；只在支持的图型上生效，详见下表 |
+| `format`、`delta_format` | 通常放在 `data` 内；支持的图型使用 Python 格式串，例如 `"{:.1f}"`、`"{:+.1f}pp"` |
+
+多个图可封装成 `{"slides":[spec1,spec2]}`。主题、标题和其他配置应写在每个图表对象内；CLI `--theme` 可以统一覆盖整次渲染。批量导出 PNG 时，每页应提供唯一 `id`，否则同名文件可能被覆盖。CLI 不接受把图表直接放在顶层 JSON 数组中。
+
+### 图型数据结构速查
+
+| 图型家族 | 主要数据结构 | 可运行例子 |
+| --- | --- | --- |
+| 柱、条、线、面积 | `categories` + `series[].values` | [stacked.json](examples/stacked.json) |
+| 瀑布 | `items[]`，含 `label`、`value`、`kind`；`kind` 区分起点、增量、合计 | [waterfall.json](examples/waterfall.json) |
+| Mekko | `categories` + `series`，百分比 Mekko 还需要市场 `widths` | [mekko_percent.json](examples/mekko_percent.json) |
+| 散点、气泡 | `points[]`，含 `x`、`y`，气泡另有 `size` | [bubble.json](examples/bubble.json) |
+| 饼、环 | `segments[]`，含 `label`、`value` | [doughnut.json](examples/doughnut.json) |
+| 甘特、时间线 | 日期范围及 `tasks` 或 `phases` / `milestones` | [gantt.json](examples/gantt.json) |
+| 评估表、热力矩阵 | 行、列及对应值；Harvey 球和勾叉有专用对象 | [table_harvey.json](examples/table_harvey.json)、[heatmap.json](examples/heatmap.json) |
+| 其他咨询图 | 每种有独立结构，如 `cards`、`root`、`levels`、`stages` | [完整图型与格式目录](docs/CATALOG.md) |
+
+### 图表装饰与四区版面
+
+版面统一分为标题与单位、数据标签、重点强调、备注与来源四区。默认 16:9（约 13.333 × 7.5 英寸），采用平面填充、细线和直接数据标签。
+
+| 装饰 | JSON 示例 | 用途 |
+| --- | --- | --- |
+| CAGR | `{"type":"cagr","from":0,"to":4}` | 按首末值及类别间隔数计算增长率 |
+| 总差 | `{"type":"total_diff","from":0,"to":4,"percent":false}` | 跨柱显示绝对差；默认显示相对变化 |
+| 差值箭头 | `{"type":"diff","from":0,"to":2}` | 连接两个数值高度，标示相对或绝对差 |
+| 数值线 | `{"type":"value_line","value":100,"label":"Target"}` | 在指定高度画参考线 |
+
+这些 `decorations` 适用于 `column`、`stacked`、`percent`、`clustered`、`waterfall`、`waterfall_subtotal`、`waterfall_percent`。`from` / `to` 可以是从 `0` 开始的索引或类别名。CAGR 使用类别间隔数计算，输入应为等间隔时期；不要把不等距日期直接当成年化周期。
+
+`highlight` 支持 `circle`、`box`、`arrow`；`callouts` 支持引线气泡。定位可用支持图型的 `category`、图上已有标签 `anchor`（重名时用 `nth`），或图表区比例坐标 `at: [x,y]`。详细字段与可复用写法见 [版面规范](docs/STYLE_SPEC.md) 和 [高亮示例](examples/stacked_highlight.json)。
+
+<a id="themes"></a>
+## 8 套配色主题
+
+主题会改变语义色，保持图型与版面。默认 `consulting_navy`；命令行 `--theme` 优先于每页的 `theme`。显式设置 `palette` 的页面仍会保留自己的系列色板。
+
+| 名称 | 视觉特点 | 常见用途 |
+| --- | --- | --- |
+| `consulting_navy` | 海军蓝主色、酒红负向、金橙绿辅色 | 战略分析、经营汇报 |
+| `thinkcell_green` | 经典绿、深灰、浅灰 | 绿灰咨询图表 |
+| `thinkcell_blue` | 蓝色阶梯、青绿、亮红 | 产品、科技、财务分析 |
+| `teal_modern` | 青绿、炭灰和红色强调 | 现代简洁报告 |
+| `banking_navy_gold` | 深海军蓝与金色 | 融资、估值、并购材料 |
+| `office` | 预设 Office 风格系列色 | 接近常见 Office 视觉习惯 |
+| `mono_smoke` | 同一蓝灰系深浅变化 | 克制、多系列表达 |
+| `gray_accent` | 灰阶配红色强调 | 聚焦单一重点 |
+
+![本项目生成的 8 套主题对比](gallery/palettes/all-palettes.png)
+
+```bash
+.venv/bin/python scripts/tc_render.py --list-themes
+.venv/bin/python scripts/tc_render.py examples/waterfall.json \
+  -o teal.pptx --png teal_png/ --theme teal_modern
+```
+
+完整色值、语义角色及来源见 [PALETTES.md](docs/PALETTES.md) 与 [COLORS.md](docs/COLORS.md)。主题名仅描述视觉方向，不代表任何机构的品牌认证。
+
+<a id="gallery"></a>
+## 全部图表示例
+
+下面直接排列本项目生成的 **61 张 PNG**，覆盖全部 **55 种 `type`**。部分类型有多张示例，用来演示轴破断、差值、重点标记、正负标签等变体；这些变体不重复计入类型总数。点击截图查看原图，点击 JSON 查看可复用的完整配置。示例数据是演示数据。
+
+[柱形图](#gallery-columns) · [瀑布图](#gallery-waterfalls) · [Mekko 与比例图](#gallery-mekko) · [条形图](#gallery-bars) · [对比图](#gallery-comparisons) · [折线与面积图](#gallery-trends) · [散点与气泡图](#gallery-scatter) · [饼图与环形图](#gallery-shares) · [甘特图与时间线](#gallery-schedules) · [评估表格](#gallery-tables) · [咨询常用图](#gallery-consulting)
+
+<a id="gallery-columns"></a>
+### 柱形图 · 13 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>基础柱形图</strong><br>
+<a href="examples/column.png"><img src="examples/column.png" alt="基础柱形图 — 单一指标随时间/类别变化" width="100%"></a><br>
+单一指标随时间/类别变化<br>
+<code>column</code> · <a href="examples/column.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>堆叠柱形图 + CAGR</strong><br>
+<a href="examples/stacked.png"><img src="examples/stacked.png" alt="堆叠柱形图 + CAGR — 总量+构成随时间变化（带总计和 CAGR）" width="100%"></a><br>
+总量+构成随时间变化（带总计和 CAGR）<br>
+<code>stacked</code> · <a href="examples/stacked.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>100% 堆叠柱形图</strong><br>
+<a href="examples/percent.png"><img src="examples/percent.png" alt="100% 堆叠柱形图 — 构成占比变化（100% 堆叠）" width="100%"></a><br>
+构成占比变化（100% 堆叠）<br>
+<code>percent</code> · <a href="examples/percent.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>簇状柱形图</strong><br>
+<a href="examples/clustered.png"><img src="examples/clustered.png" alt="簇状柱形图 — 少量系列跨类别直接比较" width="100%"></a><br>
+少量系列跨类别直接比较<br>
+<code>clustered</code> · <a href="examples/clustered.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>数值轴破断</strong><br>
+<a href="examples/column_axis_break.png"><img src="examples/column_axis_break.png" alt="数值轴破断 — 有个别极大值时用轴破断" width="100%"></a><br>
+有个别极大值时用轴破断<br>
+<code>column</code> · <a href="examples/column_axis_break.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>堆叠柱 + 差值箭头</strong><br>
+<a href="examples/stacked_diff.png"><img src="examples/stacked_diff.png" alt="堆叠柱 + 差值箭头 — 突出两点之间的差值（差值箭头）" width="100%"></a><br>
+突出两点之间的差值（差值箭头）<br>
+<code>stacked</code> · <a href="examples/stacked_diff.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>堆叠柱 + 高亮说明</strong><br>
+<a href="examples/stacked_highlight.png"><img src="examples/stacked_highlight.png" alt="堆叠柱 + 高亮说明 — 强调某一列 + callout 说明" width="100%"></a><br>
+强调某一列 + callout 说明<br>
+<code>stacked</code> · <a href="examples/stacked_highlight.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>分组堆叠柱形图</strong><br>
+<a href="examples/stacked_clustered.png"><img src="examples/stacked_clustered.png" alt="分组堆叠柱形图 — 计划 vs 实际等「每类多根堆叠柱」" width="100%"></a><br>
+计划 vs 实际等「每类多根堆叠柱」<br>
+<code>stacked_clustered</code> · <a href="examples/stacked_clustered.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>误差线柱形图</strong><br>
+<a href="examples/column_error.png"><img src="examples/column_error.png" alt="误差线柱形图 — 带置信区间/波动范围的均值比较（误差线）" width="100%"></a><br>
+带置信区间/波动范围的均值比较（误差线）<br>
+<code>column_error</code> · <a href="examples/column_error.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>双层分类柱形图</strong><br>
+<a href="examples/column_grouped.png"><img src="examples/column_grouped.png" alt="双层分类柱形图 — 两级类别（年-季度）分组 + 组间间隔" width="100%"></a><br>
+两级类别（年-季度）分组 + 组间间隔<br>
+<code>column_grouped</code> · <a href="examples/column_grouped.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>实际与目标柱形图</strong><br>
+<a href="examples/column_target.png"><img src="examples/column_target.png" alt="实际与目标柱形图 — 实际 vs 目标（目标标记线 + 达成率）" width="100%"></a><br>
+实际 vs 目标（目标标记线 + 达成率）<br>
+<code>column_target</code> · <a href="examples/column_target.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>类别轴破断</strong><br>
+<a href="examples/column_xbreak.png"><img src="examples/column_xbreak.png" alt="类别轴破断 — 类别轴不连续（跳过年份）时用横轴破断" width="100%"></a><br>
+类别轴不连续（跳过年份）时用横轴破断<br>
+<code>column_xbreak</code> · <a href="examples/column_xbreak.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>堆叠柱 + 数值线</strong><br>
+<a href="examples/stacked_value_line.png"><img src="examples/stacked_value_line.png" alt="堆叠柱 + 数值线 — 数值线/平均线（value line）" width="100%"></a><br>
+数值线/平均线（value line）<br>
+<code>stacked</code> · <a href="examples/stacked_value_line.json">JSON</a>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
+
+<a id="gallery-waterfalls"></a>
+### 瀑布图 · 7 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>基础瀑布图</strong><br>
+<a href="examples/waterfall.png"><img src="examples/waterfall.png" alt="基础瀑布图 — 起点→驱动因素→终点的桥（收入桥、利润桥）" width="100%"></a><br>
+起点→驱动因素→终点的桥（收入桥、利润桥）<br>
+<code>waterfall</code> · <a href="examples/waterfall.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>带正负号的瀑布图</strong><br>
+<a href="examples/waterfall_signed.png"><img src="examples/waterfall_signed.png" alt="带正负号的瀑布图 — 需要一眼看出正负方向时" width="100%"></a><br>
+需要一眼看出正负方向时<br>
+<code>waterfall</code> · <a href="examples/waterfall_signed.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>水平瀑布图</strong><br>
+<a href="examples/waterfall_h.png"><img src="examples/waterfall_h.png" alt="水平瀑布图 — 总额向下分解（build-down，条目名较长时用水平版）" width="100%"></a><br>
+总额向下分解（build-down，条目名较长时用水平版）<br>
+<code>waterfall_h</code> · <a href="examples/waterfall_h.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>堆叠瀑布图</strong><br>
+<a href="examples/waterfall_stacked.png"><img src="examples/waterfall_stacked.png" alt="堆叠瀑布图 — 每个驱动再按产品/区域拆分（堆叠瀑布）" width="100%"></a><br>
+每个驱动再按产品/区域拆分（堆叠瀑布）<br>
+<code>waterfall_stacked</code> · <a href="examples/waterfall_stacked.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>带小计的瀑布图</strong><br>
+<a href="examples/waterfall_subtotal.png"><img src="examples/waterfall_subtotal.png" alt="带小计的瀑布图 — 多级小计的损益桥（subtotal 自动计算）" width="100%"></a><br>
+多级小计的损益桥（subtotal 自动计算）<br>
+<code>waterfall_subtotal</code> · <a href="examples/waterfall_subtotal.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>百分比瀑布图</strong><br>
+<a href="examples/waterfall_percent.png"><img src="examples/waterfall_percent.png" alt="百分比瀑布图 — 百分比/利润率桥（pp 变化）" width="100%"></a><br>
+百分比/利润率桥（pp 变化）<br>
+<code>waterfall_percent</code> · <a href="examples/waterfall_percent.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>负终点瀑布图</strong><br>
+<a href="examples/waterfall_negative_end.png"><img src="examples/waterfall_negative_end.png" alt="负终点瀑布图 — 终点为负的桥（零线以下）" width="100%"></a><br>
+终点为负的桥（零线以下）<br>
+<code>waterfall</code> · <a href="examples/waterfall_negative_end.json">JSON</a>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
+
+<a id="gallery-mekko"></a>
+### Mekko 与比例图 · 4 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>百分比 Mekko</strong><br>
+<a href="examples/mekko_percent.png"><img src="examples/mekko_percent.png" alt="百分比 Mekko — 市场规模（宽度）× 份额（高度），看结构" width="100%"></a><br>
+市场规模（宽度）× 份额（高度），看结构<br>
+<code>mekko_percent</code> · <a href="examples/mekko_percent.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>单位 Mekko</strong><br>
+<a href="examples/mekko_unit.png"><img src="examples/mekko_unit.png" alt="单位 Mekko — 宽度和高度都是绝对值（单位 Mekko）" width="100%"></a><br>
+宽度和高度都是绝对值（单位 Mekko）<br>
+<code>mekko_unit</code> · <a href="examples/mekko_unit.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>变宽柱形图</strong><br>
+<a href="examples/variwide.png"><img src="examples/variwide.png" alt="变宽柱形图 — 宽=规模、高=指标的变宽柱（单系列 Mekko）" width="100%"></a><br>
+宽=规模、高=指标的变宽柱（单系列 Mekko）<br>
+<code>variwide</code> · <a href="examples/variwide.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>比例面积图</strong><br>
+<a href="examples/proportional_area.png"><img src="examples/proportional_area.png" alt="比例面积图 — 量级差距很大时用面积比例" width="100%"></a><br>
+量级差距很大时用面积比例<br>
+<code>proportional_area</code> · <a href="examples/proportional_area.json">JSON</a>
+</td>
+</tr>
+</table>
+
+<a id="gallery-bars"></a>
+### 条形图 · 6 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>基础条形图</strong><br>
+<a href="examples/bar.png"><img src="examples/bar.png" alt="基础条形图 — 类别名较长/类别较多时的排名" width="100%"></a><br>
+类别名较长/类别较多时的排名<br>
+<code>bar</code> · <a href="examples/bar.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>自动排序条形图</strong><br>
+<a href="examples/bar_sorted.png"><img src="examples/bar_sorted.png" alt="自动排序条形图 — 自动降序 + 高亮重点项" width="100%"></a><br>
+自动降序 + 高亮重点项<br>
+<code>bar_sorted</code> · <a href="examples/bar_sorted.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>堆叠条形图</strong><br>
+<a href="examples/bar_stacked.png"><img src="examples/bar_stacked.png" alt="堆叠条形图 — 水平堆叠，类别名长时用" width="100%"></a><br>
+水平堆叠，类别名长时用<br>
+<code>bar_stacked</code> · <a href="examples/bar_stacked.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>同比条形图</strong><br>
+<a href="examples/bar_yoy.png"><img src="examples/bar_yoy.png" alt="同比条形图 — 两年逐项对比 + 变化率列" width="100%"></a><br>
+两年逐项对比 + 变化率列<br>
+<code>bar_yoy</code> · <a href="examples/bar_yoy.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>正负条形图</strong><br>
+<a href="examples/bar_diverging.png"><img src="examples/bar_diverging.png" alt="正负条形图 — 有正有负的变化（正负条形）" width="100%"></a><br>
+有正有负的变化（正负条形）<br>
+<code>bar_diverging</code> · <a href="examples/bar_diverging.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>100% 堆叠条形图</strong><br>
+<a href="examples/bar_percent.png"><img src="examples/bar_percent.png" alt="100% 堆叠条形图 — 调研量表（李克特）/ 100% 构成条形" width="100%"></a><br>
+调研量表（李克特）/ 100% 构成条形<br>
+<code>bar_percent</code> · <a href="examples/bar_percent.json">JSON</a>
+</td>
+</tr>
+</table>
+
+<a id="gallery-comparisons"></a>
+### 对比图 · 3 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>蝴蝶图</strong><br>
+<a href="examples/butterfly.png"><img src="examples/butterfly.png" alt="蝴蝶图 — 两组人群/两个时期左右对照（蝴蝶图）" width="100%"></a><br>
+两组人群/两个时期左右对照（蝴蝶图）<br>
+<code>butterfly</code> · <a href="examples/butterfly.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>哑铃图</strong><br>
+<a href="examples/dumbbell.png"><img src="examples/dumbbell.png" alt="哑铃图 — 两个时点的前后对比（哑铃图）" width="100%"></a><br>
+两个时点的前后对比（哑铃图）<br>
+<code>dumbbell</code> · <a href="examples/dumbbell.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>足球场图</strong><br>
+<a href="examples/football.png"><img src="examples/football.png" alt="足球场图 — 估值区间（足球场图）" width="100%"></a><br>
+估值区间（足球场图）<br>
+<code>football</code> · <a href="examples/football.json">JSON</a>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
+
+<a id="gallery-trends"></a>
+### 折线与面积图 · 7 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>折线图</strong><br>
+<a href="examples/line.png"><img src="examples/line.png" alt="折线图 — 连续时间趋势" width="100%"></a><br>
+连续时间趋势<br>
+<code>line</code> · <a href="examples/line.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>堆叠面积图</strong><br>
+<a href="examples/area.png"><img src="examples/area.png" alt="堆叠面积图 — 总量趋势 + 构成" width="100%"></a><br>
+总量趋势 + 构成<br>
+<code>area</code> · <a href="examples/area.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>100% 堆叠面积图</strong><br>
+<a href="examples/area_percent.png"><img src="examples/area_percent.png" alt="100% 堆叠面积图 — 构成占比的连续变化" width="100%"></a><br>
+构成占比的连续变化<br>
+<code>area_percent</code> · <a href="examples/area_percent.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>柱线双轴组合图</strong><br>
+<a href="examples/combo.png"><img src="examples/combo.png" alt="柱线双轴组合图 — 量 + 率（双轴组合）" width="100%"></a><br>
+量 + 率（双轴组合）<br>
+<code>combo</code> · <a href="examples/combo.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>带目标的折线图</strong><br>
+<a href="examples/line_target.png"><img src="examples/line_target.png" alt="带目标的折线图 — 趋势 + 目标线 / 目标区间" width="100%"></a><br>
+趋势 + 目标线 / 目标区间<br>
+<code>line_target</code> · <a href="examples/line_target.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>斜率图</strong><br>
+<a href="examples/slope.png"><img src="examples/slope.png" alt="斜率图 — 两个时点的排名/份额变化（斜率图）" width="100%"></a><br>
+两个时点的排名/份额变化（斜率图）<br>
+<code>slope</code> · <a href="examples/slope.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>小倍数图</strong><br>
+<a href="examples/small_multiples.png"><img src="examples/small_multiples.png" alt="小倍数图 — 多个对象同刻度并排比较（小倍数）" width="100%"></a><br>
+多个对象同刻度并排比较（小倍数）<br>
+<code>small_multiples</code> · <a href="examples/small_multiples.json">JSON</a>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
+
+<a id="gallery-scatter"></a>
+### 散点与气泡图 · 2 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>散点图</strong><br>
+<a href="examples/scatter.png"><img src="examples/scatter.png" alt="散点图 — 两个指标的相关/四象限" width="100%"></a><br>
+两个指标的相关/四象限<br>
+<code>scatter</code> · <a href="examples/scatter.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>气泡图</strong><br>
+<a href="examples/bubble.png"><img src="examples/bubble.png" alt="气泡图 — 三个维度（x、y、规模）的组合定位" width="100%"></a><br>
+三个维度（x、y、规模）的组合定位<br>
+<code>bubble</code> · <a href="examples/bubble.json">JSON</a>
+</td>
+</tr>
+</table>
+
+<a id="gallery-shares"></a>
+### 饼图与环形图 · 2 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>饼图</strong><br>
+<a href="examples/pie.png"><img src="examples/pie.png" alt="饼图 — 少数（≤5）部分占整体" width="100%"></a><br>
+少数（≤5）部分占整体<br>
+<code>pie</code> · <a href="examples/pie.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>环形图</strong><br>
+<a href="examples/doughnut.png"><img src="examples/doughnut.png" alt="环形图 — 占比 + 中心放总量" width="100%"></a><br>
+占比 + 中心放总量<br>
+<code>doughnut</code> · <a href="examples/doughnut.json">JSON</a>
+</td>
+</tr>
+</table>
+
+<a id="gallery-schedules"></a>
+### 甘特图与时间线 · 4 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>甘特图</strong><br>
+<a href="examples/gantt.png"><img src="examples/gantt.png" alt="甘特图 — 项目计划、里程碑、负责人" width="100%"></a><br>
+项目计划、里程碑、负责人<br>
+<code>gantt</code> · <a href="examples/gantt.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>阶段时间线</strong><br>
+<a href="examples/timeline.png"><img src="examples/timeline.png" alt="阶段时间线 — 高层路线图/阶段 + 里程碑" width="100%"></a><br>
+高层路线图/阶段 + 里程碑<br>
+<code>timeline</code> · <a href="examples/timeline.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>进度甘特图</strong><br>
+<a href="examples/gantt_progress.png"><img src="examples/gantt_progress.png" alt="进度甘特图 — 甘特 + 完成百分比（项目状态汇报）" width="100%"></a><br>
+甘特 + 完成百分比（项目状态汇报）<br>
+<code>gantt_progress</code> · <a href="examples/gantt_progress.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>泳道甘特图</strong><br>
+<a href="examples/gantt_swimlane.png"><img src="examples/gantt_swimlane.png" alt="泳道甘特图 — 按工作流分组（泳道）的甘特" width="100%"></a><br>
+按工作流分组（泳道）的甘特<br>
+<code>gantt_swimlane</code> · <a href="examples/gantt_swimlane.json">JSON</a>
+</td>
+</tr>
+</table>
+
+<a id="gallery-tables"></a>
+### 评估表格 · 1 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>Harvey 球评估表</strong><br>
+<a href="examples/table_harvey.png"><img src="examples/table_harvey.png" alt="Harvey 球评估表 — 多维度定性评估（Harvey ball / 勾叉）" width="100%"></a><br>
+多维度定性评估（Harvey ball / 勾叉）<br>
+<code>table_harvey</code> · <a href="examples/table_harvey.json">JSON</a>
+</td>
+<td width="50%"></td>
+</tr>
+</table>
+
+<a id="gallery-consulting"></a>
+### 咨询常用图 · 12 个示例
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<strong>转化漏斗</strong><br>
+<a href="examples/funnel.png"><img src="examples/funnel.png" alt="转化漏斗 — 转化漏斗（逐级转化率）" width="100%"></a><br>
+转化漏斗（逐级转化率）<br>
+<code>funnel</code> · <a href="examples/funnel.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>热力矩阵</strong><br>
+<a href="examples/heatmap.png"><img src="examples/heatmap.png" alt="热力矩阵 — 两维交叉的强弱分布（热力矩阵）" width="100%"></a><br>
+两维交叉的强弱分布（热力矩阵）<br>
+<code>heatmap</code> · <a href="examples/heatmap.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>战略 2×2 矩阵</strong><br>
+<a href="examples/matrix_2x2.png"><img src="examples/matrix_2x2.png" alt="战略 2×2 矩阵 — 战略矩阵 / 二乘二优先级" width="100%"></a><br>
+战略矩阵 / 二乘二优先级<br>
+<code>matrix_2x2</code> · <a href="examples/matrix_2x2.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>帕累托图</strong><br>
+<a href="examples/pareto.png"><img src="examples/pareto.png" alt="帕累托图 — 找出 80/20 主因（帕累托）" width="100%"></a><br>
+找出 80/20 主因（帕累托）<br>
+<code>pareto</code> · <a href="examples/pareto.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>龙卷风图</strong><br>
+<a href="examples/tornado.png"><img src="examples/tornado.png" alt="龙卷风图 — 敏感性分析（龙卷风图）" width="100%"></a><br>
+敏感性分析（龙卷风图）<br>
+<code>tornado</code> · <a href="examples/tornado.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>指标驱动树</strong><br>
+<a href="examples/tree.png"><img src="examples/tree.png" alt="指标驱动树 — 指标拆解树 / 驱动树" width="100%"></a><br>
+指标拆解树 / 驱动树<br>
+<code>tree</code> · <a href="examples/tree.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>KPI 卡片</strong><br>
+<a href="examples/kpi_cards.png"><img src="examples/kpi_cards.png" alt="KPI 卡片 — KPI 仪表板卡片" width="100%"></a><br>
+KPI 仪表板卡片<br>
+<code>kpi_cards</code> · <a href="examples/kpi_cards.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>子弹图</strong><br>
+<a href="examples/bullet.png"><img src="examples/bullet.png" alt="子弹图 — 实际 vs 目标 vs 区间（子弹图）" width="100%"></a><br>
+实际 vs 目标 vs 区间（子弹图）<br>
+<code>bullet</code> · <a href="examples/bullet.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>目标进度条</strong><br>
+<a href="examples/progress_bars.png"><img src="examples/progress_bars.png" alt="目标进度条 — 举措/目标完成进度（对照时间进度）" width="100%"></a><br>
+举措/目标完成进度（对照时间进度）<br>
+<code>progress_bars</code> · <a href="examples/progress_bars.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>雷达图</strong><br>
+<a href="examples/radar.png"><img src="examples/radar.png" alt="雷达图 — 多维能力画像对比（雷达）" width="100%"></a><br>
+多维能力画像对比（雷达）<br>
+<code>radar</code> · <a href="examples/radar.json">JSON</a>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<strong>TAM / SAM / SOM</strong><br>
+<a href="examples/tam_sam_som.png"><img src="examples/tam_sam_som.png" alt="TAM / SAM / SOM — 潜在市场规模分层（TAM/SAM/SOM）" width="100%"></a><br>
+潜在市场规模分层（TAM/SAM/SOM）<br>
+<code>tam_sam_som</code> · <a href="examples/tam_sam_som.json">JSON</a>
+</td>
+<td width="50%" valign="top">
+<strong>华夫图</strong><br>
+<a href="examples/waffle.png"><img src="examples/waffle.png" alt="华夫图 — 直观的百分比（华夫图）" width="100%"></a><br>
+直观的百分比（华夫图）<br>
+<code>waffle</code> · <a href="examples/waffle.json">JSON</a>
+</td>
+</tr>
+</table>
+
+<a id="cli"></a>
+## CLI 参数
+
+### `tc_render.py`：渲染
+
+```text
+python scripts/tc_render.py SPEC.json [MORE.json ...] -o OUTPUT.pptx [选项]
+```
+
+| 参数 | 含义 |
+| --- | --- |
+| `specs` | 一个或多个 JSON 文件，按顺序读取；`examples/*.json` 可批量渲染，分类索引 `catalog.json` 会跳过 |
+| `-o` / `--out` | 必填，目标 PPTX 路径；其父目录应事先存在 |
+| `--png DIR` | 导出每页 PNG；自动创建目录，经 LibreOffice → PDF → Poppler 完成 |
+| `--dpi N` | PNG 分辨率，默认 `110` |
+| `--theme NAME` | 为本次所有页面指定主题 |
+| `--list-themes` | 列出主题后退出，不需要输入文件或 `-o` |
+| `--force` | 显示校验问题后仍尝试渲染 |
+| `--no-validate` | 跳过渲染前校验 |
+
+```bash
+# 渲染全部示例；只需 PPTX 时去掉 --png
+.venv/bin/python scripts/tc_render.py examples/*.json \
+  -o all-examples.pptx --png all-examples_png/ --dpi 150
+```
+
+### `tc_advise.py`：推荐
+
+```text
+python scripts/tc_advise.py DATA [--intent TEXT] [-o DRAFT.json] [--json REPORT.json]
+```
+
+- `DATA`：数据文件；`-` 表示读取标准输入。
+- `--intent`：希望表达的结论或比较目的，中英文关键词均可。
+- `-o` / `--out`：有可生成的首选图时写出 spec 草稿；部分数据形态仍需手写配置。
+- `--json`：完整推荐结果路径；传 `-` 会把 JSON 追加打印到文字报告后，**不是纯 JSON 标准输出**。自动化读取应使用文件路径。
+
+### `tc_validate.py`：校验
+
+```text
+python scripts/tc_validate.py SPEC.json [MORE.json ...] [--json]
+```
+
+`--json` 把所有校验结果作为 JSON 数组输出；详细检查规则见 [图表选择与数据充分性](docs/CHART_SELECTION.md)。
+
+<a id="maintenance"></a>
+## 目录、维护与验证
+
+```text
+zerox-thinkcell-charts/
+├── SKILL.md                 # Agent 入口与工作流程
+├── README.md / README_EN.md  # 中英文说明和完整画廊
+├── LICENSE                  # Apache-2.0
+├── NOTICE                   # 外部参考材料的权利与来源说明
+├── scripts/
+│   ├── tc_core.py           # 版面、基础图表、主题、装饰与标注
+│   ├── tc_more.py           # 扩展图表实现
+│   ├── tc_render.py         # PPTX / PNG CLI
+│   ├── tc_advise.py         # 规则推荐与 spec 草稿
+│   ├── tc_validate.py       # 数据充分性与可读性检查
+│   ├── make_examples.py     # 示例 JSON 生成
+│   ├── build_gallery.py     # 分类 PPTX / PDF 与示例 PNG
+│   ├── build_docs.py        # 图型目录与 HTML 画廊生成
+│   ├── audit.py             # 历史前后对照审核（需旧示例目录）
+│   └── requirements.txt
+├── examples/                # 61 对 JSON / PNG 与 catalog.json
+├── docs/                    # 图型、选型、版面、配色与审核文档
+├── gallery/                 # 现成 PPTX、PDF、HTML 和主题预览
+├── references/              # 公开来源清单；原始参考图仅留本地
+└── tests/                   # 推荐数据集、校验用例与回归脚本
+```
+
+| 文档 | 内容 |
+| --- | --- |
+| [SKILL.md](SKILL.md) | Agent 如何做判断、处理缺数、选配色和交付 |
+| [CATALOG.md](docs/CATALOG.md) | 每种类型的 `data` 格式、完整 JSON 与截图 |
+| [CHART_SELECTION.md](docs/CHART_SELECTION.md) | 数据形态 × 表达意图的推荐规则及校验范围 |
+| [STYLE_SPEC.md](docs/STYLE_SPEC.md) | 版面、标签、箭头、锚点与四区规范 |
+| [PALETTES.md](docs/PALETTES.md) / [COLORS.md](docs/COLORS.md) | 主题角色、色值及取色出处 |
+| [AUDIT.md](docs/AUDIT.md) | 示例是否具备四区元素的审核表 |
+| [tests/README.md](tests/README.md) | 测试数据与检查说明 |
+
+```bash
+# 推荐、校验、示例覆盖和 PPTX 渲染回归
+.venv/bin/python tests/run_tests.py
+
+# 重建图型文档和本地 HTML 画廊
+.venv/bin/python scripts/build_docs.py
+
+# 重建 61 个示例 PNG，以及带 11 张分类页的 72 页 PPTX / PDF
+.venv/bin/python scripts/build_gallery.py
+
+# 历史审核工具：需先提供包含旧版 JSON 的真实目录
+# .venv/bin/python scripts/audit.py /absolute/path/to/previous-examples
+```
+
+测试包含 19 份推荐数据集、14 份校验用例、意图偏好检查、推荐草稿渲染、61 个示例校验，以及自动拦截与 `--force` 行为检查。它不替代 PNG 的视觉审阅。`audit.py` 是历史前后对照工具，需要显式传入旧示例目录；默认目录不随仓库分发，不能直接用作通用测试。重建脚本会覆盖对应生成产物；`make_examples.py` 会重写示例 JSON，修改前应明确以生成脚本还是手工 spec 为准。
+
+<a id="limitations"></a>
+## 已知限制
+
+- **形状编辑，不是数据绑定图表**：没有 PowerPoint「编辑数据」工作表、Excel 自动链接或 think-cell 交互式拖动重排。
+- **固定版面**：默认 16:9 和固定布局；没有模板导入、任意画布尺寸或对数轴的 CLI 功能。
+- **自动标签有边界**：避让依赖估算和微移，小色块的标签可能隐藏；长标题、密集类别、多重标注仍需目检和调整。
+- **推荐与校验是规则系统**：它不能验证来源真实性、证明因果或确定业务结论；字段检查也不等于完整的 JSON Schema 验证。
+- **部分图型为本项目扩展**：漏斗、热力矩阵、驱动树、KPI 卡、雷达等沿用统一视觉约定，不能据此推断它们与商业 think-cell 功能一一对应。
+- **渲染环境影响预览**：字体与 Office / LibreOffice 差异会影响换行和对齐；只安装 Python 依赖不会得到 PNG。
+- **多语言边界**：两份 README 可切换；推荐及校验报告以中文为主，图表标题和标签使用你提供的文本。
+
+<a id="license"></a>
+## 开源协议与参考资料
+
+本技能的自有代码、文档和生成示例按 [Apache License 2.0](LICENSE) 发布；本目录协议不改变套件其他成员的授权。
+
+原始外部或用户提供的视觉参考图只保留在本地 `references/img/` 与 `references/palettes/`，已从公开 Git 分发排除；运行技能不依赖这些原图。它们的权利仍属于相应权利人，**不因本项目使用 Apache-2.0 而自动获得同样授权**。公开仓库只保留参考来源索引，列于 [图形来源清单](references/SOURCES.csv)、[配色来源清单](references/palettes/SOURCES.csv)，具体范围见 [第三方说明](NOTICE)。README 展示的是本项目生成的图表与主题预览，不是第三方参考截图。
