@@ -12,7 +12,7 @@ Bars, lines, text, arrows, and annotations can be selected and edited individual
 
 This is an independent open-source implementation, with no affiliation, authorization, or endorsement from think-cell. The name describes a visual influence; the renderer does not depend on the think-cell add-in.
 
-[Quick start](#quickstart) · [How to use & write prompts](#how-to-use) · [Capabilities](#capabilities) · [Multi-panel](#multipanel) · [Inputs and outputs](#data-contract) · [Themes](#themes) · [All examples](#gallery) · [CLI](#cli) · [Maintenance](#maintenance) · [Limitations](#limitations) · [License](#license)
+[Quick start](#quickstart) · [How to use & write prompts](#how-to-use) · [Capabilities](#capabilities) · [Multi-panel](#multipanel) · [Ops review recipes](#ops-report) · [Inputs and outputs](#data-contract) · [Themes](#themes) · [All examples](#gallery) · [CLI](#cli) · [Maintenance](#maintenance) · [Limitations](#limitations) · [License](#license)
 
 <a id="quickstart"></a>
 ## Quick start
@@ -235,6 +235,34 @@ When data has time + group + ≥2 measures, `tc_advise.py` recommends `facet` fi
 .venv/bin/python scripts/tc_render.py examples/dashboards/*.json -o dashboards.pptx --png examples/dashboards
 ```
 
+
+<a id="ops-report"></a>
+### Ops review page recipes (scorecard / volume–speed–efficiency / facet)
+
+Three common one-page skeletons for weekly and monthly business reviews. Fields: [docs/DASHBOARD.md](docs/DASHBOARD.md) §7 (Chinese). Conclusion-page checklist and misread guards: [docs/STYLE_SPEC.md](docs/STYLE_SPEC.md) §11–§12. Intent → chart additions: [docs/CHART_SELECTION.md](docs/CHART_SELECTION.md) §5.
+
+
+| Recipe | Use when | Example spec | Preview |
+| --- | --- | --- | --- |
+| Scorecard | Attainment vs time progress; red behind, green ahead | [scorecard.json](examples/ops-report/scorecard.json) | below |
+| Volume–speed–efficiency | Absolute volume + YoY + efficiency move together? | [volume-speed-efficiency.json](examples/ops-report/volume-speed-efficiency.json) | below |
+| Facet by cut | Same metrics, swap group / team columns | [facet-by-tier.json](examples/ops-report/facet-by-tier.json) | below |
+| Peak vs Base | Peak-period lift vs normal baseline | [promo-vs-bau.json](examples/ops-report/promo-vs-bau.json) | [img](gallery/ops-report/promo-vs-bau.png) |
+| CTG waterfall | Who explains the growth delta | [ctg-waterfall.json](examples/ops-report/ctg-waterfall.json) | [img](gallery/ops-report/ctg-waterfall.png) |
+| Saturation scatter | Is spend hitting diminishing returns | [saturation-scatter.json](examples/ops-report/saturation-scatter.json) | [img](gallery/ops-report/saturation-scatter.png) |
+
+All figures below use **illustrative data**, metric/group names and numbers are placeholders.
+
+| | |
+|---|---|
+| ![Scorecard](gallery/ops-report/scorecard.png) | ![Volume–speed–efficiency](gallery/ops-report/volume-speed-efficiency.png) |
+| ![Facet by group](gallery/ops-report/facet-by-tier.png) | ![Peak vs Base](gallery/ops-report/promo-vs-bau.png) |
+
+```bash
+.venv/bin/python scripts/tc_render.py examples/ops-report/*.json \
+  -o ops-report.pptx --png gallery/ops-report/
+```
+
 <a id="how-to-use"></a>
 ## How to use and how to write prompts
 
@@ -244,6 +272,7 @@ This section is for **people who actually use the skill**: what to say to the ag
 
 - You have a table and want a consulting-style column / line / waterfall / Mekko / Gantt chart.
 - You have several related small charts and want them on **one dashboard page** or a **facet grid**.
+- You need an **ops review page** (scorecard, volume–speed–efficiency, facet-by-cut) → see [Ops review recipes](#ops-report).
 - You already have a JSON spec and want validation first, or a re-render with a new theme.
 
 ### How to provide data

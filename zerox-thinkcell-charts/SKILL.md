@@ -41,7 +41,7 @@ python3 -m venv .venv && .venv/bin/pip install python-pptx   # 渲染 PNG 还需
    - 四区要齐：① title（结论式）+ unit；② 数据标签自动生成；③ highlight 圈出重点；④ callouts、footnote、source。
    - 需要标记时加 decorations：CAGR、total_diff、diff、value_line。
 4b. **多图拼版**：数据有多个指标 × 多个分组（推荐器会首选 `facet`），或者用户要“一页多图 / 看板 / 分面”时，按 `docs/DASHBOARD.md` 写 `type: dashboard`（自由区域或网格，子图类型可以混用）或 `type: facet`（行×列分面，可共用纵轴）。分段虚线、多层横轴、条件着色（≥时间进度为绿、否则红、对比期为灰）、圈注、箭头、“VS … ±pp”批注都写在子图的 `segments` / `annotations` / `rule` 里。用户给的参考图中如果有真实业务数字，示例一律换成示意数据。
-5. **目检 PNG 后交付** PPTX：检查标签是否重叠、箭头是否压字、颜色语义是否正确（正向用主色、负向用酒红/红）。
+5. **目检 PNG 后交付** PPTX：检查标签是否重叠、箭头是否压字、颜色语义是否正确（正向用主色、负向用酒红/红）。另按 `docs/STYLE_SPEC.md` §11 结论页四件套与 §12 易误读护栏自检（结论标题、baseline、例外圈注、source+截止日期；达成率分母、pp vs %、红圈=讨论重点、跨页对齐日期）。
 
 ## 目录
 - `scripts/tc_core.py`：绘图引擎（版面分区、第一批 25 种图、装饰、标签防重叠）
@@ -50,13 +50,14 @@ python3 -m venv .venv && .venv/bin/pip install python-pptx   # 渲染 PNG 还需
 - `scripts/tc_render.py`：CLI（渲染前自动调用 tc_validate；`--theme`、`--list-themes`、`--force`、`--no-validate`）
 - `scripts/tc_advise.py`：数据分析 + 图表推荐（规则引擎，输出中文报告、JSON 和 spec 草稿）
 - `scripts/tc_validate.py`：数据充分性校验（55 种图全覆盖）
-- `docs/CHART_SELECTION.md`：数据形态 × 表达意图 → 图表 决策表，以及校验项清单
+- `docs/CHART_SELECTION.md`：数据形态 × 表达意图 → 图表 决策表，以及校验项清单（含 §5 经营汇报高频意图）
+- `docs/DASHBOARD.md`：多图拼版字段；§7 为经营对账页配方（Scorecard / 量速效三联 / Facet 换维）
 - `tests/`：19 个推荐数据集 + 14 个校验用例，`python tests/run_tests.py` 一键跑
 - `scripts/make_examples.py`：生成 `examples/*.json`
 - `scripts/build_gallery.py`：分类 gallery PPTX/PDF，并重渲染示例 PNG
 - `scripts/build_docs.py`：生成 CATALOG 和 HTML 总览
 - `docs/CATALOG.md`：图表目录，每个图都有数据格式、样例、适合场景和示例图
-- `docs/STYLE_SPEC.md`：版面分区和元素规则，逐条注明参考图（§9 是四区规范）
+- `docs/STYLE_SPEC.md`：版面分区和元素规则（§9 四区；§11 结论页四件套；§12 易误读护栏）
 - `docs/AUDIT.md`：61 个示例的四区审核表
 - `scripts/audit.py`：生成审核表
 - `docs/COLORS.md`：配色和取色出处

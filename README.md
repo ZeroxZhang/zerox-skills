@@ -27,7 +27,7 @@
 |---|---|
 | [`zerox-deep-research`](zerox-deep-research/) | 对复杂开放问题做系统化深度研究。交付一份能直接支撑决策的报告，加上可复用的数据包、原始材料与过程记录。关键数据关联记录 ID，派生结果保留输入与方法，结论能追溯到原文 |
 | [`zerox-storyline`](zerox-storyline/) | 把杂乱的多源材料（文档、纪要、访谈、数据表、旧 PPT、网页摘录）重构成一条 SCQA 主线，写成完整内容稿，再拆成 PPT 故事板与逐页内容。用信息卡片、价值分级与覆盖审计保证高价值信息不被静默丢弃、不被失真 |
-| [`zerox-thinkcell-charts`](zerox-thinkcell-charts/) | 将表格与 JSON 转为可编辑 PPTX 形状图表和 PNG；55 种图型、61 个示例、8 套主题，附数据推荐与校验。[English](zerox-thinkcell-charts/README_EN.md) · [Apache-2.0](zerox-thinkcell-charts/LICENSE) |
+| [`zerox-thinkcell-charts`](zerox-thinkcell-charts/) | 将表格与 JSON 转为可编辑 PPTX 形状图表和 PNG；55 种图型、61 个示例、8 套主题，附数据推荐与校验；含经营对账页配方（Scorecard / 量速效 / 换维）。[English](zerox-thinkcell-charts/README_EN.md) · [Apache-2.0](zerox-thinkcell-charts/LICENSE) |
 
 ## 安装
 

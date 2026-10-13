@@ -12,7 +12,7 @@ PPTX 中的柱、线、文字、箭头和标注可在 PowerPoint 中逐个选中
 
 这是独立实现的开源项目，与 think-cell 无隶属、授权或背书关系。名称描述所参考的视觉风格；运行不依赖 think-cell 插件。
 
-[快速开始](#quickstart) · [如何使用与怎么写 prompt](#how-to-use) · [能力与流程](#capabilities) · [多图拼版](#multipanel) · [输入与输出](#data-contract) · [配色](#themes) · [全部示例](#gallery) · [CLI](#cli) · [维护与验证](#maintenance) · [限制](#limitations) · [协议](#license)
+[快速开始](#quickstart) · [如何使用与怎么写 prompt](#how-to-use) · [能力与流程](#capabilities) · [多图拼版](#multipanel) · [经营对账页](#ops-report) · [输入与输出](#data-contract) · [配色](#themes) · [全部示例](#gallery) · [CLI](#cli) · [维护与验证](#maintenance) · [限制](#limitations) · [协议](#license)
 
 <a id="quickstart"></a>
 ## 快速开始
@@ -233,6 +233,34 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 ```bash
 .venv/bin/python scripts/make_dashboards.py          # 重新生成 5 个示例 spec（示意数据）
 .venv/bin/python scripts/tc_render.py examples/dashboards/*.json -o dashboards.pptx --png examples/dashboards
+```
+
+
+<a id="ops-report"></a>
+### 经营对账页配方（Scorecard / 量速效 / 换维）
+
+周会、月度复盘、经营复盘常见三种一页骨架，字段见 [docs/DASHBOARD.md](docs/DASHBOARD.md) §7；结论页四件套与易误读护栏见 [docs/STYLE_SPEC.md](docs/STYLE_SPEC.md) §11–§12。选型意图补充见 [docs/CHART_SELECTION.md](docs/CHART_SELECTION.md) §5。
+
+
+| 配方 | 用途 | 示例 spec | 预览 |
+| --- | --- | --- | --- |
+| Scorecard | 相对时间进度对账；红=落后、绿=超前 | [examples/ops-report/scorecard.json](examples/ops-report/scorecard.json) | 见下 |
+| 量–速–效三联 | 绝对量 + YoY + 效率是否同向 | [volume-speed-efficiency.json](examples/ops-report/volume-speed-efficiency.json) | 见下 |
+| 换维分面 | 同指标换分组 / 团队找结构差异 | [facet-by-tier.json](examples/ops-report/facet-by-tier.json) | 见下 |
+| 高峰 vs 日常（Peak vs Base） | 高峰期相对日常的放大倍数 | [promo-vs-bau.json](examples/ops-report/promo-vs-bau.json) | [图](gallery/ops-report/promo-vs-bau.png) |
+| CTG 瀑布 | 谁解释了增速差额 | [ctg-waterfall.json](examples/ops-report/ctg-waterfall.json) | [图](gallery/ops-report/ctg-waterfall.png) |
+| 饱和散点 | 预算是否触顶 | [saturation-scatter.json](examples/ops-report/saturation-scatter.json) | [图](gallery/ops-report/saturation-scatter.png) |
+
+下图均为**示意数据**（Illustrative），指标、分组与数字均为占位。
+
+| | |
+|---|---|
+| ![Scorecard](gallery/ops-report/scorecard.png) | ![量速效三联](gallery/ops-report/volume-speed-efficiency.png) |
+| ![换维分面](gallery/ops-report/facet-by-tier.png) | ![Peak vs Base](gallery/ops-report/promo-vs-bau.png) |
+
+```bash
+.venv/bin/python scripts/tc_render.py examples/ops-report/*.json \
+  -o ops-report.pptx --png gallery/ops-report/
 ```
 
 <a id="how-to-use"></a>

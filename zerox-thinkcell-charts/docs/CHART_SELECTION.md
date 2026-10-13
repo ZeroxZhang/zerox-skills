@@ -63,3 +63,21 @@
 - **图表专属字段**：百分比 Mekko 是否有 widths；甘特图每个任务是否有日期、格式是否正确、开始是否早于结束；line_target 是否有目标值；butterfly 和 dumbbell 是否正好 2 个系列；radar 是否 ≥ 3 个维度；2×2 矩阵的点是否在坐标范围内。
 - **可读性**：类别数是否超出上限（如饼图 6 块、柱形 12 个、条形 15 个）；类别名是否过长；是否需要轴破断。
 - **通用**：source 是否填写、是否有标题。
+
+## 5. 经营汇报高频意图 → 图型（通用，不绑具体业务）
+
+以下意图来自真实经营复盘/周会/月度复盘类材料的归纳，给 Agent 覆盖 `tc_advise` 规则推荐时用。表述保持通用。
+
+| 表达意图（用户原话或语境） | 首选 | 常见备选 | 必须带的标注 |
+|---|---|---|---|
+| 相对时间进度 / 目标是否达标；开场对账 | `dashboard` 含 `bars_pair` + `rule.threshold`（时间进度），或 `column_target` / `progress_bars` / `kpi_cards` | `bullet`、表格式 scorecard | 时间进度虚线；≥阈值为绿、否则红；对比期灰 |
+| 谁解释了增速差额 / 贡献度归因 | `waterfall` 或 `column_stack`（贡献拆解）+ Explain 表（可用旁侧 `callouts`/脚注） | `bar_diverging`、`pareto` | 标最大正/负贡献；总差箭头 |
+| 大促 vs 日常（节点膨胀） | `clustered` / `column_grouped`（本期高峰 vs 日常，或今年 vs 去年） | `bar_yoy`、`dumbbell` | 写倍率（×）与 **pp** 差（百分点，不是%） |
+| 量、增速、效率是否同向 | `facet` 或 `dashboard`：`area_stack`（量）+ `lines`（YoY）+ `lines`（效率/费率） | `combo`、`small_multiples` | 三行共用时间轴；异常行用 `circle`/`arrow` |
+| 换切维找结构差异（团队/层级/市场） | `facet`（列=切维，行=指标） | `dashboard` 网格 | `shared_y: row`；哪一列长得不一样就圈哪一列 |
+| 漏斗渗透 / 各层定义 | `funnel`；定义卡可用表或并排 KPI | `bar_sorted`、概念信息图（非数据时说明） | 写清时间窗与互斥规则；流失最大一步 |
+| 场景×产品×指标选型 / 增效证明 | `heatmap` 或矩阵表 | `matrix_2x2`、案例拼版 `dashboard` | 高亮最优格；脚注度量口径 |
+| 预算是否触顶 / 边际递减 | `scatter`（花费×回报）+ 饱和趋势 | `bubble`、`line` | 分区（还可加 / 临界 / 过饱和）；离群点 callout |
+| 机制/方案讲解（少小数点） | 概念漏斗或对比示意图（可用 `funnel`/`bars_pair` 示意） | 深色背景示意页 | 标题讲逻辑；数字用示意并标注 |
+
+意图关键词补充（中英文）：时间进度/attainment/pacing → target；贡献度/CTG/explain/归因 → bridge；膨胀/大促/高峰/promo/peak → change；量速效/费率/效率背离 → trend+composition；分面/按团队/按市场 → facet；渗透/漏斗层 → funnel；饱和/加预算 → correlation。
