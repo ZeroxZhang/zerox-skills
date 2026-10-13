@@ -2,17 +2,17 @@
 
 [简体中文](README.md) · **English**
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](scripts/requirements.txt) [![Chart types](https://img.shields.io/badge/Chart_types-55-00507D)](docs/CATALOG.md) [![Examples](https://img.shields.io/badge/Examples-61-6C89B4)](examples/catalog.json) [![Themes](https://img.shields.io/badge/Themes-8-18A98C)](docs/PALETTES.md) [![Output](https://img.shields.io/badge/Output-Editable_PPTX_%2B_PNG-E87722)](#quickstart) [![GitHub stars](https://img.shields.io/github/stars/ZeroxZhang/zerox-skills?style=flat&label=Suite%20stars)](https://github.com/ZeroxZhang/zerox-skills)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](scripts/requirements.txt) [![Chart types](https://img.shields.io/badge/Chart_types-55-00507D)](docs/CATALOG.md) [![Examples](https://img.shields.io/badge/Examples-72-6C89B4)](#gallery) [![Themes](https://img.shields.io/badge/Themes-8-18A98C)](docs/PALETTES.md) [![Output](https://img.shields.io/badge/Output-PPTX_%2B_PNG_%2B_HTML-E87722)](#quickstart) [![GitHub stars](https://img.shields.io/github/stars/ZeroxZhang/zerox-skills?style=flat&label=Suite%20stars)](https://github.com/ZeroxZhang/zerox-skills)
 
-**Turn tabular data into consulting charts: recommend a chart, validate its data, and generate editable PowerPoint shapes with PNG previews.**
+**Turn tabular data into consulting charts: recommend a chart, validate its data, and generate editable PowerPoint shapes, PNG previews, and HTML with offline text editing.**
 
-This charting skill is part of the [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) suite. It includes **55 chart types, 11 categories, 61 complete examples, and 8 color themes**, plus **dashboard / facet multi-panel layouts** (shared x-axis, segment labels, conditional coloring, circles and notes). A JSON specification can reproduce everything from waterfall bridges, Mekko charts, and stacked columns to project schedules, sensitivity charts, KPI cards, and ops dashboards.
+This charting skill is part of the [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) suite. It includes **55 single-chart types, 11 categories, 61 single-chart examples, and 8 color themes**, plus **dashboard / facet multi-panel layouts** (shared x-axis, segment labels, conditional coloring, circles and notes). A JSON specification can reproduce everything from waterfall bridges, Mekko charts, and stacked columns to project schedules, sensitivity charts, KPI cards, and ops dashboards. Another 5 dashboard examples and 6 ops review examples bring the total to **72 chart specs**.
 
 Bars, lines, text, arrows, and annotations can be selected and edited individually in PowerPoint. The output consists of **editable shapes**, not native chart objects with embedded data sheets. To change the underlying data, update the specification and render again.
 
 This is an independent open-source implementation, with no affiliation, authorization, or endorsement from think-cell. The name describes a visual influence; the renderer does not depend on the think-cell add-in.
 
-[Quick start](#quickstart) · [How to use & write prompts](#how-to-use) · [Capabilities](#capabilities) · [Multi-panel](#multipanel) · [Ops review recipes](#ops-report) · [Inputs and outputs](#data-contract) · [Themes](#themes) · [All examples](#gallery) · [CLI](#cli) · [Maintenance](#maintenance) · [Limitations](#limitations) · [License](#license)
+[Quick start](#quickstart) · [Editable HTML](#editable-html) · [How to use & write prompts](#how-to-use) · [Capabilities](#capabilities) · [Multi-panel](#multipanel) · [Ops review recipes](#ops-report) · [Inputs and outputs](#data-contract) · [Themes](#themes) · [All examples](#gallery) · [CLI](#cli) · [Maintenance](#maintenance) · [Limitations](#limitations) · [License](#license)
 
 <a id="quickstart"></a>
 ## Quick start
@@ -35,7 +35,7 @@ python3 -m venv .venv
 | Poppler (`pdftoppm`) | Convert PDF pages to PNG | PNG export and gallery rebuilds |
 | Arial or compatible fonts | Keep text layout consistent | Recommended; Arial is the default, and Chinese text needs an available fallback font |
 
-LibreOffice and Poppler are unnecessary for PPTX-only output. Install the preview tools for your platform:
+LibreOffice and Poppler are unnecessary for PPTX-only or HTML-only output. Install the preview tools for your platform:
 
 ```bash
 # macOS
@@ -62,7 +62,7 @@ Run these commands from the skill directory:
   -o deck.pptx --png deck_png/ --theme consulting_navy
 ```
 
-The first command produces `out.pptx` and `out_png/waterfall.png`. Edit individual shapes in PowerPoint, and use the PNG for visual inspection or documents. Ready-made outputs are also available: [full example PPTX](gallery/thinkcell-gallery.pptx), [PDF](gallery/thinkcell-gallery.pdf), and an [HTML gallery](gallery/index.html) to open locally after downloading the repository.
+The first command produces `out.pptx` and `out_png/waterfall.png`. Edit individual shapes in PowerPoint, and use the PNG for visual inspection or documents. Ready-made outputs are also available: [full example PPTX](gallery/thinkcell-gallery.pptx), [PDF](gallery/thinkcell-gallery.pdf), and an [static PNG gallery](gallery/index.html) to open locally after downloading the repository.
 
 ### 3. Register the skill with local agents through symlinks
 
@@ -83,6 +83,38 @@ Example request to an Agent Skills-compatible host:
 
 > Use zerox-thinkcell-charts to turn this revenue breakdown into a waterfall chart. Use consulting_navy, preserve the real data source, and deliver editable PPTX plus PNG.
 
+<a id="editable-html"></a>
+## Editable HTML: view offline, edit text, and save
+
+`--html` creates a single HTML file that opens directly in a browser. Charts use **native SVG and editable text**, covering all 55 single-chart types and `dashboard` / `facet` layouts. Styles and editing scripts are embedded: no CDN or network service is required, and HTML generation needs neither LibreOffice nor Poppler.
+
+```bash
+# Write HTML only; do not generate or overwrite existing PPTX / PNG files
+.venv/bin/python scripts/tc_render.py examples/waterfall.json --html report.html
+
+# Request PPTX, PNG, and an independent HTML output together
+.venv/bin/python scripts/tc_render.py examples/waterfall.json \
+  -o report.pptx --png report_png/ --html report.html
+
+# Multi-panel layouts can also be exported as HTML alone
+.venv/bin/python scripts/tc_render.py examples/dashboards/dash_three_column.json \
+  --html dashboard.html
+```
+
+To use it:
+
+1. Download and open the HTML in a browser, then click the toolbar’s “编辑文字” (Edit text) button.
+2. Click a title, explanation, data label, footnote, or annotation to change its displayed text.
+3. Click “保存 HTML” (Save HTML), or press Ctrl / Cmd + S, to download `*-edited.html`. Reopen it to keep viewing or editing; share that one file.
+
+The toolbar also provides font-size controls, text-box fitting, and overflow notices. “还原本次修改” (Reset this session) restores the content as it was when the current file opened. Small screens can scroll horizontally while editing. JavaScript is needed for editing and saving; charts remain viewable with scripts disabled.
+
+Start with the [editable demo](gallery/editable-demo.html). If GitHub shows source code, download the file and open it in a browser. The existing [PNG example index](gallery/index.html) is a static image gallery for browsing chart types, distinct from the editable export.
+
+HTML edits change text in that document only: **they do not recalculate values, resize chart marks, or write changes back to JSON, PPTX, or PNG**. Changing a label from `100` to `120`, for example, leaves the bar height unchanged. For data changes, update the source spec and render again. Longer text and browser / PowerPoint font differences can affect layout, so inspect the document before saving. Shape dragging, hover data tooltips, and linked-data updates are not provided.
+
+Existing CLI commands do not generate HTML automatically. The skill’s usual delivery includes PPTX, PNG, and editable HTML; an explicit request for only some formats takes precedence. Rendering requires at least `-o` or `--html`; `--png` still requires `-o`.
+
 <a id="capabilities"></a>
 ## Capabilities and workflow
 
@@ -92,17 +124,18 @@ Example request to an Agent Skills-compatible host:
 | Chart recommendations | Combines data shape with Chinese or English intent to propose a preferred chart and up to two alternatives, including reasons, candidate conclusions, emphasis, and a draft spec |
 | Validation | Covers all 55 types; checks structure, numeric types, list lengths, bridge arithmetic, proportions, dates, ranges, and readability, with suggested fixes and alternatives |
 | PPTX generation | One 16:9 slide per spec; multiple files or a `slides` array can form one deck |
+| Editable HTML | Native SVG and editable text in an offline, single-file document; export independently, edit text, save, and reopen for further editing |
 | Chart presentation | Totals, segment labels, series labels, change rates, targets, dual axes, error bars, category gaps, and value/category axis breaks, depending on chart type |
 | Annotations | Action titles, units, circles, boxes, arrows, callouts, footnotes, and sources; CAGR, total difference, level difference, and value-line decorations |
 | Color themes | Eight semantic themes for positive, negative, target, emphasis, and background roles; custom series palettes are supported |
-| Preview and reuse | PNG previews, categorized PPTX/PDF galleries, an HTML overview, individual JSON examples, and a generated chart catalog |
+| Preview and reuse | PNG previews, categorized PPTX/PDF galleries, a static PNG index, editable HTML, individual JSON examples, and a generated chart catalog |
 
 The workflow is **prepare data → choose intent and chart → validate → choose colors → render → inspect → deliver**.
 
 - **No chart selected:** run `tc_advise.py`. The agent should interpret the business context and confirm the chart and intended conclusion before completing the draft. Rules cannot substitute for business judgment.
 - **Chart already selected:** adapt its example spec and run `tc_validate.py`. Supply real missing data or agree on an alternative; do not invent values.
 - **Chart, conclusion, or colors already specified:** retain those choices. Otherwise, show the available themes; use the default when the user delegates that decision.
-- **After rendering:** inspect the PNG for overlapping labels, misplaced annotations, color semantics, and the source before delivering the PPTX.
+- **After rendering:** inspect the requested outputs for labels, annotation placement, color semantics, and sources. Use previews for PPTX / PNG; when delivering HTML, also check enabling editing, changing text, saving, reopening, and continuing to edit.
 
 The recommender temporarily fills some missing draft values with `0`, and the `source` must be completed. A draft is a starting point: placeholder values and inferred conclusions must not be treated as verified facts.
 
@@ -129,7 +162,7 @@ Validation has three outcomes: ready, usable with issues, and insufficient data.
 | --- | --- | --- |
 | `tc_advise.py` | CSV, TSV, semicolon-separated text, Markdown tables, text aligned with multiple spaces; active sheets in `.xlsx` / `.xlsm`; tabular JSON; `-` for text from standard input | A Chinese explanatory report, optional full report JSON, and an optional draft spec for the preferred chart |
 | `tc_validate.py` | One chart object, `{"slides":[...]}`, or multiple spec files | Human-readable or JSON validation results |
-| `tc_render.py` | One chart object, `{"slides":[...]}`, or multiple spec files | One PPTX and optionally one PNG per slide |
+| `tc_render.py` | A chart or multi-panel object, `{"slides":[...]}`, or multiple spec files | Requested PPTX, PNG per slide, or independent editable HTML; HTML-only output is supported |
 
 Tabular JSON can be a list of records, an object mapping column names to arrays, a two-dimensional array with a header, or `{"columns":[...],"rows":[...]}`. Excel input uses saved formula-cache values and does not calculate formulas; recalculate and save in spreadsheet software first. Legacy binary `.xls` files are unsupported.
 
@@ -274,6 +307,7 @@ This section is for **people who actually use the skill**: what to say to the ag
 - You have several related small charts and want them on **one dashboard page** or a **facet grid**.
 - You need an **ops review page** (scorecard, volume–speed–efficiency, facet-by-cut) → see [Ops review recipes](#ops-report).
 - You already have a JSON spec and want validation first, or a re-render with a new theme.
+- You need an offline HTML chart whose titles and explanatory text can be edited and saved in the browser.
 
 ### How to provide data
 
@@ -306,8 +340,11 @@ Name the type (waterfall, percent Mekko, target column, Gantt, …) and attach t
 
 ### What you get back
 
+The usual delivery contains all three formats below; if you explicitly request a subset, the agent follows that scope.
+
 - **Editable PPTX**: bars, lines, text, and arrows are PowerPoint shapes you can restyle; changing data means re-running the script.
 - **PNG preview**: for checking overlaps and arrow placement.
+- **Editable HTML**: normally included with PPTX / PNG; it can also be delivered alone when requested. Edit text in a browser, save, and reopen for further edits without writing back to other files.
 - Optional: validation report and recommendation JSON.
 
 ### Copy-paste prompt examples
@@ -366,6 +403,24 @@ Only render after status is "能做" / OK, or after I accept a workaround.
 ```text
 Re-render ./draft.json with theme banking_navy_gold.
 Do not change chart type, data, or conclusion. Deliver new PPTX + PNG.
+```
+
+**7. HTML only, with offline text editing**
+
+```text
+Use zerox-thinkcell-charts to export ./draft.json as editable HTML.
+Create only ./report.html; do not modify the existing PPTX or PNG files.
+I need to edit titles, data labels, and notes in the browser, save, and reopen for further edits.
+Keep chart types and source data unchanged. Check editing, saving, and reopening before delivery.
+```
+
+**8. Keep the original outputs and add HTML**
+
+```text
+Use zerox-thinkcell-charts with ./draft.json and deliver three outputs:
+editable PPTX, PNG previews, and editable HTML.
+The HTML must open offline, allow text editing and saving, and remain editable when reopened.
+Keep the existing PPTX / PNG generation unchanged; HTML is an additional independent file.
 ```
 
 <a id="themes"></a>
@@ -910,14 +965,15 @@ Communicate a percentage through a grid of cells.<br>
 ### `tc_render.py`: rendering
 
 ```text
-python scripts/tc_render.py SPEC.json [MORE.json ...] -o OUTPUT.pptx [OPTIONS]
+python scripts/tc_render.py SPEC.json [MORE.json ...] [-o OUTPUT.pptx] [--png DIR] [--html OUTPUT.html] [OPTIONS]
 ```
 
 | Argument | Meaning |
 | --- | --- |
 | `specs` | One or more JSON files, read in order; `examples/*.json` renders the examples and skips the non-chart `catalog.json` index |
-| `-o` / `--out` | Required output PPTX path; its parent directory should already exist |
-| `--png DIR` | Export each page as PNG; creates the directory and uses LibreOffice → PDF → Poppler |
+| `-o` / `--out` | Output PPTX path; provide at least this or `--html`; the output parent directory should already exist |
+| `--png DIR` | Requires `-o`; exports each page as PNG, creates the directory, and uses LibreOffice → PDF → Poppler |
+| `--html FILE` | Export all input pages as one independent editable `.html` / `.htm` file; combine with PPTX / PNG or omit `-o` for HTML-only output |
 | `--dpi N` | PNG resolution, default `110` |
 | `--theme NAME` | Set the theme for all slides in this run |
 | `--list-themes` | List themes and exit; requires neither specs nor `-o` |
@@ -925,7 +981,7 @@ python scripts/tc_render.py SPEC.json [MORE.json ...] -o OUTPUT.pptx [OPTIONS]
 | `--no-validate` | Skip pre-render validation |
 
 ```bash
-# Render every example; omit --png for PPTX-only output
+# Render the 61 base examples; dashboard and ops examples are in subdirectories
 .venv/bin/python scripts/tc_render.py examples/*.json \
   -o all-examples.pptx --png all-examples_png/ --dpi 150
 ```
@@ -961,7 +1017,10 @@ zerox-thinkcell-charts/
 ├── scripts/
 │   ├── tc_core.py           # Layout, base charts, themes, and annotations
 │   ├── tc_more.py           # Additional chart implementations
-│   ├── tc_render.py         # PPTX / PNG CLI
+│   ├── tc_dash.py           # dashboard / facet layouts
+│   ├── tc_render.py         # PPTX / PNG / HTML CLI
+│   ├── tc_svg.py            # Convert chart shapes to native SVG
+│   ├── tc_html.py           # Single-file editable HTML export
 │   ├── tc_advise.py         # Rule-based recommendations and draft specs
 │   ├── tc_validate.py       # Data sufficiency and readability checks
 │   ├── make_examples.py     # Example JSON generation
@@ -969,9 +1028,10 @@ zerox-thinkcell-charts/
 │   ├── build_docs.py        # Chart catalog and HTML gallery generation
 │   ├── audit.py             # Historical comparison; requires old examples
 │   └── requirements.txt
-├── examples/                # 61 JSON / PNG pairs and catalog.json
+├── assets/html-editor.html  # Embedded editing and save interface
+├── examples/                # 61 single-chart + 5 dashboard + 6 ops specs
 ├── docs/                    # Catalog, selection, style, colors, and audits
-├── gallery/                 # Ready-made PPTX, PDF, HTML, and theme previews
+├── gallery/                 # PPTX, PDF, static gallery, editable demo, and themes
 ├── references/              # Public source lists; original images stay local
 └── tests/                   # Recommendation fixtures and validation tests
 ```
@@ -990,7 +1050,15 @@ zerox-thinkcell-charts/
 # Regression checks for recommendations, validation, examples, and PPTX rendering
 .venv/bin/python tests/run_tests.py
 
-# Rebuild the chart catalog and local HTML gallery
+# Regression checks for SVG, the HTML editor, and HTML export
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+
+# Rebuild the five-page editable demo without rewriting its PPTX / PNG outputs
+.venv/bin/python scripts/tc_render.py examples/waterfall.json examples/doughnut.json \
+  examples/timeline.json examples/dashboards/dash_three_column.json \
+  examples/ops-report/scorecard.json --html gallery/editable-demo.html
+
+# Rebuild the chart catalog and static PNG HTML index
 .venv/bin/python scripts/build_docs.py
 
 # Rebuild 61 example PNGs and a 72-page PPTX / PDF with 11 category dividers
@@ -1000,17 +1068,18 @@ zerox-thinkcell-charts/
 # .venv/bin/python scripts/audit.py /absolute/path/to/previous-examples
 ```
 
-Tests include 19 recommendation datasets, 14 validation cases, intent preferences, draft rendering, validation of all 61 examples, and rejection / `--force` behavior. They do not replace visual review of PNGs. `audit.py` is a historical before/after comparison tool and requires an explicit directory of previous examples; its default directory is not distributed, so it is not a general test command. Build scripts overwrite their generated artifacts; `make_examples.py` rewrites example JSON files, so decide whether the generator or a manually edited spec is authoritative before rebuilding.
+`run_tests.py` uses 20 recommendation datasets and 16 validation cases, covering intent preferences, draft rendering, validation of the 61 base examples, 5 dashboard examples, and rejection / `--force` behavior. The `test_*.py` suite additionally covers SVG, HTML documents, and CLI export, including all 72 example specs. See the [test guide](tests/README.md) for scope; automated checks do not replace visual review and in-browser editing, saving, and reopening checks. `audit.py` is a historical before/after comparison tool and requires an explicit directory of previous examples; its default directory is not distributed, so it is not a general test command. Build scripts overwrite their generated artifacts; `make_examples.py` rewrites example JSON files, so decide whether the generator or a manually edited spec is authoritative before rebuilding.
 
 <a id="limitations"></a>
 ## Known limitations
 
 - **Shape editing, not data-bound charts:** no PowerPoint “Edit Data” sheet, automatic Excel link, or think-cell-style interactive rearrangement.
+- **HTML edits displayed text only:** it does not recalculate data, write back to JSON / PPTX / PNG, or provide shape dragging or linked-data updates. Inspect for overlaps after adding long text.
 - **Fixed canvas and layout:** default 16:9; no CLI for template import, arbitrary slide dimensions, or logarithmic axes.
 - **Heuristic label placement:** estimated bounds and small position adjustments can still leave overlaps; tiny segments may hide labels. Long titles, dense categories, and multiple annotations require inspection.
 - **Rules, not business verification:** recommendation and validation cannot verify sources, establish causality, or decide a business conclusion. Field checks are not a comprehensive JSON Schema validator.
 - **Project-specific extensions:** funnels, heatmaps, driver trees, KPI cards, radar charts, and others use this project's visual conventions; the catalog is not a feature-equivalence claim about commercial think-cell.
-- **Environment-dependent previews:** fonts and differences between Office and LibreOffice can change wrapping and alignment. Python dependencies alone do not provide PNG rendering.
+- **Environment-dependent previews:** fonts and differences between browsers, Office, and LibreOffice can change wrapping and alignment. Python dependencies alone support PPTX / HTML output, but not PNG rendering.
 - **Language scope:** both README versions are available; recommendation and validation reports are primarily Chinese, while chart titles and labels use your supplied text. Other reference documents currently remain in Chinese.
 
 <a id="license"></a>

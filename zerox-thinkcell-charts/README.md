@@ -2,17 +2,17 @@
 
 **简体中文** · [English](README_EN.md)
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](scripts/requirements.txt) [![Chart types](https://img.shields.io/badge/Chart_types-55-00507D)](docs/CATALOG.md) [![Examples](https://img.shields.io/badge/Examples-61-6C89B4)](examples/catalog.json) [![Themes](https://img.shields.io/badge/Themes-8-18A98C)](docs/PALETTES.md) [![Output](https://img.shields.io/badge/Output-Editable_PPTX_%2B_PNG-E87722)](#quickstart) [![GitHub stars](https://img.shields.io/github/stars/ZeroxZhang/zerox-skills?style=flat&label=Suite%20stars)](https://github.com/ZeroxZhang/zerox-skills)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](scripts/requirements.txt) [![Chart types](https://img.shields.io/badge/Chart_types-55-00507D)](docs/CATALOG.md) [![Examples](https://img.shields.io/badge/Examples-72-6C89B4)](#gallery) [![Themes](https://img.shields.io/badge/Themes-8-18A98C)](docs/PALETTES.md) [![Output](https://img.shields.io/badge/Output-PPTX_%2B_PNG_%2B_HTML-E87722)](#quickstart) [![GitHub stars](https://img.shields.io/github/stars/ZeroxZhang/zerox-skills?style=flat&label=Suite%20stars)](https://github.com/ZeroxZhang/zerox-skills)
 
-**把表格数据变成咨询汇报图表：推荐图型、校验数据，生成可编辑的 PowerPoint 形状与 PNG 预览。**
+**把表格数据变成咨询汇报图表：推荐图型、校验数据，生成可编辑的 PowerPoint 形状、PNG 预览与可离线改字的 HTML。**
 
-本技能是 [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) 套件的图表能力，支持 **55 种图表类型、11 个分类、61 个完整示例、8 套配色主题**，并支持一页多图的 **dashboard / facet 拼版**（共用横轴、分段标注、条件着色、圈注与批注）。从瀑布桥、Mekko、堆叠柱，到甘特、敏感性分析、KPI 卡片，再到运营看板，均可用一份 JSON 重复生成。
+本技能是 [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) 套件的图表能力，支持 **55 种单图类型、11 个分类、61 个单图示例、8 套配色主题**，并支持一页多图的 **dashboard / facet 拼版**（共用横轴、分段标注、条件着色、圈注与批注）。从瀑布桥、Mekko、堆叠柱，到甘特、敏感性分析、KPI 卡片，再到运营看板，均可用一份 JSON 重复生成。另含 5 个拼版和 6 个经营对账示例，合计 **72 个图表 spec**。
 
 PPTX 中的柱、线、文字、箭头和标注可在 PowerPoint 中逐个选中修改。它们是**可编辑形状**，不是带内嵌工作表的数据绑定图表；修改源数据后，应重新运行脚本。
 
 这是独立实现的开源项目，与 think-cell 无隶属、授权或背书关系。名称描述所参考的视觉风格；运行不依赖 think-cell 插件。
 
-[快速开始](#quickstart) · [如何使用与怎么写 prompt](#how-to-use) · [能力与流程](#capabilities) · [多图拼版](#multipanel) · [经营对账页](#ops-report) · [输入与输出](#data-contract) · [配色](#themes) · [全部示例](#gallery) · [CLI](#cli) · [维护与验证](#maintenance) · [限制](#limitations) · [协议](#license)
+[快速开始](#quickstart) · [可编辑 HTML](#editable-html) · [如何使用与怎么写 prompt](#how-to-use) · [能力与流程](#capabilities) · [多图拼版](#multipanel) · [经营对账页](#ops-report) · [输入与输出](#data-contract) · [配色](#themes) · [全部示例](#gallery) · [CLI](#cli) · [维护与验证](#maintenance) · [限制](#limitations) · [协议](#license)
 
 <a id="quickstart"></a>
 ## 快速开始
@@ -35,7 +35,7 @@ python3 -m venv .venv
 | Poppler（`pdftoppm`） | 将 PDF 转为 PNG | 导出 PNG 或重建画廊时需要 |
 | Arial 或兼容字体 | 稳定文字布局 | 建议；默认字体为 Arial，中文需要可用的中文回退字体 |
 
-仅生成 PPTX 时，无需安装 LibreOffice 和 Poppler。完整预览环境可按平台安装：
+仅生成 PPTX 或 HTML 时，无需安装 LibreOffice 和 Poppler。完整预览环境可按平台安装：
 
 ```bash
 # macOS
@@ -62,7 +62,7 @@ sudo apt install libreoffice-impress poppler-utils fonts-liberation
   -o deck.pptx --png deck_png/ --theme consulting_navy
 ```
 
-首条命令生成 `out.pptx` 和 `out_png/waterfall.png`。打开 PPTX 可逐个编辑形状；PNG 用于目检和嵌入文档。也可直接查看现成的 [完整示例 PPTX](gallery/thinkcell-gallery.pptx)、[PDF](gallery/thinkcell-gallery.pdf) 或下载后在浏览器打开 [HTML 画廊](gallery/index.html)。
+首条命令生成 `out.pptx` 和 `out_png/waterfall.png`。打开 PPTX 可逐个编辑形状；PNG 用于目检和嵌入文档。也可直接查看现成的 [完整示例 PPTX](gallery/thinkcell-gallery.pptx)、[PDF](gallery/thinkcell-gallery.pdf) 或下载后在浏览器打开 [PNG 静态画廊](gallery/index.html)。
 
 ### 3. 通过软链接接入本机 Agent
 
@@ -83,6 +83,38 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 
 > 使用 zerox-thinkcell-charts，把这份收入明细做成瀑布图，配色用 consulting_navy，保留真实来源，交付可编辑 PPTX 和 PNG。
 
+<a id="editable-html"></a>
+## 可编辑 HTML：离线查看、改字与保存
+
+`--html` 生成一个可直接在浏览器打开的 HTML 文件，图表由**原生 SVG 与可编辑文字**组成，支持全部 55 种单图类型及 `dashboard` / `facet`。样式和编辑脚本都在文件内，无 CDN、无网络服务依赖；生成 HTML 也不需要 LibreOffice 或 Poppler。
+
+```bash
+# 只写 HTML；不会生成或改写已有 PPTX / PNG
+.venv/bin/python scripts/tc_render.py examples/waterfall.json --html report.html
+
+# 按需同时交付 PPTX、PNG 与独立 HTML
+.venv/bin/python scripts/tc_render.py examples/waterfall.json \
+  -o report.pptx --png report_png/ --html report.html
+
+# 多图拼版也可单独导出 HTML
+.venv/bin/python scripts/tc_render.py examples/dashboards/dash_three_column.json \
+  --html dashboard.html
+```
+
+使用方式：
+
+1. 下载并在浏览器打开 HTML，点击工具条的「编辑文字」。
+2. 点击标题、说明、数据标签、脚注或批注，修改显示文字。
+3. 点击「保存 HTML」（或按 Ctrl / Cmd + S）下载 `*-edited.html`，打开保存的文件即可继续查看和编辑；分享这一个文件即可。
+
+工具条还提供字号增减与适配文字框，文字溢出时会提示；「还原本次修改」恢复为当前文件刚打开时的内容。小屏幕编辑时可横向滚动。浏览器需启用 JavaScript 才能编辑与保存；关闭脚本时仍可查看图表。
+
+可从 [可编辑示例](gallery/editable-demo.html) 开始体验；在 GitHub 页面看到源码时，请先下载再用浏览器打开。原有 [PNG 示例总览](gallery/index.html) 只是用图片浏览图型的静态画廊，与这里的可编辑导出是两种用途。
+
+HTML 编辑只改变当前文档的文字展示：**不会重新计算数值、改变图形尺寸，也不会回写 JSON、PPTX 或 PNG**。例如把标签 `100` 改成 `120`，柱子的高度仍不变；需要更改数据时，应修改源 spec 后重新生成。较长文字以及浏览器与 PowerPoint 的字体差异可能影响排版，保存前需目检。不提供图形拖拽、悬浮数据提示或数据联动。
+
+CLI 的原有命令不自动生成 HTML；通过本技能交付时，常规提供 PPTX、PNG 和可编辑 HTML 三份，用户明确只要部分格式时按其要求。渲染时至少提供 `-o` 或 `--html`；`--png` 仍必须与 `-o` 一起使用。
+
 <a id="capabilities"></a>
 ## 能力与工作流程
 
@@ -92,17 +124,18 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 | 图表推荐 | 结合数据形态与中英文表达意图，给出首选和最多两个备选，并附理由、结论候选、强调点和首选 spec 草稿 |
 | 数据校验 | 覆盖 55 种类型；检查必填结构、数字类型、列表长度、瀑布平衡、比例、日期、范围和可读性，返回问题、补法及替代图 |
 | PPTX 生成 | 每份 spec 生成一页 16:9 幻灯片；支持多个文件或 `slides` 数组合并为一个 PPTX |
+| 可编辑 HTML | 原生 SVG 图表与可编辑文字，单文件离线运行；可单独导出，改字后保存并再次编辑 |
 | 图表呈现 | 总计、段内标签、系列名、同比、目标、双轴、误差线、分类间隔、数值轴或类别轴破断，按图型启用 |
 | 说明与强调 | 结论式标题、单位、圈/框/箭头、callout、脚注、来源；支持 CAGR、总差、差值箭头及数值线 |
 | 配色 | 8 套语义主题；正向、负向、目标、重点和背景有分工，也可覆盖系列色板 |
-| 预览与复用 | PNG 预览、分类 PPTX/PDF 画廊、HTML 总览、逐图 JSON 示例和自动生成的图型目录 |
+| 预览与复用 | PNG 预览、分类 PPTX/PDF 画廊、PNG 静态 HTML 总览、可编辑 HTML、逐图 JSON 示例和自动生成的图型目录 |
 
 推荐流程是：**准备数据 → 确定表达意图与图型 → 校验 → 选配色 → 渲染 → 目检 → 交付**。
 
 - **尚未选图**：运行 `tc_advise.py`。Agent 应结合业务含义判断，确认图表和要表达的结论，再完善草稿。规则引擎无法替代业务判断。
 - **已经指定图表**：从相应示例写 spec，运行 `tc_validate.py`。数据不足时补真实数据或说明替代方案，不编造数值。
 - **已经指定图型、结论或配色**：沿用用户明确选择；未指定配色时展示主题供选择，交由 Agent 决定时使用默认主题。
-- **渲染之后**：查看 PNG，检查标签重叠、标注位置、颜色语义与来源，再交付 PPTX。
+- **渲染之后**：检查用户所需交付物的标签、标注、颜色语义与来源。PPTX / PNG 用预览目检；交付 HTML 时还要检查开启编辑、改字、保存、重新打开后继续编辑的流程。
 
 推荐器会暂时把草稿中的部分空值填为 `0`，`source` 也需要补写。草稿是起点，不可把占位数或自动推断的结论直接当成事实。
 
@@ -129,7 +162,7 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 | --- | --- | --- |
 | `tc_advise.py` | CSV、TSV、分号文本、Markdown 表格、多空格对齐文本；Excel `.xlsx` / `.xlsm` 的活动工作表；表格形态 JSON；`-` 从标准输入读取文本 | 中文说明报告、可选完整报告 JSON、可选首选图 spec 草稿 |
 | `tc_validate.py` | 单图 JSON、`{"slides":[...]}`、多个 spec 文件 | 人类可读或 JSON 格式的校验结果 |
-| `tc_render.py` | 单图 JSON、`{"slides":[...]}`、多个 spec 文件 | 一个 PPTX；可选每页一张 PNG |
+| `tc_render.py` | 单图或拼版 JSON、`{"slides":[...]}`、多个 spec 文件 | 按参数输出 PPTX、每页 PNG 或独立可编辑 HTML；支持只写 HTML |
 
 表格 JSON 支持对象列表、列名到数组的对象、含表头的二维数组，或 `{"columns":[...],"rows":[...]}`。Excel 使用已保存的公式缓存值，不会计算工作簿公式；建议先在表格软件中完成重算和保存。不支持旧版二进制 `.xls`。
 
@@ -273,6 +306,7 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 - 有一张表，想做成咨询汇报里常见的柱 / 线 / 瀑布 / Mekko / 甘特等图。
 - 有多张相关小图，想塞进**一页看板**（dashboard）或**分面网格**（facet）。
 - 已经有 JSON spec，想先校验再出图，或换一套配色重渲。
+- 需要一个能离线打开、直接修改标题和说明并保存的 HTML 图表。
 
 ### 怎么给数据
 
@@ -305,8 +339,11 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 
 ### 交付物是什么
 
+常规交付以下三份；如果你明确只要其中一部分，Agent 按你的范围生成。
+
 - **可编辑 PPTX**：柱、线、文字、箭头都是 PowerPoint 形状，可在 PPT 里改色改字；改数据要重新跑脚本。
 - **PNG 预览**：方便目检标签是否重叠、箭头是否压字。
+- **可编辑 HTML**：常规与 PPTX / PNG 一起交付；明确只要 HTML 时也可单独提供。在浏览器改字、保存后仍可继续编辑，不回写其他文件。
 - 可选：校验报告、推荐报告 JSON。
 
 ### 可直接复制的 prompt 示例
@@ -362,6 +399,23 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 ```text
 把 ./out/deck.pptx 对应的 spec（./draft.json）改成 banking_navy_gold 主题重新渲染；
 图型、数据和结论都不要改。交付新的 PPTX + PNG。
+```
+
+**7. 只要可离线改字的 HTML**
+
+```text
+用 zerox-thinkcell-charts，把 ./draft.json 导出为可编辑 HTML。
+只生成 ./report.html，不修改已有 PPTX 或 PNG。
+我需要在浏览器中改标题、数据标签和说明，保存后重新打开还能继续编辑。
+不要改变图型和数据；交付前检查编辑、保存、重新打开流程。
+```
+
+**8. 保留原有输出，再加一份 HTML**
+
+```text
+用 zerox-thinkcell-charts，按 ./draft.json 交付三份：可编辑 PPTX、PNG 预览、可编辑 HTML。
+HTML 需要离线打开、点击文字修改并保存；保存后还能继续编辑。
+保持原来的 PPTX / PNG 生成方式，HTML 作为独立附加文件，不替代前两份。
 ```
 
 <a id="themes"></a>
@@ -906,14 +960,15 @@ KPI 仪表板卡片<br>
 ### `tc_render.py`：渲染
 
 ```text
-python scripts/tc_render.py SPEC.json [MORE.json ...] -o OUTPUT.pptx [选项]
+python scripts/tc_render.py SPEC.json [MORE.json ...] [-o OUTPUT.pptx] [--png DIR] [--html OUTPUT.html] [选项]
 ```
 
 | 参数 | 含义 |
 | --- | --- |
 | `specs` | 一个或多个 JSON 文件，按顺序读取；`examples/*.json` 可批量渲染，分类索引 `catalog.json` 会跳过 |
-| `-o` / `--out` | 必填，目标 PPTX 路径；其父目录应事先存在 |
-| `--png DIR` | 导出每页 PNG；自动创建目录，经 LibreOffice → PDF → Poppler 完成 |
+| `-o` / `--out` | 目标 PPTX 路径；与 `--html` 至少提供一个，输出父目录应事先存在 |
+| `--png DIR` | 需同时提供 `-o`；导出每页 PNG，自动创建目录，经 LibreOffice → PDF → Poppler 完成 |
+| `--html FILE` | 导出包含所有输入页面的独立可编辑 HTML；文件后缀为 `.html` / `.htm`，可与 PPTX / PNG 同时输出，也可省略 `-o` 只写 HTML |
 | `--dpi N` | PNG 分辨率，默认 `110` |
 | `--theme NAME` | 为本次所有页面指定主题 |
 | `--list-themes` | 列出主题后退出，不需要输入文件或 `-o` |
@@ -921,7 +976,7 @@ python scripts/tc_render.py SPEC.json [MORE.json ...] -o OUTPUT.pptx [选项]
 | `--no-validate` | 跳过渲染前校验 |
 
 ```bash
-# 渲染全部示例；只需 PPTX 时去掉 --png
+# 渲染 61 个基础示例；拼版及经营对账示例位于各自子目录
 .venv/bin/python scripts/tc_render.py examples/*.json \
   -o all-examples.pptx --png all-examples_png/ --dpi 150
 ```
@@ -957,7 +1012,10 @@ zerox-thinkcell-charts/
 ├── scripts/
 │   ├── tc_core.py           # 版面、基础图表、主题、装饰与标注
 │   ├── tc_more.py           # 扩展图表实现
-│   ├── tc_render.py         # PPTX / PNG CLI
+│   ├── tc_dash.py           # dashboard / facet 拼版
+│   ├── tc_render.py         # PPTX / PNG / HTML CLI
+│   ├── tc_svg.py            # 图表形状转原生 SVG
+│   ├── tc_html.py           # 单文件可编辑 HTML 导出
 │   ├── tc_advise.py         # 规则推荐与 spec 草稿
 │   ├── tc_validate.py       # 数据充分性与可读性检查
 │   ├── make_examples.py     # 示例 JSON 生成
@@ -965,9 +1023,10 @@ zerox-thinkcell-charts/
 │   ├── build_docs.py        # 图型目录与 HTML 画廊生成
 │   ├── audit.py             # 历史前后对照审核（需旧示例目录）
 │   └── requirements.txt
-├── examples/                # 61 对 JSON / PNG 与 catalog.json
+├── assets/html-editor.html  # 内嵌 HTML 编辑与保存界面
+├── examples/                # 61 单图 + 5 拼版 + 6 经营对账 spec
 ├── docs/                    # 图型、选型、版面、配色与审核文档
-├── gallery/                 # 现成 PPTX、PDF、HTML 和主题预览
+├── gallery/                 # PPTX、PDF、静态画廊、可编辑示例和主题预览
 ├── references/              # 公开来源清单；原始参考图仅留本地
 └── tests/                   # 推荐数据集、校验用例与回归脚本
 ```
@@ -986,7 +1045,15 @@ zerox-thinkcell-charts/
 # 推荐、校验、示例覆盖和 PPTX 渲染回归
 .venv/bin/python tests/run_tests.py
 
-# 重建图型文档和本地 HTML 画廊
+# SVG、HTML 编辑器与 HTML 导出的回归
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+
+# 重建五页可编辑 HTML 演示，不改写对应的 PPTX / PNG
+.venv/bin/python scripts/tc_render.py examples/waterfall.json examples/doughnut.json \
+  examples/timeline.json examples/dashboards/dash_three_column.json \
+  examples/ops-report/scorecard.json --html gallery/editable-demo.html
+
+# 重建图型文档和 PNG 静态 HTML 画廊
 .venv/bin/python scripts/build_docs.py
 
 # 重建 61 个示例 PNG，以及带 11 张分类页的 72 页 PPTX / PDF
@@ -996,17 +1063,18 @@ zerox-thinkcell-charts/
 # .venv/bin/python scripts/audit.py /absolute/path/to/previous-examples
 ```
 
-测试包含 19 份推荐数据集、14 份校验用例、意图偏好检查、推荐草稿渲染、61 个示例校验，以及自动拦截与 `--force` 行为检查。它不替代 PNG 的视觉审阅。`audit.py` 是历史前后对照工具，需要显式传入旧示例目录；默认目录不随仓库分发，不能直接用作通用测试。重建脚本会覆盖对应生成产物；`make_examples.py` 会重写示例 JSON，修改前应明确以生成脚本还是手工 spec 为准。
+`run_tests.py` 使用 20 份推荐数据集和 16 份校验用例，覆盖意图偏好、草稿渲染、61 个基础示例校验、5 个拼版示例及自动拦截与 `--force` 行为。`test_*.py` 另覆盖 SVG、HTML 文档与 CLI 导出，包括全部 72 个示例。具体范围见 [测试说明](tests/README.md)；自动化检查不替代图表目检和浏览器内的编辑、保存、重开验证。`audit.py` 是历史前后对照工具，需要显式传入旧示例目录；默认目录不随仓库分发，不能直接用作通用测试。重建脚本会覆盖对应生成产物；`make_examples.py` 会重写示例 JSON，修改前应明确以生成脚本还是手工 spec 为准。
 
 <a id="limitations"></a>
 ## 已知限制
 
 - **形状编辑，不是数据绑定图表**：没有 PowerPoint「编辑数据」工作表、Excel 自动链接或 think-cell 交互式拖动重排。
+- **HTML 只编辑显示文字**：不重算数据、不回写 JSON / PPTX / PNG，也不提供图形拖拽或数据联动；长文本修改后需检查遮挡。
 - **固定版面**：默认 16:9 和固定布局；没有模板导入、任意画布尺寸或对数轴的 CLI 功能。
 - **自动标签有边界**：避让依赖估算和微移，小色块的标签可能隐藏；长标题、密集类别、多重标注仍需目检和调整。
 - **推荐与校验是规则系统**：它不能验证来源真实性、证明因果或确定业务结论；字段检查也不等于完整的 JSON Schema 验证。
 - **部分图型为本项目扩展**：漏斗、热力矩阵、驱动树、KPI 卡、雷达等沿用统一视觉约定，不能据此推断它们与商业 think-cell 功能一一对应。
-- **渲染环境影响预览**：字体与 Office / LibreOffice 差异会影响换行和对齐；只安装 Python 依赖不会得到 PNG。
+- **渲染环境影响预览**：字体以及浏览器、Office / LibreOffice 差异会影响换行和对齐；只安装 Python 依赖可导出 PPTX / HTML，但不会得到 PNG。
 - **多语言边界**：两份 README 可切换；推荐及校验报告以中文为主，图表标题和标签使用你提供的文本。
 
 <a id="license"></a>
