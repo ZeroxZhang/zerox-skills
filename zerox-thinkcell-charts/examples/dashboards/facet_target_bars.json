@@ -1,0 +1,314 @@
+{
+ "id": "facet_target_bars",
+ "type": "facet",
+ "title": "Business Unit | 2026Q1 | Target Achievement by Team by Lever (Update to 02-28)",
+ "title_bold": false,
+ "title_size": 18,
+ "source": "Illustrative data (not real figures)",
+ "note": [
+  {
+   "text": "Red/green = 26Q1 achievement (red = behind time progress, green = ahead)\nGray = 25Q1 achievement"
+  }
+ ],
+ "cols": [
+  "Lever 1",
+  "Lever 2",
+  "Lever 3",
+  "Lever 4",
+  "Lever 5",
+  "Lever 6",
+  "Lever 7",
+  "Lever 8"
+ ],
+ "col_header_style": "plain",
+ "col_header_align": "l",
+ "col_header_size": 10,
+ "row_header_style": "right",
+ "row_header_w": 1.0,
+ "legend_w": 0.25,
+ "separators": null,
+ "bottom_h": 0.25,
+ "rows": [
+  {
+   "label": "Total",
+   "chart": {
+    "kind": "bars_pair",
+    "rule": {
+     "threshold": 65.6,
+     "ge": "green",
+     "lt": "red",
+     "compare": "gray"
+    },
+    "x_max": 80,
+    "font_size": 6.5,
+    "bar_h": 0.26
+   }
+  },
+  {
+   "label": "Team A",
+   "chart": {
+    "kind": "bars_pair",
+    "rule": {
+     "threshold": 65.6,
+     "ge": "green",
+     "lt": "red",
+     "compare": "gray"
+    },
+    "x_max": 80,
+    "font_size": 6.5,
+    "bar_h": 0.26
+   }
+  },
+  {
+   "label": "Team B",
+   "chart": {
+    "kind": "bars_pair",
+    "rule": {
+     "threshold": 65.6,
+     "ge": "green",
+     "lt": "red",
+     "compare": "gray"
+    },
+    "x_max": 80,
+    "font_size": 6.5,
+    "bar_h": 0.26
+   }
+  },
+  {
+   "label": "Team C",
+   "chart": {
+    "kind": "bars_pair",
+    "rule": {
+     "threshold": 65.6,
+     "ge": "green",
+     "lt": "red",
+     "compare": "gray"
+    },
+    "x_max": 80,
+    "font_size": 6.5,
+    "bar_h": 0.26
+   }
+  },
+  {
+   "label": "Web",
+   "chart": {
+    "kind": "bars_pair",
+    "rule": {
+     "threshold": 65.6,
+     "ge": "green",
+     "lt": "red",
+     "compare": "gray"
+    },
+    "x_max": 80,
+    "font_size": 6.5,
+    "bar_h": 0.26
+   }
+  },
+  {
+   "label": "Branding",
+   "chart": {
+    "kind": "bars_pair",
+    "rule": {
+     "threshold": 65.6,
+     "ge": "green",
+     "lt": "red",
+     "compare": "gray"
+    },
+    "x_max": 80,
+    "font_size": 6.5,
+    "bar_h": 0.26
+   }
+  }
+ ],
+ "cells": [
+  [
+   {
+    "value": 44.5,
+    "compare": 54.6
+   },
+   {
+    "value": 59.6,
+    "compare": 51.3
+   },
+   {
+    "value": 46.3,
+    "compare": 55.6
+   },
+   {
+    "value": 35.9,
+    "compare": 52.9
+   },
+   {
+    "value": 50.2,
+    "compare": 62.8
+   },
+   {
+    "value": 33.0,
+    "compare": 45.6
+   },
+   {
+    "value": 32.9,
+    "compare": 63.3
+   },
+   {
+    "value": 52.2,
+    "compare": 36.5
+   }
+  ],
+  [
+   {
+    "value": 61.4,
+    "compare": 68.8
+   },
+   {
+    "value": 50.9,
+    "compare": 56.5
+   },
+   {
+    "value": 35.0,
+    "compare": 35.5
+   },
+   {
+    "value": 46.9,
+    "compare": 37.1
+   },
+   {
+    "value": 36.1,
+    "compare": 43.5
+   },
+   {
+    "value": 31.0,
+    "compare": 51.2
+   },
+   {
+    "value": 44.1,
+    "compare": 64.5
+   },
+   null
+  ],
+  [
+   {
+    "value": 46.6,
+    "compare": 57.4
+   },
+   {
+    "value": 46.0,
+    "compare": 58.2
+   },
+   {
+    "value": 44.6,
+    "compare": 44.7
+   },
+   {
+    "value": 94.0,
+    "compare": 69.8
+   },
+   {
+    "value": 52.6,
+    "compare": 46.0
+   },
+   {
+    "value": 37.3,
+    "compare": 45.1
+   },
+   {
+    "value": 230.0,
+    "compare": 61.8
+   },
+   null
+  ],
+  [
+   {
+    "value": 42.8,
+    "compare": 64.6
+   },
+   {
+    "value": 42.4,
+    "compare": 68.5
+   },
+   {
+    "value": 57.1,
+    "compare": 35.0
+   },
+   {
+    "value": 36.7,
+    "compare": 66.9
+   },
+   {
+    "value": 45.0,
+    "compare": 69.3
+   },
+   {
+    "value": 42.7,
+    "compare": 37.6
+   },
+   {
+    "value": 250.0,
+    "compare": 62.2
+   },
+   null
+  ],
+  [
+   {
+    "value": 38.6,
+    "compare": 38.1
+   },
+   {
+    "value": 40.6,
+    "compare": 68.7
+   },
+   {
+    "value": 54.3,
+    "compare": 39.1
+   },
+   {
+    "value": 37.9,
+    "compare": 38.5
+   },
+   {
+    "value": 31.9,
+    "compare": 62.9
+   },
+   {
+    "value": 35.7,
+    "compare": 54.6
+   },
+   {
+    "value": 44.3,
+    "compare": 41.7
+   },
+   null
+  ],
+  [
+   {
+    "value": 53.4,
+    "compare": 39.6
+   },
+   {
+    "value": 50.6,
+    "compare": 39.1
+   },
+   {
+    "value": 43.5,
+    "compare": 42.5
+   },
+   {
+    "value": 38.6,
+    "compare": 69.0
+   },
+   {
+    "value": 55.7,
+    "compare": 45.6
+   },
+   {
+    "value": 58.3,
+    "compare": 42.4
+   },
+   {
+    "value": 42.6,
+    "compare": 64.9
+   },
+   null
+  ]
+ ]
+}

@@ -1,0 +1,420 @@
+{
+ "id": "dash_three_column_circle",
+ "type": "dashboard",
+ "palette": "ops_bright",
+ "series_colors": {
+  "Team A": "#0070C0",
+  "Team B": "#EA6A06",
+  "Team C": "#4EA72E",
+  "Others": "#BFBFBF",
+  "Overall": "#000000",
+  "Team D": "#E8B400"
+ },
+ "title_tag": {
+  "text": "Region-B",
+  "fill": "yellow"
+ },
+ "title": "Daily Revenue & YoY & Daily GMV & Ad-share% by Teams [$Mn/%]",
+ "source": "Illustrative data (not real figures)",
+ "panels": [
+  {
+   "box": [
+    0,
+    0,
+    0.36,
+    1
+   ],
+   "title": "Daily Revenue/$Mn",
+   "chart": {
+    "kind": "area_stack",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25-10",
+      "25-11",
+      "25-12",
+      "26-01",
+      "26-02",
+      "26-03"
+     ],
+     "series": [
+      {
+       "name": "Team A",
+       "values": [
+        1.8,
+        2.3,
+        2.6,
+        2.9,
+        4.5,
+        3.9,
+        2.8,
+        3.0,
+        3.6
+       ]
+      },
+      {
+       "name": "Team C",
+       "values": [
+        0.1,
+        0.1,
+        0.2,
+        0.2,
+        0.9,
+        0.6,
+        0.6,
+        0.8,
+        0.9
+       ]
+      },
+      {
+       "name": "Team B",
+       "values": [
+        0.05,
+        0.1,
+        0.1,
+        0.1,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+       ]
+      },
+      {
+       "name": "Others",
+       "values": [
+        1.9,
+        2.4,
+        3.0,
+        3.4,
+        5.4,
+        4.6,
+        3.5,
+        4.0,
+        4.4
+       ]
+      }
+     ]
+    },
+    "segments": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "By Q"
+     },
+     {
+      "from": 3,
+      "to": 5,
+      "label": "By M"
+     },
+     {
+      "from": 6,
+      "to": 8,
+      "label": "2026 By M"
+     }
+    ],
+    "decimals": 1,
+    "font_size": 7
+   }
+  },
+  {
+   "box": [
+    0.375,
+    0,
+    0.3,
+    0.42
+   ],
+   "title": "Ad-share/%",
+   "chart": {
+    "kind": "lines",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25-10",
+      "25-11",
+      "25-12",
+      "26-01",
+      "26-02",
+      "26-03"
+     ],
+     "series": [
+      {
+       "name": "Others",
+       "values": [
+        13.5,
+        16.8,
+        17.2,
+        18.4,
+        19.8,
+        19.1,
+        18.6,
+        19.8,
+        19.4
+       ]
+      },
+      {
+       "name": "Overall",
+       "values": [
+        12.0,
+        13.6,
+        13.8,
+        13.8,
+        15.0,
+        13.7,
+        13.6,
+        14.2,
+        14.4
+       ]
+      },
+      {
+       "name": "Team A",
+       "values": [
+        11.5,
+        12.9,
+        12.3,
+        12.4,
+        13.0,
+        11.9,
+        11.8,
+        11.8,
+        12.1
+       ],
+       "label_pos": "below"
+      }
+     ]
+    },
+    "suffix": "%",
+    "decimals": 1,
+    "segments": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "By Q"
+     },
+     {
+      "from": 3,
+      "to": 5,
+      "label": "By M"
+     },
+     {
+      "from": 6,
+      "to": 8,
+      "label": "2026 By M"
+     }
+    ],
+    "font_size": 6.5,
+    "line_width": 1.25,
+    "annotations": [
+     {
+      "type": "circle",
+      "series": "Team A",
+      "points": [
+       6,
+       7,
+       8
+      ],
+      "label_pos": "below",
+      "w": 0.5,
+      "h": 0.22
+     }
+    ]
+   }
+  },
+  {
+   "box": [
+    0.375,
+    0.44,
+    0.3,
+    0.56
+   ],
+   "title": "Daily GMV/$Mn",
+   "chart": {
+    "kind": "area_stack",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25-10",
+      "25-11",
+      "25-12",
+      "26-01",
+      "26-02",
+      "26-03"
+     ],
+     "series": [
+      {
+       "name": "Team A",
+       "values": [
+        15,
+        17,
+        21,
+        23,
+        34,
+        32,
+        23,
+        25,
+        29
+       ]
+      },
+      {
+       "name": "Team C",
+       "values": [
+        0.5,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        3
+       ]
+      },
+      {
+       "name": "Team B",
+       "values": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        1,
+        1,
+        1,
+        1,
+        1
+       ]
+      },
+      {
+       "name": "Others",
+       "values": [
+        13,
+        13,
+        16,
+        18,
+        26,
+        23,
+        18,
+        20,
+        21
+       ]
+      }
+     ]
+    },
+    "segments": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "By Q"
+     },
+     {
+      "from": 3,
+      "to": 5,
+      "label": "By M"
+     },
+     {
+      "from": 6,
+      "to": 8,
+      "label": "2026 By M"
+     }
+    ],
+    "font_size": 6.5
+   }
+  },
+  {
+   "box": [
+    0.69,
+    0,
+    0.31,
+    1
+   ],
+   "title": "YoY/%",
+   "chart": {
+    "kind": "lines",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25-10",
+      "25-11",
+      "25-12",
+      "26-01",
+      "26-02",
+      "26-03"
+     ],
+     "series": [
+      {
+       "name": "Others",
+       "values": [
+        220,
+        145,
+        134,
+        120,
+        135,
+        134,
+        117,
+        121,
+        104
+       ]
+      },
+      {
+       "name": "Overall",
+       "values": [
+        160,
+        110,
+        111,
+        106,
+        128,
+        103,
+        99,
+        116,
+        105
+       ],
+       "label_pos": "below"
+      },
+      {
+       "name": "Team A",
+       "values": [
+        144,
+        95,
+        83,
+        80,
+        89,
+        70,
+        65,
+        72,
+        70
+       ],
+       "label_pos": "below"
+      }
+     ]
+    },
+    "suffix": "%",
+    "smooth": true,
+    "segments": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "By Q"
+     },
+     {
+      "from": 3,
+      "to": 5,
+      "label": "By M"
+     },
+     {
+      "from": 6,
+      "to": 8,
+      "label": "2026 By M"
+     }
+    ],
+    "font_size": 7
+   }
+  }
+ ]
+}

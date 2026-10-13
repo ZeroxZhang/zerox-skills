@@ -782,6 +782,8 @@ def annotate(sl, spec, geo):
         b.adjustments[0] = 0.15; sl._tf(b.text_frame, c["text"], color=TC["callout"], bold=True, size=sl.fs-1)
 
 def render(prs, spec):
+    if spec.get("type") in ("dashboard", "facet"):   # 多图拼版，见 tc_dash.py
+        import tc_dash; return tc_dash.render(prs, spec)
     sl = Slide(prs, spec); sl.frame()
     geo = RENDER[spec["type"]](sl, spec["data"])
     if spec["type"] in CATEGORY_TYPES and spec.get("decorations"):
