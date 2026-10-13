@@ -15,6 +15,8 @@ python3 -m venv .venv && .venv/bin/pip install python-pptx   # 渲染 PNG 还需
 ```
 一个 JSON 可以是单个图表对象，也可以是 `{"slides":[...]}`。
 
+给真正使用者的「什么时候用、怎么给数据、怎么写 prompt、交付物是什么」见 [README.md · 如何使用与怎么写 prompt](README.md#how-to-use)；多图拼版字段见 [docs/DASHBOARD.md](docs/DASHBOARD.md)。
+
 ## 工作流程（给 Agent）
 **拿数据 →（未指定图）分析推荐、让用户确认 /（已指定图）校验并报缺 → 选配色 → 渲染 → 交付**
 
