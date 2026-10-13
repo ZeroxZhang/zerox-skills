@@ -6,13 +6,13 @@
 
 **把表格数据变成咨询汇报图表：推荐图型、校验数据，生成可编辑的 PowerPoint 形状与 PNG 预览。**
 
-本技能是 [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) 套件的图表能力，支持 **55 种图表类型、11 个分类、61 个完整示例、8 套配色主题**。从瀑布桥、Mekko、堆叠柱，到甘特、敏感性分析、KPI 卡片，均可用一份 JSON 重复生成。
+本技能是 [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) 套件的图表能力，支持 **55 种图表类型、11 个分类、61 个完整示例、8 套配色主题**，并支持一页多图的 **dashboard / facet 拼版**（共用横轴、分段标注、条件着色、圈注与批注）。从瀑布桥、Mekko、堆叠柱，到甘特、敏感性分析、KPI 卡片，再到运营看板，均可用一份 JSON 重复生成。
 
 PPTX 中的柱、线、文字、箭头和标注可在 PowerPoint 中逐个选中修改。它们是**可编辑形状**，不是带内嵌工作表的数据绑定图表；修改源数据后，应重新运行脚本。
 
 这是独立实现的开源项目，与 think-cell 无隶属、授权或背书关系。名称描述所参考的视觉风格；运行不依赖 think-cell 插件。
 
-[快速开始](#quickstart) · [能力与流程](#capabilities) · [输入与输出](#data-contract) · [配色](#themes) · [全部示例](#gallery) · [CLI](#cli) · [维护与验证](#maintenance) · [限制](#limitations) · [协议](#license)
+[快速开始](#quickstart) · [如何使用与怎么写 prompt](#how-to-use) · [能力与流程](#capabilities) · [多图拼版](#multipanel) · [输入与输出](#data-contract) · [配色](#themes) · [全部示例](#gallery) · [CLI](#cli) · [维护与验证](#maintenance) · [限制](#limitations) · [协议](#license)
 
 <a id="quickstart"></a>
 ## 快速开始
@@ -199,28 +199,31 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 
 `highlight` 支持 `circle`、`box`、`arrow`；`callouts` 支持引线气泡。定位可用支持图型的 `category`、图上已有标签 `anchor`（重名时用 `nth`），或图表区比例坐标 `at: [x,y]`。详细字段与可复用写法见 [版面规范](docs/STYLE_SPEC.md) 和 [高亮示例](examples/stacked_highlight.json)。
 
-<a id="themes"></a>
+<a id="multipanel"></a>
 ## 多图拼版（dashboard / facet）
 
-一页放多张小图，常用于运营看板和周报。完整字段说明见 [docs/DASHBOARD.md](docs/DASHBOARD.md)。
+一页放多张小图，常用于运营看板和周报。完整字段说明见 [docs/DASHBOARD.md](docs/DASHBOARD.md)；版面约定见 [docs/STYLE_SPEC.md](docs/STYLE_SPEC.md) §10。
 
-- `type: "dashboard"`：
-  - 区域可以用比例坐标自由划分，也可以按网格排；
-  - 子图类型可以混用（堆积面积 / 折线 / 堆积柱 / 成对条形）；
-  - 每张子图带红色下划线小标题；
-  - 总标题前可以加黄底标签块，页脚统一写来源。
-- `type: "facet"`：
-  - 按“行 × 列”分面，带行表头和列表头；
-  - 纵轴可以同一行共用，也可以各自独立；
-  - 行列之间用虚线分隔。
-- 每张子图都可以加：
-  - 多层共享横轴，例如周 / 月 / 年三层；
-  - 分段虚线和分段名（By Q / By M / 年份）；
-  - 条件着色：≥ 时间进度标绿，低于时间进度标红，对比期标灰；并画时间进度虚线，底部标 ▲ 数值；
-  - 红圈、红色斜箭头、自动按正负着色的“VS … ±pp”批注；
-  - 堆积面积色块内的“值 (占比%)”标签、右侧系列名、平滑曲线。
-- 新增配色 `ops_bright`（蓝 / 橙 / 绿 / 灰，取自运营看板参考图，[约定]），在 spec 里写 `"palette": "ops_bright"` 就能用，不影响原有的 8 套主题。
-- `tc_advise.py` 发现数据同时有多个指标、多个分组和时间维度时，会首选推荐 facet，并生成草稿；`tc_validate.py` 也会检查拼版 spec。
+### 两种拼版方式
+
+| 类型 | 什么时候用 | 怎么排 |
+| --- | --- | --- |
+| `dashboard` | 一页里要混用不同图型（左边面积、中间折线、右边同比），或区域大小不一样 | 用 `box: [x, y, 宽, 高]`（内容区 0–1 比例）自由划分，或用 `grid` + `cell` / `span` |
+| `facet` | 同一套图型，按「行 = 指标、列 = 国家 / 团队」重复铺开，方便横向对比 | 写 `rows`、`cols`、`cells[行][列]`；没有数据的格子写 `null` |
+
+### 拼版能力一览
+
+| 能力 | 说明 |
+| --- | --- |
+| 共用横轴 | `x_labels` 可写多层，例如周 / 月 / 年三层，子图共用同一套横轴刻度 |
+| 分段标注 | `segments` 画竖向虚线，顶部写分段名（By Q / By M / 年份）；样式用 `segment_style` 调 |
+| 条件着色 | 成对条形的 `rule`：≥ 时间进度标绿、低于标红、对比期标灰；页面底部标 `▲ 65.6%` 进度线 |
+| 标注 | 红圈（`circle`）、红色斜箭头（`arrow`）、按正负自动着色的「VS … ±pp」批注（`note`）、趋势通道（`channel`） |
+| 页面装饰 | 总标题前可加黄底标签块（`title_tag`）；子图标题默认红色下划线；页脚统一写 `source` 和 `footnotes` |
+| 子图类型 | 目前 4 种：`area_stack`、`lines`、`column_stack`、`bars_pair`（可平滑曲线、色块内写「值 (占比%)」、右侧系列名） |
+| 配色 | 拼版可用 `ops_bright`（蓝 / 橙 / 绿 / 灰，[约定]），在 spec 写 `"palette": "ops_bright"`；不影响原有 8 套主题 |
+
+`tc_advise.py` 发现数据同时有「时间 + 分组 + ≥2 个指标」时，会首选推荐 `facet` 并生成草稿；`tc_validate.py` 会检查拼版 spec（子图类型、数据长度、分段越界、系列名、区域重叠等）。
 
 | | |
 |---|---|
@@ -232,6 +235,108 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 .venv/bin/python scripts/tc_render.py examples/dashboards/*.json -o dashboards.pptx --png examples/dashboards
 ```
 
+<a id="how-to-use"></a>
+## 如何使用与怎么写 prompt
+
+这一节给**真正用这个 skill 的人**看：你怎么跟 Agent 说话、给什么数据、拿到什么交付物。Agent 侧的详细步骤见 [SKILL.md](SKILL.md)。
+
+### 什么时候用
+
+- 有一张表，想做成咨询汇报里常见的柱 / 线 / 瀑布 / Mekko / 甘特等图。
+- 有多张相关小图，想塞进**一页看板**（dashboard）或**分面网格**（facet）。
+- 已经有 JSON spec，想先校验再出图，或换一套配色重渲。
+
+### 怎么给数据
+
+任选一种即可：
+
+1. 把 CSV / TSV / Excel / 粘贴的表格交给 Agent（或放到 skill 目录里，告诉它路径）。
+2. 直接给一份图表 JSON（可参考 `examples/` 或 `examples/dashboards/`）。
+3. 附一张参考截图，说「按这个版式做，数字换成我的表」——**不要让 Agent 照抄参考图里的真实业务数字**。
+
+每张图都需要写清**数据来源**（`source`）。没有来源时页脚会显示红字提醒；不要编造来源。
+
+### 没指定图型时怎么说
+
+把表给 Agent，说你想说明什么结论即可。Agent 会跑推荐器，给出 1 个首选 + 2 个备选，请你确认后再出图。
+
+### 指定了图型时怎么说
+
+直接说图型名字（瀑布、占比 Mekko、目标柱、甘特……），并附上数据。Agent 会按 `docs/CATALOG.md` 写 spec、先校验、再渲染。数据不够时它会告诉你缺什么，**不会自己编数字**。
+
+### 想拼多图时怎么说
+
+- 「做成一页运营看板 / 周报拼版」→ 通常出 `dashboard`（可混用面积、折线、同比）。
+- 「按国家（或团队）分列、按指标分行」→ 通常出 `facet`。
+- 需要分段、时间进度线、红圈、VS 批注时，在 prompt 里直接说出来（见下面示例）。
+
+### 怎么选配色
+
+- 单图：说主题名，或说「你定 / 随便」→ 默认 `consulting_navy`。8 套主题见 [docs/PALETTES.md](docs/PALETTES.md)。
+- 拼版看板：可以说「用运营看板那套蓝橙绿灰」→ `ops_bright`。
+
+### 交付物是什么
+
+- **可编辑 PPTX**：柱、线、文字、箭头都是 PowerPoint 形状，可在 PPT 里改色改字；改数据要重新跑脚本。
+- **PNG 预览**：方便目检标签是否重叠、箭头是否压字。
+- 可选：校验报告、推荐报告 JSON。
+
+### 可直接复制的 prompt 示例
+
+把下面整段复制给 Agent，把路径和业务词换成你的即可。
+
+**1. 单图推荐（还没想好用什么图）**
+
+```text
+用 zerox-thinkcell-charts。数据在 ./revenue.csv。
+我想说明「近三年收入构成变化」，请先推荐图表和结论，等我确认后再出图。
+配色先用默认，来源写「公司财务系统 · 2024」。
+交付可编辑 PPTX + PNG。
+```
+
+**2. 指定瀑布图**
+
+```text
+用 zerox-thinkcell-charts，画一张瀑布图解释利润变化。
+数据：起点 120，价格 +18，销量 +9，成本 -11，费用 -6，终点 130（单位 Mn）。
+标题写成结论式；正值用主色、负值用酒红；脚注写来源「管理报表 · Q3」。
+出 PPTX + PNG。
+```
+
+**3. 多图拼版看板（dashboard）**
+
+```text
+用 zerox-thinkcell-charts 做一页运营看板（type: dashboard）。
+左栏：各团队日收入堆积面积；中上：广告 GMV 折线，并加红色斜箭头；中下：广告份额堆积面积；右栏：同比折线（平滑）。
+横轴按 By Q / By M 分段虚线；总标题前加黄底标签「Region-A」；配色用 ops_bright。
+数据用我附的表（团队名 Team A/B/C 即可）；不要用参考图里的真实数字。
+交付 PPTX + PNG。
+```
+
+**4. 分面网格（facet）**
+
+```text
+用 zerox-thinkcell-charts 做分面图（type: facet）。
+列 = 6 个国家，行 = 日收入 / 收入占比 / 活跃店铺数 / 日 ARPA；同行共用纵轴。
+日收入用堆积面积并显示「值 (占比%)」；下面两行用折线。
+数据见 ./by_country.csv；来源写「示意数据」。出 PPTX + PNG。
+```
+
+**5. 先校验数据再出图**
+
+```text
+用 zerox-thinkcell-charts。我写好了 examples/waterfall.json 的改版，路径是 ./my_bridge.json。
+请先跑校验，用大白话告诉我能不能做、缺什么；只有「能做」或我同意折中后才渲染。
+```
+
+**6. 换配色重渲**
+
+```text
+把 ./out/deck.pptx 对应的 spec（./draft.json）改成 banking_navy_gold 主题重新渲染；
+图型、数据和结论都不要改。交付新的 PPTX + PNG。
+```
+
+<a id="themes"></a>
 ## 8 套配色主题
 
 主题会改变语义色，保持图型与版面。默认 `consulting_navy`；命令行 `--theme` 优先于每页的 `theme`。显式设置 `palette` 的页面仍会保留自己的系列色板。

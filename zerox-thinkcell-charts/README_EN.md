@@ -6,13 +6,13 @@
 
 **Turn tabular data into consulting charts: recommend a chart, validate its data, and generate editable PowerPoint shapes with PNG previews.**
 
-This charting skill is part of the [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) suite. It includes **55 chart types, 11 categories, 61 complete examples, and 8 color themes**. A JSON specification can reproduce everything from waterfall bridges, Mekko charts, and stacked columns to project schedules, sensitivity charts, and KPI cards.
+This charting skill is part of the [zerox-skills](https://github.com/ZeroxZhang/zerox-skills) suite. It includes **55 chart types, 11 categories, 61 complete examples, and 8 color themes**, plus **dashboard / facet multi-panel layouts** (shared x-axis, segment labels, conditional coloring, circles and notes). A JSON specification can reproduce everything from waterfall bridges, Mekko charts, and stacked columns to project schedules, sensitivity charts, KPI cards, and ops dashboards.
 
 Bars, lines, text, arrows, and annotations can be selected and edited individually in PowerPoint. The output consists of **editable shapes**, not native chart objects with embedded data sheets. To change the underlying data, update the specification and render again.
 
 This is an independent open-source implementation, with no affiliation, authorization, or endorsement from think-cell. The name describes a visual influence; the renderer does not depend on the think-cell add-in.
 
-[Quick start](#quickstart) · [Capabilities](#capabilities) · [Inputs and outputs](#data-contract) · [Themes](#themes) · [All examples](#gallery) · [CLI](#cli) · [Maintenance](#maintenance) · [Limitations](#limitations) · [License](#license)
+[Quick start](#quickstart) · [How to use & write prompts](#how-to-use) · [Capabilities](#capabilities) · [Multi-panel](#multipanel) · [Inputs and outputs](#data-contract) · [Themes](#themes) · [All examples](#gallery) · [CLI](#cli) · [Maintenance](#maintenance) · [Limitations](#limitations) · [License](#license)
 
 <a id="quickstart"></a>
 ## Quick start
@@ -199,34 +199,147 @@ These `decorations` apply to `column`, `stacked`, `percent`, `clustered`, `water
 
 `highlight` supports `circle`, `box`, and `arrow`; `callouts` adds a bubble and leader line. Position them using a supported chart's `category`, an existing text `anchor` (`nth` disambiguates repeated labels), or chart-relative `at: [x,y]` coordinates. See the [style specification](docs/STYLE_SPEC.md) and [highlight example](examples/stacked_highlight.json) for exact fields.
 
-<a id="themes"></a>
+<a id="multipanel"></a>
 ## Multi-panel layouts (dashboard / facet)
 
-Put several small charts on one slide, as in ops dashboards and weekly reviews. See [docs/DASHBOARD.md](docs/DASHBOARD.md) for every field (written in Chinese).
+Put several small charts on one slide, as in ops dashboards and weekly reviews. Full field reference: [docs/DASHBOARD.md](docs/DASHBOARD.md) (Chinese). Layout conventions: [docs/STYLE_SPEC.md](docs/STYLE_SPEC.md) §10.
 
-- `type: "dashboard"`:
-  - lay panels out by free fractional boxes or on a grid;
-  - mix chart kinds (stacked area / lines / stacked columns / paired bars);
-  - give each panel a red underlined subtitle;
-  - add an optional yellow tag block before the page title and one shared source footer.
-- `type: "facet"`:
-  - build a rows × columns grid with row and column headers;
-  - use a shared y-axis per row or an independent one per panel;
-  - separate rows and columns with dashed lines.
-- Panel features:
-  - multi-layer shared x-axis (for example week / month / year);
-  - dashed segment dividers with labels;
-  - conditional colors: green if ≥ time progress, red otherwise, gray for the comparison period, plus a time-progress dashed line with a ▲ value;
-  - red circles, red diagonal arrows, and "VS … ±pp" notes colored by sign;
-  - in-band "value (share%)" labels, right-side series names, and smooth lines.
-- New palette `ops_bright` (blue / orange / green / gray, sampled from the user's dashboard references; a convention, not an official think-cell palette). Enable it with `"palette": "ops_bright"` in a spec. The 8 existing themes are unchanged.
-- When data has a time dimension, a group dimension, and two or more measures, `tc_advise.py` recommends `facet` first and drafts the spec. `tc_validate.py` checks dashboard and facet specs.
+### Two layout modes
+
+| Type | When to use | How to lay out |
+| --- | --- | --- |
+| `dashboard` | Mix chart kinds on one page (area left, lines middle, YoY right), or use unequal panel sizes | Free `box: [x, y, w, h]` in content-area fractions, or `grid` + `cell` / `span` |
+| `facet` | Repeat the same chart kind as rows = metrics × columns = countries / teams for side-by-side comparison | Write `rows`, `cols`, and `cells[row][col]`; use `null` for empty cells |
+
+### Multi-panel features
+
+| Feature | What it does |
+| --- | --- |
+| Shared x-axis | `x_labels` can be multi-layer (week / month / year); panels share the same tick marks |
+| Segment labels | `segments` draws vertical dashed dividers with names (By Q / By M / year); style via `segment_style` |
+| Conditional coloring | Paired-bar `rule`: green if ≥ time progress, red if below, gray for comparison period; page shows `▲ 65.6%` progress line |
+| Annotations | Red circles (`circle`), red diagonal arrows (`arrow`), sign-colored "VS … ±pp" notes (`note`), trend channels (`channel`) |
+| Page chrome | Yellow tag block before the title (`title_tag`); red underlined panel subtitles; shared `source` and `footnotes` |
+| Panel kinds | Four today: `area_stack`, `lines`, `column_stack`, `bars_pair` (smooth lines, in-band "value (share%)", right-side series names) |
+| Palette | Spec-local `ops_bright` (blue / orange / green / gray, [convention]); does not change the 8 themes |
+
+When data has time + group + ≥2 measures, `tc_advise.py` recommends `facet` first and drafts a renderable spec. `tc_validate.py` checks multi-panel specs (kinds, lengths, segment bounds, series names, overlapping boxes, and more).
 
 | | |
 |---|---|
 | ![](examples/dashboards/dash_three_column.png) | ![](examples/dashboards/facet_country_metric.png) |
 | ![](examples/dashboards/facet_target_bars.png) | ![](examples/dashboards/dash_shared_axis_layers.png) |
 
+```bash
+.venv/bin/python scripts/make_dashboards.py
+.venv/bin/python scripts/tc_render.py examples/dashboards/*.json -o dashboards.pptx --png examples/dashboards
+```
+
+<a id="how-to-use"></a>
+## How to use and how to write prompts
+
+This section is for **people who actually use the skill**: what to say to the agent, what data to provide, and what you get back. Agent-side steps live in [SKILL.md](SKILL.md) (Chinese).
+
+### When to use it
+
+- You have a table and want a consulting-style column / line / waterfall / Mekko / Gantt chart.
+- You have several related small charts and want them on **one dashboard page** or a **facet grid**.
+- You already have a JSON spec and want validation first, or a re-render with a new theme.
+
+### How to provide data
+
+Any of these works:
+
+1. Hand the agent a CSV / TSV / Excel file or a pasted table (or put it in the skill folder and name the path).
+2. Give a chart JSON (see `examples/` or `examples/dashboards/`).
+3. Attach a reference screenshot and say "match this layout, use my numbers" — **do not ask the agent to copy real business figures from the reference**.
+
+Every chart needs a **source** (`source`). Without one, the footer shows a red reminder. Do not invent a source.
+
+### If you have not chosen a chart type
+
+Give the table and say what conclusion you want. The agent runs the recommender, offers 1 primary + 2 alternatives, and waits for your confirmation before rendering.
+
+### If you have chosen a chart type
+
+Name the type (waterfall, percent Mekko, target column, Gantt, …) and attach the data. The agent writes a spec from `docs/CATALOG.md`, validates, then renders. If data is incomplete it tells you what is missing — **it will not invent numbers**.
+
+### If you want a multi-panel page
+
+- "Make a one-page ops / weekly dashboard" → usually `dashboard` (mix area, lines, YoY).
+- "Columns = countries (or teams), rows = metrics" → usually `facet`.
+- Mention segments, time-progress lines, circles, or VS notes in the prompt when you need them (see examples below).
+
+### Choosing a theme
+
+- Single chart: name a theme, or say "your call" → default `consulting_navy`. See [docs/PALETTES.md](docs/PALETTES.md).
+- Dashboard: say "use the ops blue / orange / green / gray set" → `ops_bright`.
+
+### What you get back
+
+- **Editable PPTX**: bars, lines, text, and arrows are PowerPoint shapes you can restyle; changing data means re-running the script.
+- **PNG preview**: for checking overlaps and arrow placement.
+- Optional: validation report and recommendation JSON.
+
+### Copy-paste prompt examples
+
+Swap paths and business words for yours.
+
+**1. Single chart — let the skill recommend**
+
+```text
+Use zerox-thinkcell-charts. Data is in ./revenue.csv.
+I want to explain "how revenue mix changed over three years".
+Recommend a chart and a conclusion first; wait for my OK before rendering.
+Default theme is fine. Source: "Finance system · 2024".
+Deliver editable PPTX + PNG.
+```
+
+**2. Named waterfall**
+
+```text
+Use zerox-thinkcell-charts. Draw a waterfall that explains the profit bridge.
+Data: start 120, price +18, volume +9, cost -11, opex -6, end 130 (Mn).
+Conclusion-style title; positive = primary color, negative = wine red;
+footnote source "Management report · Q3". PPTX + PNG.
+```
+
+**3. Multi-panel dashboard**
+
+```text
+Use zerox-thinkcell-charts for a one-page ops dashboard (type: dashboard).
+Left: stacked area of daily revenue by team; middle-top: ad GMV lines with a red diagonal arrow;
+middle-bottom: ad-share stacked area; right: smooth YoY lines.
+Segment the x-axis with By Q / By M dashed lines; yellow tag "Region-A" before the title;
+palette ops_bright. Use my attached table (Team A/B/C is fine); do not copy real figures from any reference image.
+Deliver PPTX + PNG.
+```
+
+**4. Facet grid**
+
+```text
+Use zerox-thinkcell-charts for a facet chart (type: facet).
+Columns = 6 countries; rows = daily revenue / revenue share / active shops / daily ARPA;
+shared y-axis within each row. Revenue = stacked area with "value (share%)" labels; bottom two rows = lines.
+Data: ./by_country.csv. Source: "Illustrative data". PPTX + PNG.
+```
+
+**5. Validate first, then render**
+
+```text
+Use zerox-thinkcell-charts. I edited a waterfall spec at ./my_bridge.json.
+Run validation first and tell me in plain language whether it can render and what is missing.
+Only render after status is "能做" / OK, or after I accept a workaround.
+```
+
+**6. Re-theme without changing data**
+
+```text
+Re-render ./draft.json with theme banking_navy_gold.
+Do not change chart type, data, or conclusion. Deliver new PPTX + PNG.
+```
+
+<a id="themes"></a>
 ## Eight color themes
 
 Themes change semantic colors while preserving chart type and layout. The default is `consulting_navy`; CLI `--theme` takes precedence over each slide's `theme`. A slide with an explicit `palette` still retains its custom series palette.
