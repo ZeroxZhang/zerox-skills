@@ -379,3 +379,6 @@ RENDER.update({
  "funnel": funnel, "heatmap": heatmap, "matrix_2x2": matrix_2x2, "pareto": pareto, "tornado": tornado, "tree": tree,
  "kpi_cards": kpi_cards, "bullet": bullet, "progress_bars": progress_bars, "radar": radar, "tam_sam_som": tam_sam_som, "waffle": waffle,
 })
+
+# 多图拼版（不计入 55 种单图）：dashboard / facet，渲染入口在 tc_core.render → tc_dash.render
+RENDER.update({"dashboard": None, "facet": None})

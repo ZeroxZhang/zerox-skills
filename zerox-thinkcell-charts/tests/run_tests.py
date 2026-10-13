@@ -13,12 +13,14 @@ ADV = {
  "13_margin_change.csv": ({"bar_diverging"}, None), "14_market_mekko.csv": ({"mekko_percent"}, None), "15_price_csat.csv": ({"scatter"}, None),
  "16_region_product_long.csv": ({"bar_stacked", "stacked", "heatmap", "mekko_unit"}, None), "17_deals_outlier.csv": ({"column"}, None),
  "18_rev_margin.csv": ({"combo"}, None), "19_quarters.xlsx": ({"clustered", "line"}, None),
+ "20_multi_metric_teams.csv": ({"facet"}, "dashboard"),
 }
 INTENT = [("02_segments_wide.csv", "想说明结构变化：Seg C 占比提升", {"percent"}), ("05_channel_share.tsv", "show the ranking of channels", {"bar_sorted", "pie"})]
 VAL = {"v01_waterfall_unbalanced": "不能做", "v02_pie_not_100": "能做但有问题", "v03_mekko_no_widths": "不能做", "v04_gantt_no_dates": "不能做",
        "v05_column_too_many_long": "能做但有问题", "v06_length_mismatch": "不能做", "v07_football_low_gt_high": "不能做", "v08_line_target_missing": "不能做",
        "v09_butterfly_3_series": "不能做", "v10_text_numbers": "不能做", "v11_ok_percent": "能做", "v12_pie_too_many": "能做但有问题",
-       "v13_wf_stacked_unbalanced": "不能做", "v14_unknown_type": "不能做"}
+       "v13_wf_stacked_unbalanced": "不能做", "v14_unknown_type": "不能做",
+       "v15_dashboard_bad": "不能做", "v16_facet_bad": "不能做"}
 ok = fail = 0
 def check(cond, msg):
     global ok, fail
@@ -51,6 +53,15 @@ for f in glob.glob(os.path.join(R, "examples", "*.json")):
         r = tc_validate.validate(j)
         if r["status"] != "能做": bad.append((os.path.basename(f), r["status"]))
 check(not bad, f"示例校验 {bad or '全部通过'}")
+print("== 多图拼版")
+D = sorted(glob.glob(os.path.join(R, "examples", "dashboards", "*.json")))
+check(len(D) == 5, f"examples/dashboards 有 {len(D)} 个拼版示例（期望 5）")
+for f in D:
+    r = tc_validate.validate(json.load(open(f))); check(r["status"] == "能做", f"{os.path.basename(f)} 校验：{r['status']}")
+p = subprocess.run([PY, os.path.join(R, "scripts", "tc_render.py"), *D, "-o", os.path.join(tmp, "dash.pptx")], capture_output=True, text=True)
+check(p.returncode == 0 and os.path.exists(os.path.join(tmp, "dash.pptx")), f"5 个拼版一次渲染成 PPTX（exit {p.returncode}）" + ("" if p.returncode == 0 else p.stderr[-400:]))
+r = tc_validate.validate(json.load(open(os.path.join(H, "specs", "v15_dashboard_bad.json"))))
+check(all(k in json.dumps(r, ensure_ascii=False) for k in ("长度对不上", "segments", "不存在的系列", "超出边界", "pie")), "坏拼版的 5 类问题都被指出（长度/分段/系列名/区域越界/未知子图类型）")
 print("== 渲染前自动拦截")
 p = subprocess.run([PY, os.path.join(R, "scripts", "tc_render.py"), os.path.join(H, "specs", "v01_waterfall_unbalanced.json"), "-o", os.path.join(tmp, "x.pptx")], capture_output=True, text=True)
 check(p.returncode != 0 and "瀑布不平" in p.stderr and not os.path.exists(os.path.join(tmp, "x.pptx")), "瀑布不平时 tc_render 拒绝渲染并给出大白话原因")

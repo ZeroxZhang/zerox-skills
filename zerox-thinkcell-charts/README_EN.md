@@ -200,6 +200,33 @@ These `decorations` apply to `column`, `stacked`, `percent`, `clustered`, `water
 `highlight` supports `circle`, `box`, and `arrow`; `callouts` adds a bubble and leader line. Position them using a supported chart's `category`, an existing text `anchor` (`nth` disambiguates repeated labels), or chart-relative `at: [x,y]` coordinates. See the [style specification](docs/STYLE_SPEC.md) and [highlight example](examples/stacked_highlight.json) for exact fields.
 
 <a id="themes"></a>
+## Multi-panel layouts (dashboard / facet)
+
+Put several small charts on one slide, as in ops dashboards and weekly reviews. See [docs/DASHBOARD.md](docs/DASHBOARD.md) for every field (written in Chinese).
+
+- `type: "dashboard"`:
+  - lay panels out by free fractional boxes or on a grid;
+  - mix chart kinds (stacked area / lines / stacked columns / paired bars);
+  - give each panel a red underlined subtitle;
+  - add an optional yellow tag block before the page title and one shared source footer.
+- `type: "facet"`:
+  - build a rows × columns grid with row and column headers;
+  - use a shared y-axis per row or an independent one per panel;
+  - separate rows and columns with dashed lines.
+- Panel features:
+  - multi-layer shared x-axis (for example week / month / year);
+  - dashed segment dividers with labels;
+  - conditional colors: green if ≥ time progress, red otherwise, gray for the comparison period, plus a time-progress dashed line with a ▲ value;
+  - red circles, red diagonal arrows, and "VS … ±pp" notes colored by sign;
+  - in-band "value (share%)" labels, right-side series names, and smooth lines.
+- New palette `ops_bright` (blue / orange / green / gray, sampled from the user's dashboard references; a convention, not an official think-cell palette). Enable it with `"palette": "ops_bright"` in a spec. The 8 existing themes are unchanged.
+- When data has a time dimension, a group dimension, and two or more measures, `tc_advise.py` recommends `facet` first and drafts the spec. `tc_validate.py` checks dashboard and facet specs.
+
+| | |
+|---|---|
+| ![](examples/dashboards/dash_three_column.png) | ![](examples/dashboards/facet_country_metric.png) |
+| ![](examples/dashboards/facet_target_bars.png) | ![](examples/dashboards/dash_shared_axis_layers.png) |
+
 ## Eight color themes
 
 Themes change semantic colors while preserving chart type and layout. The default is `consulting_navy`; CLI `--theme` takes precedence over each slide's `theme`. A slide with an explicit `palette` still retains its custom series palette.

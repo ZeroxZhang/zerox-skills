@@ -1,5 +1,5 @@
 """生成 docs/CATALOG.md 与 gallery/index.html（HTML 遵循 pinguo-apple-design：DM Sans、#0066cc、#f5f5f7、1.2rem 圆角、1px 边框、轻阴影）"""
-import json, os, html
+import glob, os, json, os, html
 R = os.path.join(os.path.dirname(__file__), "..")
 cat = json.load(open(f"{R}/examples/catalog.json"))
 COMMON = '''`theme`（可选）：`consulting_navy`（默认）｜`thinkcell_green`｜`thinkcell_blue`｜`teal_modern`｜`banking_navy_gold`｜`office`｜`mono_smoke`｜`gray_accent`（见 PALETTES.md）；
@@ -91,6 +91,9 @@ for c in cat:
     L += [f"### `{c['id']}`（type: `{c['type']}`）\n", f"- **适合场景**：{c['use']}", f"- **data 格式**：`{SCHEMA[c['type']]}`",
           f"- **示例**：[examples/{c['id']}.json](../examples/{c['id']}.json)\n", f"![{c['id']}](../examples/{c['id']}.png)\n",
           "<details><summary>完整样例 JSON</summary>\n\n```json\n" + json.dumps(spec, ensure_ascii=False, indent=1) + "\n```\n</details>\n"]
+L += ["\n## 多图拼版（dashboard / facet）\n", "一页多图：自由区域或网格拼版（`dashboard`）、行×列分面（`facet`）；支持分段虚线、多层共享横轴、条件着色、时间进度线、圈注/箭头/批注。完整字段见 [DASHBOARD.md](DASHBOARD.md)。\n"]
+for f in sorted(glob.glob(f"{R}/examples/dashboards/*.json")):
+    b = os.path.basename(f)[:-5]; L += [f"### `{b}`（type: `{json.load(open(f))['type']}`）\n", f"- **示例**：[examples/dashboards/{b}.json](../examples/dashboards/{b}.json)\n", f"![{b}](../examples/dashboards/{b}.png)\n"]
 open(f"{R}/docs/CATALOG.md","w").write("\n".join(L))
 # ---------- HTML ----------
 cards = []; cur = None; sections = []
