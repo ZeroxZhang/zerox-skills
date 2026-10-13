@@ -1,0 +1,420 @@
+{
+ "id": "dash_three_column",
+ "type": "dashboard",
+ "palette": "ops_bright",
+ "series_colors": {
+  "Team A": "#0070C0",
+  "Team B": "#EA6A06",
+  "Team C": "#4EA72E",
+  "Others": "#BFBFBF",
+  "Overall": "#000000",
+  "Team D": "#E8B400"
+ },
+ "title_tag": {
+  "text": "Region-A",
+  "fill": "yellow"
+ },
+ "title": "Daily Revenue & YoY & Daily GMV & Ad-share% by Teams [$Mn/%]",
+ "source": "Illustrative data (not real figures)",
+ "footnotes": [
+  [
+   {
+    "text": "YoY: Team performance dataset "
+   },
+   {
+    "text": "(Daily Latest Binding)",
+    "color": "red",
+    "bold": true
+   }
+  ],
+  "Limited to shops with ad revenue in the respective month"
+ ],
+ "panels": [
+  {
+   "box": [
+    0,
+    0,
+    0.36,
+    1
+   ],
+   "title": "Daily Revenue ($Mn)",
+   "title_style": "red",
+   "chart": {
+    "kind": "area_stack",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25/10",
+      "25/11",
+      "25/12",
+      "26/1",
+      "26/2",
+      "26/3"
+     ],
+     "series": [
+      {
+       "name": "Team A",
+       "values": [
+        2.0,
+        2.8,
+        3.5,
+        3.8,
+        4.2,
+        4.7,
+        4.0,
+        4.3,
+        4.6
+       ]
+      },
+      {
+       "name": "Team B",
+       "values": [
+        1.8,
+        2.1,
+        2.6,
+        3.0,
+        3.4,
+        3.6,
+        3.3,
+        3.7,
+        3.9
+       ]
+      },
+      {
+       "name": "Team C",
+       "values": [
+        0.1,
+        0.1,
+        0.2,
+        0.2,
+        0.2,
+        0.3,
+        0.2,
+        0.3,
+        0.3
+       ]
+      },
+      {
+       "name": "Others",
+       "values": [
+        2.5,
+        2.9,
+        3.5,
+        4.1,
+        4.6,
+        5.1,
+        5.2,
+        5.5,
+        5.6
+       ]
+      }
+     ]
+    },
+    "segments": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "By Q"
+     },
+     {
+      "from": 3,
+      "to": 8,
+      "label": "By M"
+     }
+    ],
+    "decimals": 1,
+    "font_size": 7
+   }
+  },
+  {
+   "box": [
+    0.375,
+    0,
+    0.3,
+    0.37
+   ],
+   "title": "Ad-share%",
+   "title_style": "red",
+   "chart": {
+    "kind": "lines",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25/10",
+      "25/11",
+      "25/12",
+      "26/1",
+      "26/2",
+      "26/3"
+     ],
+     "series": [
+      {
+       "name": "Team A",
+       "values": [
+        14.1,
+        15.2,
+        15.8,
+        15.0,
+        15.4,
+        15.0,
+        14.0,
+        13.8,
+        14.5
+       ]
+      },
+      {
+       "name": "Overall",
+       "values": [
+        11.6,
+        12.3,
+        12.8,
+        12.4,
+        12.3,
+        12.2,
+        11.5,
+        11.6,
+        12.0
+       ]
+      },
+      {
+       "name": "Team B",
+       "values": [
+        9.6,
+        9.9,
+        10.2,
+        10.0,
+        10.1,
+        9.7,
+        9.4,
+        9.8,
+        10.0
+       ]
+      },
+      {
+       "name": "Others",
+       "values": [
+        4.0,
+        4.4,
+        4.9,
+        5.1,
+        5.2,
+        5.1,
+        5.1,
+        5.2,
+        5.3
+       ]
+      }
+     ]
+    },
+    "suffix": "%",
+    "decimals": 1,
+    "segments": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "By Q"
+     },
+     {
+      "from": 3,
+      "to": 8,
+      "label": "By M"
+     }
+    ],
+    "font_size": 6.5,
+    "line_width": 1.25,
+    "annotations": [
+     {
+      "type": "arrow",
+      "from": [
+       0.62,
+       0.12
+      ],
+      "to": [
+       0.72,
+       0.3
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "box": [
+    0.375,
+    0.39,
+    0.3,
+    0.61
+   ],
+   "title": "Daily GMV of Advertised Shops ($Mn)",
+   "title_style": "red",
+   "chart": {
+    "kind": "area_stack",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25/10",
+      "25/11",
+      "25/12",
+      "26/1",
+      "26/2",
+      "26/3"
+     ],
+     "series": [
+      {
+       "name": "Team A",
+       "values": [
+        14,
+        17,
+        20,
+        23,
+        26,
+        30,
+        28,
+        31,
+        30
+       ]
+      },
+      {
+       "name": "Team B",
+       "values": [
+        18,
+        20,
+        24,
+        30,
+        34,
+        36,
+        35,
+        38,
+        38
+       ]
+      },
+      {
+       "name": "Team C",
+       "values": [
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+       ]
+      },
+      {
+       "name": "Others",
+       "values": [
+        62,
+        66,
+        71,
+        78,
+        86,
+        98,
+        102,
+        106,
+        104
+       ]
+      }
+     ]
+    },
+    "font_size": 6.5,
+    "decimals": 0
+   }
+  },
+  {
+   "box": [
+    0.69,
+    0,
+    0.31,
+    1
+   ],
+   "title": "Revenue YoY",
+   "title_style": "red",
+   "chart": {
+    "kind": "lines",
+    "data": {
+     "categories": [
+      "25-Q1",
+      "25-Q2",
+      "25-Q3",
+      "25/10",
+      "25/11",
+      "25/12",
+      "26/1",
+      "26/2",
+      "26/3"
+     ],
+     "series": [
+      {
+       "name": "Others",
+       "values": [
+        128,
+        125,
+        114,
+        102,
+        110,
+        116,
+        125,
+        112,
+        87
+       ],
+       "label_pos": "below"
+      },
+      {
+       "name": "Team A",
+       "values": [
+        155,
+        168,
+        171,
+        150,
+        158,
+        142,
+        126,
+        129,
+        83
+       ]
+      },
+      {
+       "name": "Team B",
+       "values": [
+        124,
+        102,
+        100,
+        96,
+        101,
+        96,
+        104,
+        99,
+        79
+       ],
+       "label_pos": "below"
+      }
+     ]
+    },
+    "suffix": "%",
+    "smooth": true,
+    "segments": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "By Q"
+     },
+     {
+      "from": 3,
+      "to": 8,
+      "label": "By M"
+     }
+    ],
+    "font_size": 7,
+    "pad_hi": 2.2,
+    "pad_lo": 2.2
+   }
+  }
+ ]
+}

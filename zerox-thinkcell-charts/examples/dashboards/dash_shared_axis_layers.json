@@ -1,0 +1,437 @@
+{
+ "id": "dash_shared_axis_layers",
+ "type": "dashboard",
+ "title": [
+  {
+   "text": "Self-serve vs Managed  ",
+   "color": "#000000"
+  },
+  {
+   "text": "Daily Spend & Mid-funnel Share by Event",
+   "color": "#4472C0"
+  },
+  {
+   "text": " (to 6/30)",
+   "color": "#000000"
+  }
+ ],
+ "source": "Illustrative data (not real figures)",
+ "pad": {
+  "l": 0.25,
+  "r": 1.25
+ },
+ "panels": [
+  {
+   "box": [
+    0,
+    0,
+    1,
+    0.26
+   ],
+   "chart": {
+    "kind": "lines",
+    "data": {
+     "categories": [
+      "a.23 Mid-Mar",
+      "b.23 Pre-sale",
+      "c.23 Main",
+      "d.23 Return",
+      "e.23 Off-peak",
+      "f.23 Double-11",
+      "g.23 D11 Return",
+      "h.23 Dec",
+      "i.24 Mar",
+      "j.24 Mid-Mar",
+      "k.24 Pre-sale",
+      "l.24 Main",
+      "m.24 Return"
+     ],
+     "series": [
+      {
+       "name": "Self-serve YoY",
+       "values": [
+        195,
+        158,
+        150,
+        125,
+        118,
+        121,
+        126,
+        158,
+        26,
+        58,
+        40,
+        35,
+        37
+       ]
+      },
+      {
+       "name": "Managed YoY",
+       "values": [
+        56,
+        54,
+        66,
+        40,
+        60,
+        73,
+        70,
+        84,
+        30,
+        41,
+        34,
+        28,
+        32
+       ],
+       "label_pos": "below"
+      }
+     ]
+    },
+    "suffix": "%",
+    "smooth": true,
+    "x_labels": false,
+    "font_size": 7.5,
+    "line_width": 1.25,
+    "baseline": false,
+    "legend_size": 7.5
+   }
+  },
+  {
+   "box": [
+    0,
+    0.27,
+    1,
+    0.27
+   ],
+   "chart": {
+    "kind": "lines",
+    "data": {
+     "categories": [
+      "a.23 Mid-Mar",
+      "b.23 Pre-sale",
+      "c.23 Main",
+      "d.23 Return",
+      "e.23 Off-peak",
+      "f.23 Double-11",
+      "g.23 D11 Return",
+      "h.23 Dec",
+      "i.24 Mar",
+      "j.24 Mid-Mar",
+      "k.24 Pre-sale",
+      "l.24 Main",
+      "m.24 Return"
+     ],
+     "series": [
+      {
+       "name": "Mid-funnel share\n(non-home)",
+       "values": [
+        37.9,
+        36.4,
+        35.1,
+        39.0,
+        40.0,
+        36.2,
+        42.1,
+        41.4,
+        36.8,
+        43.0,
+        39.4,
+        37.0,
+        40.1
+       ]
+      }
+     ]
+    },
+    "suffix": "%",
+    "decimals": 1,
+    "smooth": true,
+    "x_labels": false,
+    "font_size": 7.5,
+    "line_width": 1.25,
+    "baseline": false,
+    "pad_hi": 2.4,
+    "pad_lo": 2.4,
+    "legend_size": 7.5,
+    "segments": [
+     {
+      "from": 0,
+      "to": 7,
+      "label": "2023"
+     },
+     {
+      "from": 8,
+      "to": 12,
+      "label": "2024"
+     }
+    ],
+    "segment_style": {
+     "color": "#7F7F7F",
+     "italic": true,
+     "bold": false,
+     "size": 8.5
+    },
+    "annotations": [
+     {
+      "type": "channel",
+      "series": "Mid-funnel share\n(non-home)",
+      "offset": 3.6,
+      "color": "#7F7F7F"
+     },
+     {
+      "type": "circle",
+      "series": "Mid-funnel share\n(non-home)",
+      "points": [
+       1
+      ],
+      "color": "green",
+      "w": 0.5,
+      "h": 0.24
+     },
+     {
+      "type": "circle",
+      "series": "Mid-funnel share\n(non-home)",
+      "points": [
+       2
+      ],
+      "color": "green",
+      "w": 0.5,
+      "h": 0.24
+     },
+     {
+      "type": "circle",
+      "series": "Mid-funnel share\n(non-home)",
+      "points": [
+       3
+      ],
+      "color": "green",
+      "w": 0.5,
+      "h": 0.24
+     },
+     {
+      "type": "circle",
+      "series": "Mid-funnel share\n(non-home)",
+      "points": [
+       10
+      ],
+      "color": "red",
+      "w": 0.5,
+      "h": 0.24
+     },
+     {
+      "type": "circle",
+      "series": "Mid-funnel share\n(non-home)",
+      "points": [
+       11
+      ],
+      "color": "red",
+      "w": 0.5,
+      "h": 0.24
+     },
+     {
+      "type": "circle",
+      "series": "Mid-funnel share\n(non-home)",
+      "points": [
+       12
+      ],
+      "color": "red",
+      "w": 0.5,
+      "h": 0.24
+     },
+     {
+      "type": "note",
+      "text": "VS off-peak",
+      "value": -1.5,
+      "series": "Mid-funnel share\n(non-home)",
+      "point": 0,
+      "dx": 0.1,
+      "dy": -0.45
+     },
+     {
+      "type": "note",
+      "text": "VS off-peak",
+      "value": -3.0,
+      "series": "Mid-funnel share\n(non-home)",
+      "point": 1,
+      "dx": 0.25,
+      "dy": -0.5
+     },
+     {
+      "type": "note",
+      "text": "VS off-peak",
+      "value": 0.9,
+      "series": "Mid-funnel share\n(non-home)",
+      "point": 3,
+      "dx": 0.05,
+      "dy": 0.42
+     },
+     {
+      "type": "note",
+      "text": "VS off-peak",
+      "value": -3.8,
+      "series": "Mid-funnel share\n(non-home)",
+      "point": 10,
+      "dx": 0.0,
+      "dy": -0.5
+     },
+     {
+      "type": "note",
+      "text": "VS off-peak",
+      "value": -6.2,
+      "series": "Mid-funnel share\n(non-home)",
+      "point": 11,
+      "dx": 0.0,
+      "dy": -0.42
+     },
+     {
+      "type": "note",
+      "text": "VS off-peak",
+      "value": -3.1,
+      "series": "Mid-funnel share\n(non-home)",
+      "point": 12,
+      "dx": 0.0,
+      "dy": -0.5
+     },
+     {
+      "type": "arrow",
+      "from": [
+       0.165,
+       0.5
+      ],
+      "to": [
+       0.21,
+       0.62
+      ]
+     },
+     {
+      "type": "arrow",
+      "from": [
+       0.775,
+       0.42
+      ],
+      "to": [
+       0.83,
+       0.55
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "box": [
+    0,
+    0.55,
+    1,
+    0.45
+   ],
+   "chart": {
+    "kind": "column_stack",
+    "data": {
+     "categories": [
+      "a.23 Mid-Mar",
+      "b.23 Pre-sale",
+      "c.23 Main",
+      "d.23 Return",
+      "e.23 Off-peak",
+      "f.23 Double-11",
+      "g.23 D11 Return",
+      "h.23 Dec",
+      "i.24 Mar",
+      "j.24 Mid-Mar",
+      "k.24 Pre-sale",
+      "l.24 Main",
+      "m.24 Return"
+     ],
+     "series": [
+      {
+       "name": "Self-serve spend",
+       "values": [
+        2.1,
+        2.4,
+        2.4,
+        2.3,
+        2.9,
+        3.2,
+        3.5,
+        3.3,
+        2.9,
+        3.1,
+        3.4,
+        3.2,
+        3.1
+       ],
+       "point_colors": [
+        "#9CAECC",
+        "#4472C0",
+        "#4472C0",
+        "#9CAECC",
+        "#9CAECC",
+        "#4472C0",
+        "#4472C0",
+        "#4472C0",
+        "#9CAECC",
+        "#9CAECC",
+        "#4472C0",
+        "#4472C0",
+        "#4472C0"
+       ]
+      },
+      {
+       "name": "Managed spend",
+       "values": [
+        3.3,
+        3.9,
+        4.3,
+        3.4,
+        4.3,
+        5.7,
+        5.1,
+        4.9,
+        5.2,
+        4.5,
+        5.5,
+        5.6,
+        4.5
+       ],
+       "point_colors": [
+        "#D9D9D9",
+        "#A6A6A6",
+        "#A6A6A6",
+        "#D9D9D9",
+        "#D9D9D9",
+        "#A6A6A6",
+        "#A6A6A6",
+        "#A6A6A6",
+        "#D9D9D9",
+        "#D9D9D9",
+        "#A6A6A6",
+        "#A6A6A6",
+        "#A6A6A6"
+       ]
+      }
+     ]
+    },
+    "decimals": 1,
+    "font_size": 7.5,
+    "x_label_size": 6,
+    "x_label_bold": false,
+    "legend_size": 7.5,
+    "segments": [
+     {
+      "from": 0,
+      "to": 7
+     },
+     {
+      "from": 8,
+      "to": 12
+     }
+    ]
+   }
+  }
+ ],
+ "series_colors": {
+  "Self-serve YoY": "#4472C0",
+  "Managed YoY": "#ED7D31",
+  "Mid-funnel share\n(non-home)": "#6F9FD8",
+  "Self-serve spend": "#4472C0",
+  "Managed spend": "#A6A6A6"
+ }
+}

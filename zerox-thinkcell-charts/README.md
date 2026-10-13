@@ -200,6 +200,38 @@ SUITE_SOURCE="$(cd .. && pwd -P)"
 `highlight` 支持 `circle`、`box`、`arrow`；`callouts` 支持引线气泡。定位可用支持图型的 `category`、图上已有标签 `anchor`（重名时用 `nth`），或图表区比例坐标 `at: [x,y]`。详细字段与可复用写法见 [版面规范](docs/STYLE_SPEC.md) 和 [高亮示例](examples/stacked_highlight.json)。
 
 <a id="themes"></a>
+## 多图拼版（dashboard / facet）
+
+一页放多张小图，常用于运营看板和周报。完整字段说明见 [docs/DASHBOARD.md](docs/DASHBOARD.md)。
+
+- `type: "dashboard"`：
+  - 区域可以用比例坐标自由划分，也可以按网格排；
+  - 子图类型可以混用（堆积面积 / 折线 / 堆积柱 / 成对条形）；
+  - 每张子图带红色下划线小标题；
+  - 总标题前可以加黄底标签块，页脚统一写来源。
+- `type: "facet"`：
+  - 按“行 × 列”分面，带行表头和列表头；
+  - 纵轴可以同一行共用，也可以各自独立；
+  - 行列之间用虚线分隔。
+- 每张子图都可以加：
+  - 多层共享横轴，例如周 / 月 / 年三层；
+  - 分段虚线和分段名（By Q / By M / 年份）；
+  - 条件着色：≥ 时间进度标绿，低于时间进度标红，对比期标灰；并画时间进度虚线，底部标 ▲ 数值；
+  - 红圈、红色斜箭头、自动按正负着色的“VS … ±pp”批注；
+  - 堆积面积色块内的“值 (占比%)”标签、右侧系列名、平滑曲线。
+- 新增配色 `ops_bright`（蓝 / 橙 / 绿 / 灰，取自运营看板参考图，[约定]），在 spec 里写 `"palette": "ops_bright"` 就能用，不影响原有的 8 套主题。
+- `tc_advise.py` 发现数据同时有多个指标、多个分组和时间维度时，会首选推荐 facet，并生成草稿；`tc_validate.py` 也会检查拼版 spec。
+
+| | |
+|---|---|
+| ![](examples/dashboards/dash_three_column.png) | ![](examples/dashboards/facet_country_metric.png) |
+| ![](examples/dashboards/facet_target_bars.png) | ![](examples/dashboards/dash_shared_axis_layers.png) |
+
+```bash
+.venv/bin/python scripts/make_dashboards.py          # 重新生成 5 个示例 spec（示意数据）
+.venv/bin/python scripts/tc_render.py examples/dashboards/*.json -o dashboards.pptx --png examples/dashboards
+```
+
 ## 8 套配色主题
 
 主题会改变语义色，保持图型与版面。默认 `consulting_navy`；命令行 `--theme` 优先于每页的 `theme`。显式设置 `palette` 的页面仍会保留自己的系列色板。

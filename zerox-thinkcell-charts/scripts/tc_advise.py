@@ -463,8 +463,35 @@ def build(t, A, title):
 
 # ------------------------------------------------------------ 主流程
 NAMES = {}
+def multi_panel(A):
+    """多指标 × 多分组（× 时间）的长表 → 推荐分面 / 拼版，并给出可渲染的 facet 草稿。"""
+    if A.get("shape") == "schedule" or A["n_measures"] < 2 or A["n_dims"] < 2: return None
+    hdr, kinds, body = A["headers"], A["kinds"], A["rows"]
+    dims = [i for i, k in enumerate(kinds) if k in ("text", "period")]; meas = [i for i, k in enumerate(kinds) if k == "num"]
+    ti = next((i for i in dims if kinds[i] == "period"), None)
+    if ti is None: return None
+    gi = next(i for i in dims if i != ti)
+    periods = list(dict.fromkeys(str(r[ti]) for r in body)); groups = list(dict.fromkeys(str(r[gi]) for r in body))
+    if len(periods) < 3 or not 2 <= len(groups) <= 8: return None
+    val = {(str(r[gi]), str(r[ti]), m): pnum(r[m]) for r in body for m in meas}
+    rows_ = [dict(label=hdr[m], chart=dict(kind="lines", decimals=0 if all((val.get((g, t, m)) or 0) >= 100 for g in groups for t in periods) else 1)) for m in meas]
+    cells = [[dict(categories=periods, series=[dict(name=hdr[m], values=[val.get((g, t, m)) for t in periods])]) for g in groups] for m in meas]
+    spec = dict(type="facet", title=f"{' / '.join(hdr[m] for m in meas)} by {hdr[gi]}", cols=groups, rows=rows_, cells=cells, shared_y="row")
+    recs = [dict(type="facet", score=95, why=f"有 {len(meas)} 个指标 × {len(groups)} 个{hdr[gi]} × {len(periods)} 个时间点：一张图放不下，按“行=指标、列={hdr[gi]}”分面，同行共用纵轴便于横向比较", emphasis="同行共用纵轴；用 segments 标注分段、annotations 圈出异常", marks="小图标题、行表头、虚线分隔"),
+            dict(type="dashboard", score=80, why="若各指标想用不同图型（如构成用堆积面积、单价用折线），用自由拼版 dashboard 手动划分区域", emphasis="每个子图一个红色下划线小标题", marks="统一页脚来源"),
+            dict(type="line", score=60, why=f"只看一个指标时，用多折线（每个{hdr[gi]}一条）", emphasis="", marks="")]
+    return recs, spec
 def advise(rows, intent=""):
-    A = analyse(rows); intents = parse_intent(intent); ins, zh = insights(A)
+    A = analyse(rows)
+    mp = multi_panel(A)
+    if mp:
+        import tc_validate
+        recs, spec = mp; ins = [f"数据含 {A['n_measures']} 个指标、多个分组和时间维度，建议多图拼版"]
+        for c in recs: c["title"] = spec["title"]
+        return dict(features=dict({k: A.get(k) for k in ("layout", "n_rows", "n_dims", "n_measures", "dims", "measures", "n_cats", "n_series", "time", "has_neg", "mixed_sign", "bridge",
+                                  "bridge_balanced", "subtotal_idx", "sums_100", "single_sum_100", "two_points", "extreme_ratio", "max_label_len", "has_missing", "unit", "roles", "dim2", "stage_like")}, layout="长表多指标 × 分组 × 时间（建议分面）", target=False, range=False, width=False, schedule=False), intents=parse_intent(intent), intent_text=intent,
+                    conclusions=ins, conclusion_source="从数据推断", recommendations=[dict(rank=i + 1, **c) for i, c in enumerate(recs)], spec=spec, spec_validation=tc_validate.validate(spec))
+    intents = parse_intent(intent); ins, zh = insights(A)
     C = sorted(candidates(A, intents).values(), key=lambda c: -c["score"])
     top = []
     for c in C:

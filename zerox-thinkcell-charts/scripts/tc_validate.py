@@ -106,6 +106,10 @@ class V:
         import tc_more; from tc_core import RENDER
         if t not in RENDER:
             self.fatal(f"不认识的图表类型 \"{t}\"。", "从 docs/CATALOG.md 的 55 种里选一个 type。"); return
+        if t in ("dashboard", "facet"):
+            if not self.spec.get("source"): self.warn("没有填 source（数据来源），页脚会显示红字提醒。", '加 "source": "..."。')
+            if not self.spec.get("title"): self.warn("拼版页没有总标题。", "加一句总标题，可配 title_tag 标签块。")
+            return getattr(self, "c_" + t)()
         if "data" not in self.spec or not isinstance(self.spec.get("data"), dict):
             self.fatal("缺少 data 对象。", "参考 examples/<type>.json 的 data 写法。"); return
         if not self.spec.get("source"): self.warn("没有填 source（数据来源），图上会显示红字提醒。", '加 "source": "公司年报 2025"。')
@@ -410,6 +414,81 @@ class V:
             for v in x.get("values") or []:
                 if isinstance(v, dict) and "harvey" in v and not (_num(v["harvey"]) and 0 <= v["harvey"] <= 4): self.fatal(f"哈维球取值要在 0–4 之间（0=空，4=满），“{x.get('name')}”里有 {v['harvey']}。")
     def generic(self): pass
+    # ---- 多图拼版 ----
+    def _mini(self, kind, d, where):
+        KINDS = ("area_stack", "lines", "column_stack", "bars_pair")
+        if kind not in KINDS: self.fatal(f"{where} 的 chart.kind=\"{kind}\" 不认识，只能是 {' / '.join(KINDS)}。"); return 0
+        if not isinstance(d, dict): self.fatal(f"{where} 缺少 data。", ex='"data": {"categories": ["Q1","Q2"], "series": [{"name":"Team A","values":[1,2]}]}'); return 0
+        if kind == "bars_pair":
+            rows = d["rows"] if "rows" in d else [d]
+            for r in rows:
+                if r is None: continue
+                if not any(k in r for k in ("value", "compare")): self.fatal(f"{where} 成对条形缺少 value / compare。", ex='{"value": 54.1, "compare": 56.1}')
+                for k in ("value", "compare"):
+                    if k in r and r[k] is not None and not _num(r[k]): self.fatal(f"{where}.{k} 应该是数字（百分比写成 54.1，不要带 %）。")
+            return 1
+        c = d.get("categories"); S = d.get("series")
+        if not isinstance(c, list) or not c: self.fatal(f"{where} 缺少 categories（横轴）。", ex='"categories": ["25-Q1", "25-Q2"]'); return 0
+        if not isinstance(S, list) or not S: self.fatal(f"{where} 缺少 series。", ex='"series": [{"name":"Team A","values":[1,2]}]'); return 0
+        for k, s in enumerate(S):
+            if not isinstance(s, dict) or "values" not in s: self.fatal(f"{where}.series[{k}] 缺少 values。"); continue
+            self.nums(s["values"], f"{where}.series[{k}].values", len(c), nonneg=kind != "lines", allow_none=kind == "lines")
+            if kind == "column_stack" and s.get("point_colors") is not None and len(s["point_colors"]) != len(c): self.fatal(f"{where}.series[{k}].point_colors 长度要等于类别数 {len(c)}。")
+        if len(c) > 24: self.warn(f"{where} 横轴有 {len(c)} 个点，拼版里会很挤。", "用 x_label_every 隔点显示标签，或缩短区间。")
+        if kind != "lines" and len(S) > 6: self.warn(f"{where} 有 {len(S)} 个堆叠系列，小图里难以区分。", "合并为 Others。")
+        return len(c)
+    def _deco(self, ch, n, where, names):
+        segs = ch.get("segments", [])
+        for s in segs:
+            if not (isinstance(s, dict) and isinstance(s.get("from"), int) and isinstance(s.get("to"), int) and 0 <= s["from"] <= s["to"] < max(n, 1)):
+                self.fatal(f"{where} 的分段 segments 写错：{json.dumps(s, ensure_ascii=False)}；from/to 是类别序号（0 开始），不能超过 {n-1}。", ex='{"from": 0, "to": 2, "label": "By Q"}')
+        for a in ch.get("annotations", []):
+            t = a.get("type")
+            if t not in ("circle", "arrow", "note", "channel", "text"): self.fatal(f"{where} 有不认识的标注类型 {t}（可用 circle / arrow / note / channel / text）。"); continue
+            if a.get("series") is not None and a["series"] not in names: self.fatal(f"{where} 的标注引用了不存在的系列“{a['series']}”。", f"系列名要和 series.name 一字不差：{names}")
+            pts = a.get("points", []) + ([a["point"]] if "point" in a else [])
+            if any(not isinstance(i, int) or not 0 <= i < n for i in pts): self.fatal(f"{where} 的标注点序号超出范围 0–{n-1}：{pts}。")
+            if t == "arrow" and not (isinstance(a.get("from"), list) and isinstance(a.get("to"), list)): self.fatal(f"{where} 的箭头需要 from/to（面板内 0–1 比例坐标）。", ex='{"type":"arrow","from":[0.6,0.1],"to":[0.7,0.3]}')
+            if t == "note" and "point" not in a and "at" not in a: self.fatal(f"{where} 的批注需要 point（挂在某个数据点）或 at（比例坐标）。")
+            if t == "channel" and a.get("series") is None: self.fatal(f"{where} 的趋势通道需要指定 series。")
+    def c_dashboard(self):
+        P = self.spec.get("panels")
+        if not isinstance(P, list) or not P: self.fatal("拼版缺少 panels（子图列表）。", ex='"panels": [{"box":[0,0,0.5,1], "title":"Daily Revenue", "chart":{"kind":"area_stack","data":{...}}}]'); return
+        if len(P) > 9: self.warn(f"一页放了 {len(P)} 个子图，太密。", "控制在 6 个以内，或拆成两页。")
+        g = self.spec.get("grid")
+        for k, p in enumerate(P):
+            w = f"panels[{k}]"
+            if "box" in p:
+                b = p["box"]
+                if not (isinstance(b, list) and len(b) == 4 and all(_num(x) for x in b) and b[0] >= 0 and b[1] >= 0 and b[0]+b[2] <= 1.001 and b[1]+b[3] <= 1.001): self.fatal(f"{w}.box 应为 [x, y, 宽, 高]（内容区的 0–1 比例），且不能超出边界：{b}。")
+            elif "cell" in p:
+                if not g: self.fatal(f"{w} 用了 cell，但页面没有 grid。", ex='"grid": {"rows": 2, "cols": 3}')
+                else:
+                    r, c = p["cell"]; rs, cs = p.get("span", [1, 1])
+                    if r+rs > g["rows"] or c+cs > g["cols"]: self.fatal(f"{w} 的 cell/span 超出网格 {g['rows']}×{g['cols']}。")
+            ch = p.get("chart") or {}
+            n = self._mini(ch.get("kind"), ch.get("data"), w)
+            if n: self._deco(ch, n, w, [s.get("name") for s in (ch.get("data") or {}).get("series", [])])
+        boxes = [p["box"] for p in P if isinstance(p.get("box"), list) and len(p["box"]) == 4]
+        for i in range(len(boxes)):
+            for j in range(i+1, len(boxes)):
+                a, b = boxes[i], boxes[j]
+                if a[0] < b[0]+b[2]-0.01 and b[0] < a[0]+a[2]-0.01 and a[1] < b[1]+b[3]-0.01 and b[1] < a[1]+a[3]-0.01: self.warn(f"panels[{i}] 和 panels[{j}] 的区域重叠，子图会压在一起。", "调整 box。")
+    def c_facet(self):
+        rows, cols, cells = self.spec.get("rows"), self.spec.get("cols"), self.spec.get("cells")
+        if not isinstance(rows, list) or not rows: self.fatal("分面缺少 rows（行：指标或分组）。", ex='"rows": [{"label":"Daily Rev","chart":{"kind":"area_stack"}}]'); return
+        if not isinstance(cols, list) or not cols: self.fatal("分面缺少 cols（列名）。", ex='"cols": ["Country 1", "Country 2"]'); return
+        if not isinstance(cells, list) or len(cells) != len(rows): self.fatal(f"cells 要有 {len(rows)} 行（和 rows 一样多），每行 {len(cols)} 格。"); return
+        if len(rows)*len(cols) > 60: self.warn(f"分面有 {len(rows)}×{len(cols)} = {len(rows)*len(cols)} 格，数字会小到看不清。", "减少行或列。")
+        for i, (r, row) in enumerate(zip(rows, cells)):
+            kind = (r.get("chart") or {}).get("kind")
+            if not isinstance(row, list) or len(row) != len(cols): self.fatal(f"cells[{i}] 有 {len(row) if isinstance(row, list) else '?'} 格，但有 {len(cols)} 列。", "没有数据的格子写 null。"); continue
+            if kind == "bars_pair":
+                rule = r["chart"].get("rule", {})
+                if rule.get("threshold") is not None and not _num(rule["threshold"]): self.fatal(f"rows[{i}] 的 rule.threshold（时间进度）应该是数字。")
+            for j, d in enumerate(row):
+                if d is None: continue
+                self._mini(kind, d, f"cells[{i}][{j}]")
 
 def validate(spec):
     v = V(spec)

@@ -4174,3 +4174,38 @@
 }
 ```
 </details>
+
+
+## 多图拼版（dashboard / facet）
+
+一页多图：自由区域或网格拼版（`dashboard`）、行×列分面（`facet`）；支持分段虚线、多层共享横轴、条件着色、时间进度线、圈注/箭头/批注。完整字段见 [DASHBOARD.md](DASHBOARD.md)。
+
+### `dash_shared_axis_layers`（type: `dashboard`）
+
+- **示例**：[examples/dashboards/dash_shared_axis_layers.json](../examples/dashboards/dash_shared_axis_layers.json)
+
+![dash_shared_axis_layers](../examples/dashboards/dash_shared_axis_layers.png)
+
+### `dash_three_column`（type: `dashboard`）
+
+- **示例**：[examples/dashboards/dash_three_column.json](../examples/dashboards/dash_three_column.json)
+
+![dash_three_column](../examples/dashboards/dash_three_column.png)
+
+### `dash_three_column_circle`（type: `dashboard`）
+
+- **示例**：[examples/dashboards/dash_three_column_circle.json](../examples/dashboards/dash_three_column_circle.json)
+
+![dash_three_column_circle](../examples/dashboards/dash_three_column_circle.png)
+
+### `facet_country_metric`（type: `facet`）
+
+- **示例**：[examples/dashboards/facet_country_metric.json](../examples/dashboards/facet_country_metric.json)
+
+![facet_country_metric](../examples/dashboards/facet_country_metric.png)
+
+### `facet_target_bars`（type: `facet`）
+
+- **示例**：[examples/dashboards/facet_target_bars.json](../examples/dashboards/facet_target_bars.json)
+
+![facet_target_bars](../examples/dashboards/facet_target_bars.png)
