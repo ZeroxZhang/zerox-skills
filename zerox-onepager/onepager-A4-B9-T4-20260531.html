@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zerox-onepager — AI驱动的信息可视化技能</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-smiley-sans-oblique/font.css">
+
+    <style>
+        /* ============================================
+           SVG ICON SYSTEM
+           ============================================ */
+        .icon { width: 24px; height: 24px; display: inline-block; vertical-align: middle; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-lg { width: 36px; height: 36px; }
+
+        /* ============================================
+           BASE RESET & B9 GOOGLE NATIVE TOKENS
+           ============================================ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blue:   #4285f4;
+            --red:    #ea4335;
+            --yellow: #fbbc04;
+            --green:  #34a853;
+            --cta:    #1a73e8;
+            --ink:    #202124;
+            --ink2:   #5f6368;
+            --surface:#f8f9fa;
+            --white:  #ffffff;
+            --border: #dadce0;
+
+            --font-display: 'Anton', 'Smiley Sans Oblique', 'Noto Sans SC', 'PingFang SC', sans-serif;
+            --font-display-cn: 'Smiley Sans Oblique', 'Noto Sans SC', 'PingFang SC', sans-serif;
+            --font-body: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+        }
+
+        /* ============================================
+           PAGE — A4 1080×1440 Full-Bleed Stack
+           ============================================ */
+        .page {
+            width: 1080px;
+            height: 1440px;
+            overflow: hidden;
+            position: relative;
+            background: var(--white);
+            font-family: var(--font-body);
+            color: var(--ink);
+            display: grid;
+            grid-template-rows: 560px 340px 320px 220px;
+            align-content: start;
+        }
+
+        /* ============================================
+           HERO — Red full-bleed, 560px
+           P1 GIANT TYPE + P3 STROKE TEXT + P6 STICKER
+           ============================================ */
+        .hero {
+            background: var(--red);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 48px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* P6 Sticker — rotated "v3.0" */
+        .sticker-v {
+            position: absolute;
+            top: 44px; right: 60px;
+            font-family: var(--font-display);
+            font-size: 18px; font-weight: 900;
+            background: var(--yellow);
+            color: var(--ink);
+            padding: 10px 20px;
+            transform: rotate(5deg);
+            z-index: 2;
+            letter-spacing: 0.02em;
+            pointer-events: none;
+        }
+
+        /* P6 Sticker — CLAUDE CODE SKILL pill */
+        .sticker-skill {
+            position: absolute;
+            bottom: 44px; left: 64px;
+            font-family: var(--font-mono);
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: var(--white);
+            color: var(--red);
+            padding: 6px 18px;
+            border-radius: 100px;
+            transform: rotate(-3deg);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Eyebrow with horizontal rule decoration (new pattern) */
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+            opacity: 0.85;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-eyebrow::before,
+        .hero-eyebrow::after {
+            content: '';
+            flex: 0 0 56px;
+            height: 1.5px;
+            background: rgba(255,255,255,0.5);
+        }
+
+        /* Hero title with A3 stroke/fill mix */
+        h1.hero-title {
+            font-family: var(--font-display);
+            font-size: 124px;
+            font-weight: 900;
+            line-height: 0.88;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title-fill { display: block; }
+        .title-stroke {
+            display: block;
+            -webkit-text-stroke: 3px rgba(255,255,255,0.82);
+            color: transparent;
+            margin-top: -10px;
+        }
+
+        .hero-sub {
+            font-family: var(--font-body);
+            font-size: 19px; font-weight: 400;
+            opacity: 0.9;
+            margin-top: 20px;
+            letter-spacing: 0.04em;
+            position: relative;
+            z-index: 1;
+        }
+        /* Accent dot after subtitle (new pattern) */
+        .hero-sub .dot {
+            display: inline-block;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--white);
+            margin: 0 12px;
+            opacity: 0.7;
+            vertical-align: middle;
+        }
+
+        /* BigNumber row */
+        .hero-bignums {
+            display: flex;
+            gap: 52px;
+            margin-top: 32px;
+            position: relative;
+            z-index: 1;
+        }
+        .hn-item { text-align: center; }
+        .hn-num {
+            font-family: var(--font-display);
+            font-size: 64px; font-weight: 900;
+            line-height: 1; letter-spacing: -0.02em;
+        }
+        .hn-label {
+            font-family: var(--font-mono);
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           BLOCK 1 — White + border rhythm, 340px
+           NEW PATTERN: border-based section separation
+           P4 KICKER behind
+           ============================================ */
+        .block-white {
+            background: var(--white);
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            padding: 0 80px;
+            position: relative;
+            overflow: hidden;
+            border-top: 1.5px solid var(--ink);
+            border-bottom: 1.5px solid var(--ink);
+        }
+
+        /* P4 Kicker — upgraded: 220px, partially off-viewport */
+        .kicker-01 {
+            position: absolute;
+            right: 32px;
+            top: -16px;
+            font-family: var(--font-display);
+            font-size: 220px;
+            font-weight: 900;
+            line-height: 0.8;
+            color: var(--ink);
+            opacity: 0.06;
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: -0.05em;
+        }
+
+        .block-white .content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 5fr 7fr;
+            gap: 56px;
+            align-items: start;
+        }
+
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: inline-block;
+            padding: 5px 12px;
+            border: 1.5px solid var(--ink);
+            border-radius: 100px;
+            margin-bottom: 20px;
+            color: var(--ink2);
+        }
+
+        .section-heading {
+            font-family: var(--font-display-cn);
+            font-size: 64px;
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+        }
+
+        /* Feature List Rows (new pattern) */
+        .feature-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .f-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 16px 0;
+            border-bottom: 1.5px solid var(--border);
+        }
+        .f-row:first-child { border-top: 1.5px solid var(--border); }
+        .f-row-num {
+            font-family: var(--font-mono);
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--ink2);
+            min-width: 24px;
+        }
+        .f-row-text {
+            font-family: var(--font-display-cn);
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            flex: 0 1 auto;
+            min-width: 280px;
+        }
+        .f-row-arrow {
+            font-family: var(--font-mono);
+            font-size: 18px;
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        /* ============================================
+           BLOCK 2 — Blue full-bleed, 320px
+           P4 KICKER + capability grid
+           ============================================ */
+        .block-blue {
+            background: var(--blue);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            padding: 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kicker-02 {
+            position: absolute;
+            left: 28px;
+            bottom: -28px;
+            font-family: var(--font-display);
+            font-size: 200px;
+            font-weight: 900;
+            line-height: 0.8;
+            color: rgba(255,255,255,0.07);
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: -0.05em;
+        }
+
+        .block-blue .content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .block-blue .section-heading {
+            color: var(--white);
+            margin-bottom: 24px;
+        }
+
+        .cap-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 40px;
+        }
+
+        .cap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .cap-icon {
+            flex-shrink: 0;
+            margin-top: 2px;
+            opacity: 0.85;
+        }
+        .cap-text h4 {
+            font-family: var(--font-body);
+            font-size: 16px; font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .cap-text p {
+            font-family: var(--font-body);
+            font-size: 13px; font-weight: 400;
+            opacity: 0.82;
+            line-height: 1.5;
+        }
+
+        /* ============================================
+           CTA — White + yellow top bar, 220px
+           Mono metadata + accent dot
+           ============================================ */
+        .cta-block {
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 80px;
+            border-top: 6px solid var(--yellow);
+        }
+
+        .cta-left {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cta-cmd {
+            font-family: var(--font-mono);
+            font-size: 18px; font-weight: 500;
+            color: var(--ink);
+            background: var(--surface);
+            padding: 12px 24px;
+            display: inline-block;
+            letter-spacing: 0.02em;
+        }
+
+        .cta-left .cta-url {
+            font-family: var(--font-mono);
+            font-size: 12px; font-weight: 500;
+            color: var(--ink2);
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* Accent dot before URL (new pattern) */
+        .cta-left .cta-url::before {
+            content: '';
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--blue);
+            display: inline-block;
+        }
+
+        .cta-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .cta-btn {
+            font-family: var(--font-display);
+            font-size: 17px; font-weight: 900;
+            color: var(--red);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 14px 32px;
+            border: 3px solid var(--red);
+            background: transparent;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-sig {
+            font-family: var(--font-mono);
+            font-size: 11px; font-weight: 500;
+            color: var(--ink2);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .cta-sig .dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            margin: 0 6px;
+            vertical-align: middle;
+        }
+
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <defs>
+        <symbol id="icon-input" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+        <symbol id="icon-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="9" x2="9" y2="21"/></symbol>
+        <symbol id="icon-palette" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="7" cy="14" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="15" r="1.5" fill="currentColor" stroke="none"/></symbol>
+        <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></symbol>
+        <symbol id="icon-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    </defs>
+</svg>
+
+<div class="page">
+
+    <!-- ================================================
+         HERO — Red full-bleed, 560px
+         P1 + P3 + P6 + eyebrow horizontal rule + accent dot
+         ================================================ -->
+    <section class="hero">
+        <div class="sticker-v">v3.0</div>
+        <div class="sticker-skill">Claude Code Skill</div>
+
+        <!-- Eyebrow with horizontal rule decoration (NEW) -->
+        <div class="hero-eyebrow">文字 · 设计 · 代码</div>
+
+        <!-- P3 Stroke/Fill Mix Title -->
+        <h1 class="hero-title">
+            <span class="title-fill">ONEPAGER</span>
+            <span class="title-stroke" aria-hidden="true">ONEPAGER</span>
+        </h1>
+
+        <p class="hero-sub">AI 驱动的信息可视化技能<span class="dot"></span>文字到海报，一步到位</p>
+
+        <!-- BigNumbers with mono labels (NEW) -->
+        <div class="bignum-module hero-bignums">
+            <div class="hn-item">
+                <div class="hn-num">9</div>
+                <div class="hn-label">设计风格</div>
+            </div>
+            <div class="hn-item">
+                <div class="hn-num">4</div>
+                <div class="hn-label">内容类型</div>
+            </div>
+            <div class="hn-item">
+                <div class="hn-num">4</div>
+                <div class="hn-label">尺寸规格</div>
+            </div>
+            <div class="hn-item">
+                <div class="hn-num">3</div>
+                <div class="hn-label">信息密度</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         BLOCK 1 — White + border rhythm, 340px
+         NEW: border-based sections + Feature List Rows
+         P4 Kicker "01" behind
+         ================================================ -->
+    <section class="block-white">
+        <div class="kicker-01" aria-hidden="true">01</div>
+        <div class="content">
+            <div>
+                <span class="section-tag">01 · INPUT</span>
+                <h2 class="section-heading">扔什么<br>都能用</h2>
+            </div>
+            <div class="feature-rows">
+                <div class="f-row">
+                    <span class="f-row-num">A.</span>
+                    <span class="f-row-text">纯文本段落</span>
+                    <span class="f-row-arrow">→</span>
+                </div>
+                <div class="f-row">
+                    <span class="f-row-num">B.</span>
+                    <span class="f-row-text">Markdown 结构化大纲</span>
+                    <span class="f-row-arrow">→</span>
+                </div>
+                <div class="f-row">
+                    <span class="f-row-num">C.</span>
+                    <span class="f-row-text">PDF 文档自动抽取</span>
+                    <span class="f-row-arrow">→</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         BLOCK 2 — Blue full-bleed, 320px
+         P2 color block + P4 Kicker "02" behind
+         ================================================ -->
+    <section class="block-blue">
+        <div class="kicker-02" aria-hidden="true">02</div>
+        <div class="content">
+            <span class="section-tag" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.5)">02 · CAPABILITY</span>
+            <h2 class="section-heading">专业设计，零门槛</h2>
+            <div class="cap-grid">
+                <div class="cap-item">
+                    <svg class="icon icon-lg cap-icon"><use href="#icon-layout"/></svg>
+                    <div class="cap-text">
+                        <h4>T1-T4 类型系统</h4>
+                        <p>商业说服 / 使用指南 / 信息图 / 宣传海报 — 含 focus 子参数精准适配</p>
+                    </div>
+                </div>
+                <div class="cap-item">
+                    <svg class="icon icon-lg cap-icon"><use href="#icon-palette"/></svg>
+                    <div class="cap-text">
+                        <h4>9 种设计风格</h4>
+                        <p>瑞士精密 · 谷歌原生 · 暗夜编辑 · 赛博街道 · 极简东方 · 数据新闻…</p>
+                    </div>
+                </div>
+                <div class="cap-item">
+                    <svg class="icon icon-lg cap-icon"><use href="#icon-zap"/></svg>
+                    <div class="cap-text">
+                        <h4>智能内容重构</h4>
+                        <p>MECE + 金字塔原理 + SCQA 叙事 + So What 测试 — 咨询级内容引擎</p>
+                    </div>
+                </div>
+                <div class="cap-item">
+                    <svg class="icon icon-lg cap-icon"><use href="#icon-shield"/></svg>
+                    <div class="cap-text">
+                        <h4>自动质检 + 截图</h4>
+                        <p>Playwright 渲染高清 PNG — 配色/排版/对比度检查一步到位</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+         CTA — White + yellow top bar, 220px
+         Mono command + accent dots + hard-border button
+         ================================================ -->
+    <footer class="cta-block">
+        <div class="cta-left">
+            <span class="cta-cmd">/zerox-onepager</span>
+            <span class="cta-url">github.com/ZeroxZhang/zerox-skills/tree/main/zerox-onepager</span>
+        </div>
+        <div class="cta-right">
+            <span class="cta-btn">GET STARTED</span>
+            <span class="cta-sig"><span class="dot"></span>zerox · 2026</span>
+        </div>
+    </footer>
+
+</div>
+
+</body>
+</html>

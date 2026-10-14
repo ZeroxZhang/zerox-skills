@@ -1,0 +1,114 @@
+# 从同一内容真源制作页面
+
+从蓝图模板开始（新任务使用 `schemaVersion: 3`）：正文主张、来源、派生数值和页面关系只在蓝图维护，`pages.json` 由编译器生成。图形仍由作者构思，内容绑定不会自动产生一份完整报告，也不证明来源真实或推理成立。
+
+## 整册图表与版式规划
+
+标题链确定后、ready 校验与代表页制作前，必须统筹整册选型：在准确、清晰且适配的范围内，尽可能多地使用不同种类的图表与图示、不同类型的版式布局。
+
+通览蓝图现有的 `proves`、`visual.form/primary/selection`、`visual.layout/regions`；复合证据页同时看各 panel 的形式与证明分工。核对不同任务是否机械套用同一种图型或结构，主动展开尚未使用的适配候选，并把选择回写蓝图。相同图型可搭配不同布局，同一布局也可承载不同图型，两项分别检查。已有内容需精确查值或以文字论证时，保留表格与文字，不为增加种数改造证据身份。
+
+复用现有字段，不另建一套页面台账：
+
+- 图型选择写入 `visual.selection.reason`；存在实质备选时成对填写 `alternative/tradeoff`。复合证据页在相应 panel 的 selection 中记录。
+- 保留重复图型时用 `visual.repetitionReason` 说明具体需要，如同一组地区使用共同量尺便于逐页比较；布局选择及重复理由写入 `visual.layoutReason`，说明阅读路径与内容容量。连续比较组可在首个重复页说明整组范围，其他页引用该页，无须逐页复述。
+- “适合内容”“保持统一”“组件现成”本身不足以解释重复。若没有具体需要，且存在能保持准确、清晰的不同表达或结构，应调整选型；修改页序或证据后重新检查受影响的重复组。
+
+上述是必须执行的设计与审查要求，不是新增 schema 字段或机器种数门槛。代表页优先选择能暴露不同阅读结构风险的页面，最终还须按[多样性验收](visual-qa.md#整册多样性验收)核对实际成稿。
+
+## 来源与指标
+
+蓝图顶层 `sources` 是来源索引，键映射到 `{label, locator}`。顶层 `claims[].sourceKeys` 引用这些键；正文页用 `claimRefs` 引用主张、`metricRefs` 选择需要单独可见的指标，不手写 sourcePlan；`locator` 写实际可复查的文件/行号或来源网址及定位。每页正文必须有关键主张，原有 `kind`、期间、分母、推论及限制字段继续使用，见[证据身份](evidence-ledger.md)。
+
+每条主张可加 `metrics`。指标 id 全局唯一，公式可跨主张与页面引用；只在一处给数，图、标签和注释复用计算结果。
+
+```json
+{"sources":{"S1":{"label":"合成销售输入","locator":"inputs/synthetic.csv:L2-L3"}}}
+```
+
+下面是某条主张的 `metrics` 示例，全部是合成数据；省略的主张字段仍须按蓝图填写：
+
+```json
+{"metrics":[
+  {"id":"base","unit":"万元","decimals":0,"value":100},
+  {"id":"current","unit":"万元","decimals":0,"value":120},
+  {"id":"growth","unit":"%","decimals":1,
+   "formula":{"op":"percent_change","args":["current","base"]}}
+]}
+```
+
+`value` 与 `formula` 必须二选一；`value` 只能是有限数字，`decimals` 为0–6。计算保留未舍入值，显示时才按位数格式化，使用十进制半入（halfExpand，中点远离零）并消除显示负零；例如 0.725 显示为 0.73、2.175 显示为 2.18。指标继承所属主张的身份：预测、估计、假设或建议会出现在 `text` 的数值后（例如 `132 万元（预测）`），图中标签不能省去。内置公式运算支持：
+
+| op | 参数与结果 |
+|---|---|
+| `sum` / `multiply` | 一个或多个指标的和／积 |
+| `subtract` / `divide` | 两个指标，前项减／除以后项 |
+| `percent_change` | `[本期, 基期]`，结果为 `(本期/基期−1)×100`；基期须为正 |
+| `share` | `[部分, 总量]`，结果为 `部分/总量×100` |
+
+循环、缺引用、零除、非有限结果或任意代码都被拒绝。不自动换算单位，也不证明不同分母可以比较。这些是内置算术操作，不是分析模型白名单；回归、分位数、估值等可在可复算脚本或工作表中完成，再将结果作为有正确身份的 `value` 登记，并在主张的计算字段标明输入、方法与脚本定位。图形需用数值时读取编译后 `page.content.metrics` 中的 `value`；可见标签使用对应 `text`，不要另算一份。
+
+身份沿公式依赖传递：`fact` 不能引用任何非事实指标；`estimate` 不能引用预测、假设或建议。其他输出身份仍由作者明确选择，编译器保留不同的上游身份，例如 `132 万元（预测；含假设输入）`，不自动把主张升级为事实。`provided`、`source_checked` 等核验状态也不会改变证据身份。
+
+在标题、`proves` 和主张文本字段（如 `statement/denominator/calculation/inference/limitation`）复用关键数字时，必须引用 `{{metric:id}}`，不要重复手填。例如 `"title":"收入增长{{metric:growth}}，利润变化仍待核对"` 会编译成 `收入增长20.0%，利润变化仍待核对`。数字、单位和身份使用同一份 `metric.text`；改基数后标题、主张及图中标签一同更新。未知或不完整 token 被拒绝，不支持任意表达式。代码不会猜测自然语言里的数字，未使用 token 的手写文字仍需作者和独立审查核对。schema3 的解析使用全局指标池；读取编译结果，不把带 token 的原文与成稿直接比较。历史 schema2 仍可用 `resolveText(slide,text)`。
+
+瀑布在 `slide.waterfall.input` 保存唯一输入 `{items或records, config, options?}`，编译时调用现有内核体检并派生对账结果；作者只可另给有依据的 `residualReason`，不能手填零残差或节点数。渲染同样使用这一输入的内核报告。输入也计入内容摘要，改变桥接数据会使旧审查失效。具体数据前提见[瀑布合同](waterfall-bridge.md)。
+
+## 编译并填充叶节点
+
+```sh
+node scripts/compile_blueprint.cjs /任务/deck-blueprint.json /任务/pages.json --task /任务/task.json --snippets /任务/content-snippets.html
+```
+
+先通过蓝图 `ready` 校验，再生成 `pages.json`（`version: 4`）。编译器拒绝覆盖输入蓝图；再次运行可替换此前生成的 pages。snippets只写新文件或带编译器生成标头的旧文件，不覆盖作者片段；它只是可放入页面的绑定示例，不能当成已完成页面。
+
+目录布局的槽位和角色由目录派生：主区用 `visual.form`；支持区只有在允许文字时才默认 `html.text`。其他模块在 `visual.regions` 按目录顺序明确形式，不手填网格坐标。自定义布局写 `visual.layout: "custom"` 及自己的 `visual.regions`。自定义SVG另写 `visual.semanticType`：`comparison/trend/composition/flow/waterfall/scenario/table/qualitative/distribution/correlation/hierarchy/geographic/network`，使数据语义不因换实现而丢失。
+
+schema 3 还需 `visual.selection.relationship/reason`；存在已登记容量规则时填写 `visual.capacity`，计数是单个主展品的计划上界。形式与关系的允许组合由 `scripts/form_contract.cjs` 检查，形式专项容量维度与数值只在 `assets/form-capacity.js` 维护。已登记 SVG 渲染器输出 `data-form`；有结构化容量规则的同时输出 `data-capacity`，最终 QA 对照蓝图计划。作者自绘部分仍需人工看图核对。
+
+`selection.relationship` 与 `semanticType` 不是同一套枚举。例如表格的关系应按任务选择 `exact`、`comparison` 或 `decision`，不能直接填 `table`。在技能根目录查询所选形式的允许值，避免靠报错试填：
+
+```sh
+node -e 'const f=require("./assets/deck-forms.js"),c=require("./scripts/form_contract.cjs"),e=f.get(process.argv[1]);console.log(c.OVERRIDES[e.form]||c.RELATIONSHIPS[e.family]||[])' html.table
+```
+
+正文容器声明 `data-page-id`，值与蓝图 slide.id一致。标题使用 `.slide__title` 和 `data-content-key="title"`。把绑定放在**不含子元素的叶节点**；不要在包裹图表或整页的容器上绑定，以免填充文字时清掉展品。关键文字不得处于 clip/clip-path/mask 裁切层或使用透明文字；图形需要裁切时，把关键标签放在未裁切的文字层。
+
+```html
+<section class="slide" data-page-id="revenue" data-frame-boundary="line">
+  <header class="slide__header"><h1 class="slide__title" data-content-key="title"></h1></header>
+  <!-- 正文放入实际布局与展品，以下只示范叶节点。 -->
+  <span data-content-key="claim:revenue-change"></span>
+  <span data-content-key="metric:growth"></span>
+  <p data-content-key="limitation:revenue-change"></p>
+  <span data-content-key="source:S1"></span>
+</section>
+```
+
+装配器按正文 id核对页面，并补缺少的 `data-form/data-visual/data-proves/data-density-profile/data-layout/data-semantic-type/data-content-hash/data-page-plan-hash`；显式声明与编译结果冲突时拒绝。内容摘要追踪内容变化，页面计划摘要同时追踪区域、密度等制作意图变化，避免看似相同的页面沿用已失效的审查。更改内容先改蓝图再编译，不在最终HTML里改掉预测身份、数字或限定。
+
+`content_contract.bindings(page)` 返回所有应显示的键及标准文本：
+
+- `title`：本页标题；`claim:<id>`：主张，预测／估计／假设／建议自动带中文身份。
+- `limitation:<id>`：期间、对象、单位、分母与限制合并显示；把有共同职责的限定放一起，不为每个字段造一块小字。
+- `metric:<id>`：计算后的显示文本；`source:<key>`：来源标签与定位。
+
+每个键至少有一次真实可见、文本一致的绑定，可在多个位置复用；多次出现的每个实例都须一致且可见。多条来源可以同放一个叶节点，将 `data-content-key` 写成JSON数组，标准文本按数组顺序用“；”连接。可用helper避免转义错误：
+
+```js
+const content = require('/实际技能目录/scripts/content_contract.cjs');
+content.html(page, 'title', {tag: 'h1', className: 'slide__title'});
+content.html(page, ['source:S1', 'source:S2']);
+```
+
+浏览器取实际 `{key, text, visible}` 后由 `verifyBindings(page, facts)`核对；`key`既可为单键，也可为JSON数组字符串。未知键、遗漏、隐藏或偏离文本都会报错。完整 `verify({title, bindings}, page)`还核对实际 `.slide__title`。hash绑定只确认内容归属，不替代看图、计算前提与独立论证审查。
+
+## schema3 的计算闭包与显示选择
+
+公式依赖全部计算与核验，但不会把所有上游输入都强制塞进一页。页内显示 claimRefs、metricRefs 及标题/主张文本实际使用的 token；指标所属主张及其口径/来源也随之显示。编译结果中的 bindings 才是该页必须可见的集合。改一次全局数值后，所有引用页面一起重编。
+
+外部结果导入：`node scripts/import_analysis_results.cjs blueprint.json result-map.json new-blueprint.json task.json`。映射含实际 run `{id,command,executedAt}`、artifacts、claims；每个导入指标写 `external:{artifactRef,pointer}`，pointer 是输出 JSON 字段位置，如 `/margin`。输出必须追溯 input 与 code/model；不执行外部代码，不手填导入值。保留新蓝图供核对，原蓝图不覆盖。
+
+历史 schema2 的页内 sourcePlan/metrics 继续可读；需要新流程时用 `migrate_blueprint.cjs old.json new.json mapping.json`。迁移按页前缀改 ID，不自动去重同名主张，不自动认定旧判断已完成新审查。
+
+导入数值会在综合、生产和审查时重新读取原输出 JSON pointer，并核对未舍入 value。只改附件摘要不能绕过重导入。输出必须有实际 run、输入和代码/模型血缘，复用已登记 output 也一样。当前 CLI 导入结果应放在原蓝图目录；跨目录输出不会自动重定位附件相对路径，需要作者调整后再校验。

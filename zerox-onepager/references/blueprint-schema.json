@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ZeroxZhang/zerox-skills/blob/main/zerox-onepager/references/blueprint-schema.json",
+  "title": "Onepager Content Blueprint v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "goal",
+    "audience",
+    "core_claim",
+    "logic",
+    "modules",
+    "missing"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "goal": {"type": "string", "minLength": 1},
+    "audience": {"type": "string", "minLength": 1},
+    "core_claim": {"type": "string", "minLength": 1},
+    "logic": {
+      "type": "string",
+      "enum": ["hierarchy", "process", "comparison", "matrix", "narrative"]
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "role", "title", "summary", "source_refs"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "context",
+              "tension",
+              "question",
+              "answer",
+              "evidence",
+              "steps",
+              "comparison",
+              "cta",
+              "source"
+            ]
+          },
+          "title": {"type": "string", "minLength": 1},
+          "summary": {"type": "string", "minLength": 1},
+          "source_refs": {
+            "type": "array",
+            "items": {"type": "string"},
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "missing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field", "reason"],
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,338 @@
+/* 咨询阅读型页面组件；内联到deck，不替换导航引擎。 */
+.slide.reading{padding:32px 40px 26px;--fs-body:17px;--fs-note:12px}
+.reading .slide__title{font-size:var(--fs-title,32px);line-height:var(--lh-title,1.28);margin:0 0 8px;max-width:1180px}
+.reading .slide__lead{font-size:var(--fs-subtitle,15px)}
+.reading .slide__tracker{top:12px;font-size:12px;color:var(--gray-2)}
+.reading .slide__body{margin-top:16px;gap:20px}
+.reading .source{margin-top:12px;line-height:1.35;color:var(--gray-2)}
+.reading .slide__page{font-size:12px}
+.evidence-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:20px;min-height:0}
+.layout-split{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:24px;min-height:0}
+.layout-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;min-height:0}
+.layout-paired{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;min-height:0}
+.layout-stack{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:18px;min-height:0}
+.exhibit{display:flex;flex-direction:column;min-width:0;min-height:0}
+.exhibit h2{font-size:19px;line-height:1.3;color:var(--brand);margin:0 0 8px}
+.exhibit .unit{font-size:13px;color:var(--gray-2);margin-bottom:8px;line-height:1.4}
+.exhibit .graphic{min-height:0;flex:1;display:flex;align-items:center}
+.exhibit .graphic>svg{display:block;width:100%;height:100%}
+/* 注释保留完整语义，以自然高度排版；不要将短文字伸展成空框。
+   收短后仍须重新组织整页，不能把剩余空间默认为已完成的留白。 */
+.annotation{font-size:15px;line-height:1.45;padding:8px 0;margin-top:10px;background:transparent;align-self:start;flex:0 0 auto}
+.evidence-note{font-size:16px;line-height:1.5;color:var(--gray-1);padding:12px 0;border-bottom:1px solid var(--gray-3)}
+.evidence-note strong{display:block;color:var(--brand);font-size:18px;margin-bottom:5px}
+.decision-strip{background:var(--brand);color:var(--on-brand);padding:12px 16px;font-size:17px;line-height:1.4}
+/* 判断／依据／限定：text 槽位的三级骨架。做成组件而不是让每份报告手搓 .takeaway/.note-line，
+   是因为「依据有几条」得数得出来——散文数不出条数，也就无从判断这一格是不是只装了三分之一。
+   三级缺一即退化为散文；validation 由 qa_deck 按 html.finding 声明核对，不靠自觉。 */
+.finding{display:flex;flex-direction:column;gap:14px;min-height:0}
+.finding__verdict{margin:0;font-size:17px;line-height:1.5;color:var(--ink);font-weight:600}
+.finding__grounds{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.finding__step{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:11px;row-gap:3px;align-items:baseline}
+/* 档位条三格等宽，第 k 项亮 k 格。等宽是关键：长度会承载量级，格数只承载「在第几档」。
+   有序但没测过倍数的依据，只能用格数说，不能用长度说。 */
+.finding__rank{display:flex;gap:2px;align-self:center;padding-top:1px}
+.finding__rank i{width:7px;height:11px;background:var(--gray-4)}
+.finding__step:nth-child(1) .finding__rank i:nth-child(-n+1){background:var(--seq-3)}
+.finding__step:nth-child(2) .finding__rank i:nth-child(-n+2),
+.finding__step:nth-child(3) .finding__rank i:nth-child(-n+3),
+.finding__step:nth-child(4) .finding__rank i:nth-child(-n+4),
+.finding__step:nth-child(5) .finding__rank i:nth-child(-n+5){background:var(--seq-4)}
+.finding__step:nth-child(3) .finding__rank i:nth-child(-n+3),
+.finding__step:nth-child(4) .finding__rank i:nth-child(-n+4),
+.finding__step:nth-child(5) .finding__rank i:nth-child(-n+5){background:var(--seq-5)}
+.finding__label{font-size:15px;font-weight:600;color:var(--brand)}
+.finding__why{grid-column:2;font-size:14px;line-height:1.5;color:var(--gray-1)}
+.finding__limit{margin:0;font-size:13px;line-height:1.5;color:var(--gray-2);border-top:1px solid var(--gray-3);padding-top:10px}
+/* KPI 卡组（html.kpi）。卡数由作者决定，栅格就不能写死列数：
+   写死 repeat(4, …) 时 3 张卡会在右侧留一个空列，读者看到的是"少了一张"。
+   按列流铺满整行，n 张卡就是 n 等分。 */
+.kpi-grid{display:grid;gap:12px;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+.kpi-card{background:var(--gray-4);padding:10px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi-label{font-size:13px;line-height:1.35;color:var(--gray-1)}
+.kpi-value{font-size:23px;line-height:1.15;font-weight:600;color:var(--brand);font-variant-numeric:tabular-nums}
+.kpi-note{font-size:12.5px;line-height:1.4;color:var(--gray-2)}
+.reading .data-table{width:100%;border-collapse:collapse;font-size:var(--fs-data,16px);line-height:1.4;table-layout:fixed}
+.data-table th{font-size:var(--fs-table-head,15px);font-weight:600;text-align:left;color:var(--gray-1);border-bottom:2px solid var(--brand);padding:10px 9px;vertical-align:bottom}
+.data-table td{padding:13px 9px;border-bottom:1px solid var(--gray-3);vertical-align:top;overflow-wrap:anywhere}
+.data-table .num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--font-num)}
+.data-table .selected{background:var(--selected)}
+.data-table .group td{font-size:13px;color:var(--gray-2);background:var(--gray-4);padding:6px 9px}
+.row-label{font-weight:700;color:var(--brand)}
+.status-label{font-size:14px;font-weight:700;border:1px solid currentColor;padding:2px 7px;display:inline-block;white-space:nowrap}
+.microbar{display:block;height:5px;background:var(--gray-4);margin-top:7px}
+.microbar>i{height:100%;display:block;background:var(--accent)}
+.matrix-note{font-size:14px;line-height:1.5;color:var(--gray-1);margin-top:10px}
+@media print{.reading .graphic{break-inside:avoid}.decision-strip{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+.status-good{color:var(--good);background:var(--good-soft)}
+.status-risk{color:var(--risk);background:var(--risk-soft)}
+.status-caution{color:var(--caution);background:var(--caution-soft)}
+
+/* 分析表保留行列语义，数据条只作数值的冗余编码。 */
+.analytical-table caption{text-align:left;font-size:19px;font-weight:700;color:var(--ink);padding-bottom:12px}
+.analytical-table .column-unit{display:block;font-size:12px;font-weight:400;color:var(--gray-2);margin-top:4px}
+.analytical-table .table-bar{display:block;width:100%;height:14px;margin-top:5px}
+.analytical-table .total td{border-top:2px solid var(--brand);border-bottom:0;font-weight:700}
+.analytical-table .group th{padding:7px 9px;border-bottom:1px solid var(--gray-3);background:var(--gray-4)}
+/* 用于图表内注释已充分的页面，避免外围重色块抢占证据层级。 */
+.reading.analytical .exhibit h2{border-top:0;padding-top:0}
+.reading.analytical .annotation{background:transparent;padding:10px 0 0}
+.reading.analytical .decision-strip{background:transparent;color:var(--ink);padding:12px 0 0}
+
+/* ══════════════ 有布局引用的页：上模块网格 ══════════════
+   只有目录布局走网格，custom 由作者声明区域几何，历史页保持原样的 fr 分栏——重新打包不会因新规则变形。
+   模块用 grid-column / grid-row 落在 12×6 上，尺寸由网格决定而不是 fr 比例：
+   这样"第几栏第几行、跨几栏几行"才是可核对的合同，而不是渲染完才知道的偶然结果。
+
+   为什么不把 .slide 改成 grid：引擎用 .slide.active{display:flex} 控制翻页，
+   在 .slide 上写 display 会以更高优先级让所有未激活的页同时可见。改用 flex 固定基准，
+   标题带与正文区都是基准尺寸，正文起点恒定在版心 y=128。 */
+.slide.reading[data-layout]:not([data-layout="custom"]){--frame-rule-offset:0}
+.slide.reading[data-layout]:not([data-layout="custom"]) .slide__header{flex:0 0 var(--grid-title-band)}
+.slide.reading[data-layout]:not([data-layout="custom"]) .slide__body{
+  flex:0 0 var(--grid-body-height);height:var(--grid-body-height);margin-top:0;
+  gap:var(--grid-gutter);
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  grid-template-rows:repeat(6,minmax(0,1fr));
+}
+/* 行高钉到整数：容量核算的分母必须等于真实行高，否则"h 行装几行字"只是估算。 */
+.slide.reading[data-layout]:not([data-layout="custom"]) .bullet{line-height:var(--grid-line)}
+.slide.reading[data-layout]:not([data-layout="custom"]) .finding__verdict{line-height:var(--grid-line)}
+.slide.reading[data-layout]:not([data-layout="custom"]) .finding__why,
+.slide.reading[data-layout]:not([data-layout="custom"]) .finding__limit{line-height:var(--grid-note-line)}
+.slide.reading[data-layout]:not([data-layout="custom"]) .annotation{line-height:var(--grid-note-line)}
+.slide.reading[data-layout]:not([data-layout="custom"]) .exhibit{padding:var(--grid-module-pad)}
+/* 模块标题带 25 + 8 = 33、单位行 18 + 8 = 26：与 deck-grid.js 的 MODULE 常量同值。 */
+.slide.reading[data-layout]:not([data-layout="custom"]) .exhibit h2{line-height:25px}
+.slide.reading[data-layout]:not([data-layout="custom"]) .exhibit .unit{line-height:18px}
+
+/* ═══ @generated:layout-placement —— 由 scripts/build_layout_css.cjs 生成，不要手改 ═══ */
+/* 每条布局把正文区切成固定的 12×6 格，模块按 data-module 的出现顺序逐格落位。
+   两种画幅共用同一套拓扑（列宽行高由 --grid-* 变量换），所以这里不区分 16:9 与 4:3。
+   改布局 → 改 assets/layout-atlas/catalog.json → 跑 node scripts/build_layout_css.cjs 重新生成。
+   校验：scripts/check_layout_grid.cjs 会逐格量实际矩形，与目录的算术对账。 */
+
+/* L01 · 主证据 + 侧栏解读（单证据统领） */
+.slide.reading[data-layout="L01"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 8;grid-row:1/span 6}
+.slide.reading[data-layout="L01"] .slide__body > :nth-child(2 of [data-module]){grid-column:9/span 4;grid-row:1/span 6}
+
+/* L02 · 核心判断 + 证据展开（主辅互补） */
+.slide.reading[data-layout="L02"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 4;grid-row:1/span 6}
+.slide.reading[data-layout="L02"] .slide__body > :nth-child(2 of [data-module]){grid-column:5/span 8;grid-row:1/span 4}
+.slide.reading[data-layout="L02"] .slide__body > :nth-child(3 of [data-module]){grid-column:5/span 8;grid-row:5/span 2}
+
+/* L03 · 结论横带 + 三项支撑（主辅互补） */
+.slide.reading[data-layout="L03"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 2}
+.slide.reading[data-layout="L03"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 4;grid-row:3/span 4}
+.slide.reading[data-layout="L03"] .slide__body > :nth-child(3 of [data-module]){grid-column:5/span 4;grid-row:3/span 4}
+.slide.reading[data-layout="L03"] .slide__body > :nth-child(4 of [data-module]){grid-column:9/span 4;grid-row:3/span 4}
+
+/* L04 · 双栏对照（并列与对照） */
+.slide.reading[data-layout="L04"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 6;grid-row:1/span 6}
+.slide.reading[data-layout="L04"] .slide__body > :nth-child(2 of [data-module]){grid-column:7/span 6;grid-row:1/span 6}
+
+/* L05 · 三栏并列（并列与对照） */
+.slide.reading[data-layout="L05"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 4;grid-row:1/span 6}
+.slide.reading[data-layout="L05"] .slide__body > :nth-child(2 of [data-module]){grid-column:5/span 4;grid-row:1/span 6}
+.slide.reading[data-layout="L05"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:1/span 6}
+
+/* L06 · 四栏速览（并列与对照） */
+.slide.reading[data-layout="L06"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 3;grid-row:1/span 6}
+.slide.reading[data-layout="L06"] .slide__body > :nth-child(2 of [data-module]){grid-column:4/span 3;grid-row:1/span 6}
+.slide.reading[data-layout="L06"] .slide__body > :nth-child(3 of [data-module]){grid-column:7/span 3;grid-row:1/span 6}
+.slide.reading[data-layout="L06"] .slide__body > :nth-child(4 of [data-module]){grid-column:10/span 3;grid-row:1/span 6}
+
+/* L07 · 四格矩阵（矩阵与分面） */
+.slide.reading[data-layout="L07"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 6;grid-row:1/span 3}
+.slide.reading[data-layout="L07"] .slide__body > :nth-child(2 of [data-module]){grid-column:7/span 6;grid-row:1/span 3}
+.slide.reading[data-layout="L07"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 6;grid-row:4/span 3}
+.slide.reading[data-layout="L07"] .slide__body > :nth-child(4 of [data-module]){grid-column:7/span 6;grid-row:4/span 3}
+
+/* L08 · 六格模块（并列与对照） */
+.slide.reading[data-layout="L08"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L08"] .slide__body > :nth-child(2 of [data-module]){grid-column:5/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L08"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L08"] .slide__body > :nth-child(4 of [data-module]){grid-column:1/span 4;grid-row:4/span 3}
+.slide.reading[data-layout="L08"] .slide__body > :nth-child(5 of [data-module]){grid-column:5/span 4;grid-row:4/span 3}
+.slide.reading[data-layout="L08"] .slide__body > :nth-child(6 of [data-module]){grid-column:9/span 4;grid-row:4/span 3}
+
+/* L09 · 中轴结论 + 四侧证据（矩阵与分面） */
+.slide.reading[data-layout="L09"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L09"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 4;grid-row:4/span 3}
+.slide.reading[data-layout="L09"] .slide__body > :nth-child(3 of [data-module]){grid-column:5/span 4;grid-row:1/span 6}
+.slide.reading[data-layout="L09"] .slide__body > :nth-child(4 of [data-module]){grid-column:9/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L09"] .slide__body > :nth-child(5 of [data-module]){grid-column:9/span 4;grid-row:4/span 3}
+
+/* L10 · 横向流程 + 底部条件（递进与拆解） */
+.slide.reading[data-layout="L10"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 4}
+.slide.reading[data-layout="L10"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 12;grid-row:5/span 2}
+
+/* L11 · 阶梯推进（递进与拆解） */
+.slide.reading[data-layout="L11"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 3;grid-row:1/span 3}
+.slide.reading[data-layout="L11"] .slide__body > :nth-child(2 of [data-module]){grid-column:4/span 3;grid-row:2/span 3}
+.slide.reading[data-layout="L11"] .slide__body > :nth-child(3 of [data-module]){grid-column:7/span 3;grid-row:3/span 3}
+.slide.reading[data-layout="L11"] .slide__body > :nth-child(4 of [data-module]){grid-column:10/span 3;grid-row:4/span 3}
+
+/* L12 · 时间 × 责任泳道（执行与治理） */
+.slide.reading[data-layout="L12"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 6}
+
+/* L13 · 分层结构 + 逐层释义（递进与拆解） */
+.slide.reading[data-layout="L13"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 6;grid-row:1/span 2}
+.slide.reading[data-layout="L13"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 6;grid-row:3/span 2}
+.slide.reading[data-layout="L13"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 6;grid-row:5/span 2}
+.slide.reading[data-layout="L13"] .slide__body > :nth-child(4 of [data-module]){grid-column:7/span 6;grid-row:1/span 6}
+
+/* L14 · 逻辑拆解树（递进与拆解） */
+.slide.reading[data-layout="L14"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 3;grid-row:1/span 6}
+.slide.reading[data-layout="L14"] .slide__body > :nth-child(2 of [data-module]){grid-column:4/span 4;grid-row:1/span 4}
+.slide.reading[data-layout="L14"] .slide__body > :nth-child(3 of [data-module]){grid-column:4/span 4;grid-row:5/span 2}
+.slide.reading[data-layout="L14"] .slide__body > :nth-child(4 of [data-module]){grid-column:8/span 5;grid-row:1/span 2}
+.slide.reading[data-layout="L14"] .slide__body > :nth-child(5 of [data-module]){grid-column:8/span 5;grid-row:3/span 2}
+.slide.reading[data-layout="L14"] .slide__body > :nth-child(6 of [data-module]){grid-column:8/span 5;grid-row:5/span 2}
+
+/* L15 · 顶层命题 + 双支柱（递进与拆解） */
+.slide.reading[data-layout="L15"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 2}
+.slide.reading[data-layout="L15"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 6;grid-row:3/span 4}
+.slide.reading[data-layout="L15"] .slide__body > :nth-child(3 of [data-module]){grid-column:7/span 6;grid-row:3/span 4}
+
+/* L16 · 指标概览 + 证据组合（主辅互补） */
+.slide.reading[data-layout="L16"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 8;grid-row:1/span 2}
+.slide.reading[data-layout="L16"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 4;grid-row:3/span 4}
+.slide.reading[data-layout="L16"] .slide__body > :nth-child(3 of [data-module]){grid-column:5/span 4;grid-row:3/span 4}
+.slide.reading[data-layout="L16"] .slide__body > :nth-child(4 of [data-module]){grid-column:9/span 4;grid-row:1/span 6}
+
+/* L17 · 完整表格 + 决策栏（主辅互补） */
+.slide.reading[data-layout="L17"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 9;grid-row:1/span 6}
+.slide.reading[data-layout="L17"] .slide__body > :nth-child(2 of [data-module]){grid-column:10/span 3;grid-row:1/span 6}
+
+/* L18 · 证据全幅 + 底部解读（单证据统领） */
+.slide.reading[data-layout="L18"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 4}
+.slide.reading[data-layout="L18"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 8;grid-row:5/span 2}
+.slide.reading[data-layout="L18"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:5/span 2}
+
+/* L19 · 多对象 × 多指标总表（矩阵与分面） */
+.slide.reading[data-layout="L19"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 4}
+.slide.reading[data-layout="L19"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 12;grid-row:5/span 2}
+
+/* L20 · 三对象 × 三维度九格（矩阵与分面） */
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 4;grid-row:1/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(2 of [data-module]){grid-column:5/span 4;grid-row:1/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:1/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(4 of [data-module]){grid-column:1/span 4;grid-row:3/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(5 of [data-module]){grid-column:5/span 4;grid-row:3/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(6 of [data-module]){grid-column:9/span 4;grid-row:3/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(7 of [data-module]){grid-column:1/span 4;grid-row:5/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(8 of [data-module]){grid-column:5/span 4;grid-row:5/span 2}
+.slide.reading[data-layout="L20"] .slide__body > :nth-child(9 of [data-module]){grid-column:9/span 4;grid-row:5/span 2}
+
+/* L21 · 双明细表 + 共用判断（主辅互补） */
+.slide.reading[data-layout="L21"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 6;grid-row:1/span 5}
+.slide.reading[data-layout="L21"] .slide__body > :nth-child(2 of [data-module]){grid-column:7/span 6;grid-row:1/span 5}
+.slide.reading[data-layout="L21"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 12;grid-row:6/span 1}
+
+/* L22 · 六组同尺度小图（并列与对照） */
+.slide.reading[data-layout="L22"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L22"] .slide__body > :nth-child(2 of [data-module]){grid-column:5/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L22"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L22"] .slide__body > :nth-child(4 of [data-module]){grid-column:1/span 4;grid-row:4/span 3}
+.slide.reading[data-layout="L22"] .slide__body > :nth-child(5 of [data-module]){grid-column:5/span 4;grid-row:4/span 3}
+.slide.reading[data-layout="L22"] .slide__body > :nth-child(6 of [data-module]){grid-column:9/span 4;grid-row:4/span 3}
+
+/* L23 · 主图 + 四项辅助证据（单证据统领） */
+.slide.reading[data-layout="L23"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 6;grid-row:1/span 6}
+.slide.reading[data-layout="L23"] .slide__body > :nth-child(2 of [data-module]){grid-column:7/span 3;grid-row:1/span 3}
+.slide.reading[data-layout="L23"] .slide__body > :nth-child(3 of [data-module]){grid-column:10/span 3;grid-row:1/span 3}
+.slide.reading[data-layout="L23"] .slide__body > :nth-child(4 of [data-module]){grid-column:7/span 3;grid-row:4/span 3}
+.slide.reading[data-layout="L23"] .slide__body > :nth-child(5 of [data-module]){grid-column:10/span 3;grid-row:4/span 3}
+
+/* L24 · 议题—证据—含义双轨（综合与研判） */
+.slide.reading[data-layout="L24"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 3;grid-row:1/span 3}
+.slide.reading[data-layout="L24"] .slide__body > :nth-child(2 of [data-module]){grid-column:4/span 5;grid-row:1/span 3}
+.slide.reading[data-layout="L24"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:1/span 3}
+.slide.reading[data-layout="L24"] .slide__body > :nth-child(4 of [data-module]){grid-column:1/span 3;grid-row:4/span 3}
+.slide.reading[data-layout="L24"] .slide__body > :nth-child(5 of [data-module]){grid-column:4/span 5;grid-row:4/span 3}
+.slide.reading[data-layout="L24"] .slide__body > :nth-child(6 of [data-module]){grid-column:9/span 4;grid-row:4/span 3}
+
+/* L25 · 工作包 × 责任矩阵（执行与治理） */
+.slide.reading[data-layout="L25"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 9;grid-row:1/span 6}
+.slide.reading[data-layout="L25"] .slide__body > :nth-child(2 of [data-module]){grid-column:10/span 3;grid-row:1/span 6}
+
+/* L26 · 路线图 + 风险与门槛（执行与治理） */
+.slide.reading[data-layout="L26"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 8;grid-row:1/span 2}
+.slide.reading[data-layout="L26"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 8;grid-row:3/span 4}
+.slide.reading[data-layout="L26"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:1/span 4}
+.slide.reading[data-layout="L26"] .slide__body > :nth-child(4 of [data-module]){grid-column:9/span 4;grid-row:5/span 2}
+
+/* L27 · 行动台账 + 双侧约束（执行与治理） */
+.slide.reading[data-layout="L27"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 3;grid-row:1/span 6}
+.slide.reading[data-layout="L27"] .slide__body > :nth-child(2 of [data-module]){grid-column:4/span 6;grid-row:1/span 6}
+.slide.reading[data-layout="L27"] .slide__body > :nth-child(3 of [data-module]){grid-column:10/span 3;grid-row:1/span 6}
+
+/* L28 · 三栏研究论述（论述与查证） */
+.slide.reading[data-layout="L28"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 4;grid-row:1/span 6}
+.slide.reading[data-layout="L28"] .slide__body > :nth-child(2 of [data-module]){grid-column:5/span 4;grid-row:1/span 6}
+.slide.reading[data-layout="L28"] .slide__body > :nth-child(3 of [data-module]){grid-column:9/span 4;grid-row:1/span 6}
+
+/* L29 · 决策摘要 + 证据与异议（主辅互补） */
+.slide.reading[data-layout="L29"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 1}
+.slide.reading[data-layout="L29"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 8;grid-row:2/span 3}
+.slide.reading[data-layout="L29"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 8;grid-row:5/span 2}
+.slide.reading[data-layout="L29"] .slide__body > :nth-child(4 of [data-module]){grid-column:9/span 4;grid-row:2/span 5}
+
+/* L30 · 双方案 + 三项敏感条件（综合与研判） */
+.slide.reading[data-layout="L30"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 6;grid-row:1/span 3}
+.slide.reading[data-layout="L30"] .slide__body > :nth-child(2 of [data-module]){grid-column:7/span 6;grid-row:1/span 3}
+.slide.reading[data-layout="L30"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 4;grid-row:4/span 3}
+.slide.reading[data-layout="L30"] .slide__body > :nth-child(4 of [data-module]){grid-column:5/span 4;grid-row:4/span 3}
+.slide.reading[data-layout="L30"] .slide__body > :nth-child(5 of [data-module]){grid-column:9/span 4;grid-row:4/span 3}
+
+/* L31 · 封面 · 三段式（结构页） */
+.slide.reading[data-layout="L31"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 1}
+.slide.reading[data-layout="L31"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 9;grid-row:2/span 3}
+.slide.reading[data-layout="L31"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 12;grid-row:6/span 1}
+
+/* L32 · 目录 · 结构面 + 章详（结构页） */
+.slide.reading[data-layout="L32"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 2}
+.slide.reading[data-layout="L32"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 4;grid-row:3/span 2}
+.slide.reading[data-layout="L32"] .slide__body > :nth-child(3 of [data-module]){grid-column:5/span 4;grid-row:3/span 2}
+.slide.reading[data-layout="L32"] .slide__body > :nth-child(4 of [data-module]){grid-column:9/span 4;grid-row:3/span 2}
+.slide.reading[data-layout="L32"] .slide__body > :nth-child(5 of [data-module]){grid-column:1/span 4;grid-row:5/span 2}
+.slide.reading[data-layout="L32"] .slide__body > :nth-child(6 of [data-module]){grid-column:5/span 4;grid-row:5/span 2}
+.slide.reading[data-layout="L32"] .slide__body > :nth-child(7 of [data-module]){grid-column:9/span 4;grid-row:5/span 2}
+
+/* L33 · 路线图 · 六问题横带（结构页） */
+.slide.reading[data-layout="L33"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 2}
+.slide.reading[data-layout="L33"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 12;grid-row:3/span 1}
+.slide.reading[data-layout="L33"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 12;grid-row:4/span 1}
+.slide.reading[data-layout="L33"] .slide__body > :nth-child(4 of [data-module]){grid-column:1/span 12;grid-row:5/span 1}
+.slide.reading[data-layout="L33"] .slide__body > :nth-child(5 of [data-module]){grid-column:1/span 12;grid-row:6/span 1}
+
+/* L34 · 章节导读 · 章号主导（结构页） */
+.slide.reading[data-layout="L34"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 5;grid-row:1/span 3}
+.slide.reading[data-layout="L34"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 12;grid-row:4/span 1}
+.slide.reading[data-layout="L34"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 12;grid-row:5/span 2}
+
+/* L35 · 章节导读 · 章号 + 判断清单（结构页） */
+.slide.reading[data-layout="L35"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 5;grid-row:1/span 2}
+.slide.reading[data-layout="L35"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 10;grid-row:3/span 1}
+.slide.reading[data-layout="L35"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 9;grid-row:4/span 1}
+.slide.reading[data-layout="L35"] .slide__body > :nth-child(4 of [data-module]){grid-column:1/span 9;grid-row:5/span 2}
+
+/* L36 · 结论 · 结论面 + 行动分条（综合与研判） */
+.slide.reading[data-layout="L36"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 4}
+.slide.reading[data-layout="L36"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 4;grid-row:5/span 2}
+.slide.reading[data-layout="L36"] .slide__body > :nth-child(3 of [data-module]){grid-column:5/span 4;grid-row:5/span 2}
+.slide.reading[data-layout="L36"] .slide__body > :nth-child(4 of [data-module]){grid-column:9/span 4;grid-row:5/span 2}
+
+/* L37 · 结论 · 假设—验证—反证三轨（综合与研判） */
+.slide.reading[data-layout="L37"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 1}
+.slide.reading[data-layout="L37"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 12;grid-row:2/span 2}
+.slide.reading[data-layout="L37"] .slide__body > :nth-child(3 of [data-module]){grid-column:1/span 12;grid-row:4/span 3}
+
+/* L38 · 附录 · 全宽来源索引表（论述与查证） */
+.slide.reading[data-layout="L38"] .slide__body > :nth-child(1 of [data-module]){grid-column:1/span 12;grid-row:1/span 4}
+.slide.reading[data-layout="L38"] .slide__body > :nth-child(2 of [data-module]){grid-column:1/span 6;grid-row:5/span 2}
+.slide.reading[data-layout="L38"] .slide__body > :nth-child(3 of [data-module]){grid-column:7/span 6;grid-row:5/span 2}
+
+/* ═══ @generated:end ═══ */

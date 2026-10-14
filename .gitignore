@@ -2,11 +2,11 @@
 *.zip
 
 # ── 工程管理与过程文件：留在本地，不进产品仓库 ──
-AGENTS.md
-CLAUDE.md
-registry.md
-docs/
-templates/
+/AGENTS.md
+/CLAUDE.md
+/registry.md
+/docs/
+/templates/
 zerox-deep-research-evals/
 zerox-storyline-evals/
 __pycache__/
@@ -20,3 +20,11 @@ storyline/
 # 图表技能的 docs 是运行方法与数据格式契约，必须随产品分发
 !zerox-thinkcell-charts/docs/
 !zerox-thinkcell-charts/docs/**
+
+# 本机依赖、会话与私有工作区不进入技能分发
+node_modules/
+.venv/
+.font-venv/
+.claude/
+private/
+.private/

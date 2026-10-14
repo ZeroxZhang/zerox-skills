@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "project": {
+    "slug": "agent-platform",
+    "title": "AI Agent 平台价值",
+    "created_at": "2026-08-08T00:00:00+00:00"
+  },
+  "blueprint": {
+    "schema_version": 1,
+    "goal": "让业务负责人理解建设 AI Agent 平台的必要性",
+    "audience": "业务负责人",
+    "core_claim": "Agent 平台的价值不是模型接入，而是可复用的业务执行能力",
+    "logic": "narrative",
+    "modules": [
+      {
+        "id": "problem",
+        "role": "tension",
+        "title": "重复建设正在吞噬效率",
+        "summary": "团队各自接入模型，但业务流程、权限和评测无法复用。",
+        "source_refs": ["source:p2", "source:p3"]
+      },
+      {
+        "id": "solution",
+        "role": "answer",
+        "title": "把执行能力沉淀为平台",
+        "summary": "统一规划、工具、权限、评测和运行记录。",
+        "source_refs": ["source:p5"]
+      }
+    ],
+    "missing": [
+      {
+        "field": "ROI 数据",
+        "reason": "原始资料没有提供可验证的投入产出数据"
+      }
+    ]
+  },
+  "configuration": {
+    "A": "A4",
+    "B": "B2",
+    "C": "C2",
+    "T": "T1",
+    "focus": "solution",
+    "E": "E2",
+    "F": "Zerox"
+  },
+  "modules": [
+    {
+      "id": "problem",
+      "role": "tension",
+      "content": {
+        "title": "重复建设正在吞噬效率",
+        "body": "团队各自接入模型，但业务流程、权限和评测无法复用。",
+        "data": []
+      },
+      "source_refs": ["source:p2", "source:p3"],
+      "visual_priority": 4,
+      "diagram": "comparison",
+      "locked": {
+        "content": false,
+        "layout": false
+      }
+    },
+    {
+      "id": "solution",
+      "role": "answer",
+      "content": {
+        "title": "把执行能力沉淀为平台",
+        "body": "统一规划、工具、权限、评测和运行记录。",
+        "data": []
+      },
+      "source_refs": ["source:p5"],
+      "visual_priority": 5,
+      "diagram": "architecture",
+      "locked": {
+        "content": false,
+        "layout": false
+      }
+    }
+  ],
+  "design_intent": {
+    "visual_language": "border-rhythm",
+    "color_role": "spice",
+    "type_ratio": 10
+  },
+  "brand_ref": null
+}

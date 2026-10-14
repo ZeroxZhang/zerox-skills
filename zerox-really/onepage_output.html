@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zerox-really — Deep Multi-Disciplinary Root-Cause Inquiry</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+    </style>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #f8f9fa;
+            --color-surface: #ffffff;
+            --color-primary: #2563eb;
+            --color-accent: #7c3aed;
+            --color-text: #0f172a;
+            --color-text-body: #334155;
+            --color-text-secondary: #94a3b8;
+            --color-border: #f1f5f9;
+            --color-border-dark: #e2e8f0;
+            --font-heading: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            --font-body: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .page {
+            width: 1920px;
+            height: 1080px;
+            padding: 48px 64px;
+            background: var(--color-bg);
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 540px 1fr;
+            grid-template-rows: 170px 720px auto;
+            gap: 24px 40px;
+            align-content: start;
+        }
+
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #2563eb);
+            z-index: 2;
+        }
+
+        .page::after {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37,99,235,0.04) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border-dark);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: baseline;
+            gap: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header h1 {
+            font-family: var(--font-heading);
+            font-size: 96px;
+            font-weight: 900;
+            color: var(--color-text);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .header .tag {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-primary);
+            background: rgba(37,99,235,0.08);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(37,99,235,0.15);
+        }
+
+        .header .subtitle {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            margin-bottom: 10px;
+            letter-spacing: 0.02em;
+        }
+
+        .header .quote {
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--color-text-body);
+            font-style: italic;
+            padding-left: 16px;
+            border-left: 3px solid var(--color-primary);
+            line-height: 1.5;
+        }
+
+        .left-panel {
+            display: grid;
+            grid-template-rows: 260px 440px;
+            gap: 20px;
+            align-content: start;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon-bar {
+            width: 4px;
+            height: 22px;
+            background: linear-gradient(180deg, var(--color-primary), var(--color-accent));
+            border-radius: 2px;
+        }
+
+        .philosophy-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .axiom-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .axiom-card .axiom-num {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .axiom-card .axiom-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--color-text);
+            line-height: 1.3;
+        }
+
+        .axiom-card .axiom-desc {
+            font-size: 14px;
+            color: var(--color-text-body);
+            line-height: 1.5;
+        }
+
+        .workflow-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .workflow-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .workflow-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .workflow-item .wf-num {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+        }
+
+        .workflow-item .wf-content {
+            flex: 1;
+        }
+
+        .workflow-item .wf-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--color-text);
+            line-height: 1.3;
+            margin-bottom: 2px;
+        }
+
+        .workflow-item .wf-desc {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            line-height: 1.4;
+        }
+
+        .workflow-arrow {
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            line-height: 1;
+            margin: -2px 0;
+        }
+
+        .right-panel {
+            display: grid;
+            grid-template-rows: 44px 210px 44px 180px 44px auto;
+            gap: 14px;
+            align-content: start;
+        }
+
+        .lens-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            align-content: start;
+        }
+
+        .lens-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            padding: 14px 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lens-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        }
+
+        .lens-card .lens-icon {
+            font-size: 26px;
+            line-height: 1;
+        }
+
+        .lens-card .lens-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .lens-card .lens-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--color-text);
+            line-height: 1.2;
+        }
+
+        .lens-card .lens-desc {
+            font-size: 12px;
+            color: var(--color-text-body);
+            line-height: 1.4;
+        }
+
+        .lens-card.extended {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        .lens-card.extended::before {
+            background: linear-gradient(90deg, #94a3b8, #64748b);
+        }
+
+        .lens-card.extended .lens-num {
+            color: #64748b;
+        }
+
+        .lens-card.extended .lens-desc {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+        }
+
+        .principles-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            align-content: start;
+        }
+
+        .principle-item {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .principle-item .principle-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .principle-item .principle-desc {
+            font-size: 13px;
+            color: var(--color-text-body);
+            line-height: 1.5;
+        }
+
+        .footer {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border-dark);
+            margin-top: 8px;
+        }
+
+        .footer .install-cmd {
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            font-size: 13px;
+            color: var(--color-text-body);
+            background: #f1f5f9;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--color-border-dark);
+        }
+
+        .footer .activate {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .footer .activate strong {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .footer .license {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="header">
+            <div class="header-top">
+                <h1>zerox-really</h1>
+                <span class="tag">Agent Skill</span>
+            </div>
+            <div class="subtitle">Deep Multi-Disciplinary Root-Cause Inquiry</div>
+            <div class="quote">Not answering your question. Helping you see if your question is even a question.</div>
+        </div>
+
+        <div class="left-panel">
+            <div class="philosophy-section">
+                <div class="section-title">
+                    <span class="icon-bar"></span>
+                    核心哲学
+                </div>
+                <div class="axiom-card">
+                    <div class="axiom-num">AXIOM 01</div>
+                    <div class="axiom-name">表象 ≠ 真实</div>
+                    <div class="axiom-desc">90% 的问题只是症状。找到生成性问题——解决它，其他问题自然消散。</div>
+                </div>
+                <div class="axiom-card">
+                    <div class="axiom-num">AXIOM 02</div>
+                    <div class="axiom-name">单学科诊断 = 盲人摸象</div>
+                    <div class="axiom-desc">真正的洞察发生在学科交叉地带，而非单一视角的片面结论。</div>
+                </div>
+                <div class="axiom-card">
+                    <div class="axiom-num">AXIOM 03</div>
+                    <div class="axiom-name">不升维 = 失败</div>
+                    <div class="axiom-desc">每次诊断必须提供信息增量，把用户带到更高的 vantage point。</div>
+                </div>
+            </div>
+
+            <div class="workflow-section">
+                <div class="section-title">
+                    <span class="icon-bar"></span>
+                    6 阶段精简工作流
+                </div>
+                <div class="workflow-list">
+                    <div class="workflow-item">
+                        <div class="wf-num">0</div>
+                        <div class="wf-content">
+                            <div class="wf-title">接收问题</div>
+                            <div class="wf-desc">精简输入 + 选择题确认</div>
+                        </div>
+                    </div>
+                    <div class="workflow-arrow">↓</div>
+                    <div class="workflow-item">
+                        <div class="wf-num">1</div>
+                        <div class="wf-content">
+                            <div class="wf-title">表层解构</div>
+                            <div class="wf-desc">自动扫描语言陷阱 / 隐含假设 / 框架错位</div>
+                        </div>
+                    </div>
+                    <div class="workflow-arrow">↓</div>
+                    <div class="workflow-item">
+                        <div class="wf-num">2</div>
+                        <div class="wf-content">
+                            <div class="wf-title">十镜透视</div>
+                            <div class="wf-desc">核心五镜批量自动走完 + 扩展五镜条件触发</div>
+                        </div>
+                    </div>
+                    <div class="workflow-arrow">↓</div>
+                    <div class="workflow-item">
+                        <div class="wf-num">3</div>
+                        <div class="wf-content">
+                            <div class="wf-title">根本原因合成</div>
+                            <div class="wf-desc">冲突地图 + 生成性问题识别</div>
+                        </div>
+                    </div>
+                    <div class="workflow-arrow">↓</div>
+                    <div class="workflow-item">
+                        <div class="wf-num">4</div>
+                        <div class="wf-content">
+                            <div class="wf-title">升维 Elevation</div>
+                            <div class="wf-desc">Zoom Out / Zoom Up / 跨域映射，自动推进</div>
+                        </div>
+                    </div>
+                    <div class="workflow-arrow">↓</div>
+                    <div class="workflow-item">
+                        <div class="wf-num">5</div>
+                        <div class="wf-content">
+                            <div class="wf-title">完整分析报告</div>
+                            <div class="wf-desc">7 章节结构化报告 + 终局选择题</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="section-title">
+                <span class="icon-bar"></span>
+                核心五镜（必走）
+            </div>
+            <div class="lens-grid">
+                <div class="lens-card">
+                    <div class="lens-icon">🔍</div>
+                    <div class="lens-num">LENS 01</div>
+                    <div class="lens-name">心理学</div>
+                    <div class="lens-desc">认知偏差、防御机制、动机结构、情绪底色</div>
+                </div>
+                <div class="lens-card">
+                    <div class="lens-icon">🏛️</div>
+                    <div class="lens-num">LENS 02</div>
+                    <div class="lens-name">社会学</div>
+                    <div class="lens-desc">结构性力量、参照群体、地位博弈、制度约束</div>
+                </div>
+                <div class="lens-card">
+                    <div class="lens-icon">🧠</div>
+                    <div class="lens-num">LENS 03</div>
+                    <div class="lens-name">哲学</div>
+                    <div class="lens-desc">认识论有效性、范畴错误、目的论假设</div>
+                </div>
+                <div class="lens-card">
+                    <div class="lens-icon">📈</div>
+                    <div class="lens-num">LENS 04</div>
+                    <div class="lens-name">市场营销</div>
+                    <div class="lens-desc">需求真实性、品类归属、定位逻辑、增长引擎</div>
+                </div>
+                <div class="lens-card">
+                    <div class="lens-icon">⚙️</div>
+                    <div class="lens-num">LENS 05</div>
+                    <div class="lens-name">管理学</div>
+                    <div class="lens-desc">激励对齐、系统结构、反馈回路、组织能力</div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <span class="icon-bar"></span>
+                扩展五镜（条件触发）
+            </div>
+            <div class="lens-grid">
+                <div class="lens-card extended">
+                    <div class="lens-icon">💰</div>
+                    <div class="lens-num">LENS 06</div>
+                    <div class="lens-name">经济学</div>
+                    <div class="lens-desc">价格、成本、激励、市场、资源配置</div>
+                </div>
+                <div class="lens-card extended">
+                    <div class="lens-icon">🌊</div>
+                    <div class="lens-num">LENS 07</div>
+                    <div class="lens-name">复杂性科学</div>
+                    <div class="lens-desc">系统动态、不确定性、黑天鹅、崩溃风险</div>
+                </div>
+                <div class="lens-card extended">
+                    <div class="lens-icon">🎭</div>
+                    <div class="lens-num">LENS 08</div>
+                    <div class="lens-name">人类学与符号学</div>
+                    <div class="lens-desc">文化、仪式、深层意义、身份认同</div>
+                </div>
+                <div class="lens-card extended">
+                    <div class="lens-icon">🎯</div>
+                    <div class="lens-num">LENS 09</div>
+                    <div class="lens-name">决策科学</div>
+                    <div class="lens-desc">高风险决策、信息不完全、时间压力</div>
+                </div>
+                <div class="lens-card extended">
+                    <div class="lens-icon">🧬</div>
+                    <div class="lens-num">LENS 10</div>
+                    <div class="lens-name">认知神经科学</div>
+                    <div class="lens-desc">情绪失控、反复反刍、冲动行为、生理状态</div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <span class="icon-bar"></span>
+                设计原则
+            </div>
+            <div class="principles-grid">
+                <div class="principle-item">
+                    <div class="principle-title">学术深度，人话表达</div>
+                    <div class="principle-desc">每个框架都翻译成可操作的诊断语言</div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">批量自动推进</div>
+                    <div class="principle-desc">分析阶段自动走完，只在关键节点暂停</div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">永远升维</div>
+                    <div class="principle-desc">不升维的诊断是失败的诊断</div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">直面冲突</div>
+                    <div class="principle-desc">不同 lens 结论矛盾时，亮出矛盾而非和稀泥</div>
+                </div>
+                <div class="principle-item">
+                    <div class="principle-title">不给鸡汤</div>
+                    <div class="principle-desc">用户需要 clarity，不是 comfort</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="install-cmd">cp -r zerox-really ~/.claude/skills/</div>
+            <div class="activate">激活方式：<strong>/zerox-really</strong> · "帮我深挖这个问题" · "刨根问底"</div>
+            <div class="license">Apache License 2.0</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[项目名称] 系统架构图 · 16:9</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #0f172a; }
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      font-family: 'SimHei', 'Microsoft YaHei', 'PingFang SC',
+        'JetBrains Mono', ui-monospace, monospace;
+    }
+    .stage { width: min(100vw, 1280px); aspect-ratio: 16 / 9; }
+    svg { display: block; width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <!--
+      LAYOUT PLAN
+      MODE presentation  THEME dark  DIRECTION LR  GRID base=10 major=20
+      GROUP cloud-region parent=- label="云区域 / 生产环境"
+      NODE users       rank=0 group=-            x=60   y=250 w=140 h=60 type=external icon=user
+      NODE gateway     rank=1 group=cloud-region x=280  y=250 w=140 h=60 type=gateway icon=-
+      NODE api         rank=2 group=cloud-region x=520  y=220 w=160 h=60 type=backend icon=server
+      NODE auth        rank=2 group=cloud-region x=520  y=380 w=160 h=60 type=security icon=shield
+      NODE db          rank=3 group=cloud-region x=780  y=180 w=140 h=60 type=database icon=database
+      NODE redis       rank=3 group=cloud-region x=780  y=300 w=140 h=60 type=cache icon=-
+      NODE observe     rank=4 group=cloud-region x=1040 y=220 w=160 h=60 type=observability icon=-
+      EDGE users-gateway users:right -> gateway:left kind=sync label="HTTPS"
+      EDGE gateway-api gateway:right -> api:left kind=sync label="路由"
+      EDGE auth-api auth:top -> api:bottom kind=auth label="令牌校验"
+      EDGE api-db api:right -> db:left kind=sync label="SQL" bus=api-data
+      EDGE api-redis api:right -> redis:left kind=sync label="缓存" bus=api-data
+      EDGE db-observe db:right -> observe:left kind=async label="指标"
+    -->
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="1280"
+         height="720"
+         viewBox="0 0 1280 720"
+         preserveAspectRatio="xMidYMid meet"
+         role="img"
+         aria-labelledby="presentation-title presentation-desc"
+         data-diagram-version="1"
+         data-mode="presentation"
+         data-theme="dark"
+         data-direction="LR"
+         data-base-grid="10"
+         data-major-grid="20">
+      <title id="presentation-title">[项目名称] 系统架构图</title>
+      <desc id="presentation-desc">16:9 演示模式架构图，展示从用户入口到 API、数据与可观测性服务的主链路。</desc>
+      <metadata id="diagram-model">{
+        "nodes":[
+          {"id":"users","type":"external","group":null},
+          {"id":"gateway","type":"gateway","group":"cloud-region"},
+          {"id":"api","type":"backend","group":"cloud-region"},
+          {"id":"auth","type":"security","group":"cloud-region"},
+          {"id":"db","type":"database","group":"cloud-region"},
+          {"id":"redis","type":"cache","group":"cloud-region"},
+          {"id":"observe","type":"observability","group":"cloud-region"}
+        ],
+        "edges":[
+          {"id":"users-gateway","source":"users","target":"gateway","kind":"sync"},
+          {"id":"gateway-api","source":"gateway","target":"api","kind":"sync"},
+          {"id":"auth-api","source":"auth","target":"api","kind":"auth"},
+          {"id":"api-db","source":"api","target":"db","kind":"sync","bus":"api-data"},
+          {"id":"api-redis","source":"api","target":"redis","kind":"sync","bus":"api-data"},
+          {"id":"db-observe","source":"db","target":"observe","kind":"async"}
+        ]
+      }</metadata>
+
+      <defs>
+        <style>
+          svg {
+            font-family: 'SimHei', 'Microsoft YaHei', 'PingFang SC',
+              'JetBrains Mono', ui-monospace, monospace;
+            --canvas: #0f172a;
+            --grid: #1e293b;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --mask: #0f172a;
+            --line: #94a3b8;
+            --rose: #fb7185;
+            --orange: #fb923c;
+          }
+          text { fill: var(--text); }
+          .muted { fill: var(--muted); }
+          .diagram-title { font-size: 18px; font-weight: 700; }
+          .diagram-subtitle { font-size: 10px; fill: var(--muted); }
+          .group-label { fill: #fbbf24; font-size: 10px; font-weight: 600; }
+          .route {
+            fill: none;
+            stroke: var(--line);
+            stroke-width: 1.5;
+            vector-effect: non-scaling-stroke;
+          }
+          .route-auth { stroke: var(--rose); stroke-dasharray: 5 5; }
+          .route-async { stroke: var(--orange); stroke-dasharray: 2 4; }
+          .edge-label { fill: var(--muted); font-size: 8px; }
+          .edge-label-auth { fill: var(--rose); }
+          .edge-label-async { fill: var(--orange); }
+          .node-box {
+            fill: var(--node-fill);
+            fill-opacity: 0.45;
+            stroke: var(--node-stroke);
+            stroke-width: 1.5;
+            vector-effect: non-scaling-stroke;
+          }
+          .node-label { fill: var(--node-text); font-size: 11px; font-weight: 600; }
+          .node-subtitle { fill: var(--muted); font-size: 9px; }
+          .node-icon { fill: none; stroke: var(--node-stroke); stroke-width: 1.2; }
+          [data-type='external'] { --node-fill: #334155; --node-stroke: #94a3b8; --node-text: #cbd5e1; }
+          [data-type='gateway'] { --node-fill: #164e63; --node-stroke: #22d3ee; --node-text: #a5f3fc; }
+          [data-type='backend'] { --node-fill: #064e3b; --node-stroke: #34d399; --node-text: #6ee7b7; }
+          [data-type='security'] { --node-fill: #881337; --node-stroke: #fb7185; --node-text: #fda4af; }
+          [data-type='database'] { --node-fill: #4c1d95; --node-stroke: #a78bfa; --node-text: #c4b5fd; }
+          [data-type='cache'] { --node-fill: #581c87; --node-stroke: #c084fc; --node-text: #d8b4fe; }
+          [data-type='observability'] { --node-fill: #134e4a; --node-stroke: #2dd4bf; --node-text: #5eead4; }
+        </style>
+        <pattern id="presentation-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 L 0 40" fill="none" stroke="var(--grid)" stroke-width="0.5"/>
+        </pattern>
+        <marker id="presentation-arrow" markerWidth="8" markerHeight="8" refX="8" refY="4"
+                orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0 0 L 8 4 L 0 8 Z" fill="var(--line)"/>
+        </marker>
+        <marker id="presentation-arrow-rose" markerWidth="8" markerHeight="8" refX="8" refY="4"
+                orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0 0 L 8 4 L 0 8 Z" fill="var(--rose)"/>
+        </marker>
+        <marker id="presentation-arrow-orange" markerWidth="8" markerHeight="8" refX="8" refY="4"
+                orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0 0 L 8 4 L 0 8 Z" fill="var(--orange)"/>
+        </marker>
+      </defs>
+
+      <rect data-role="background" width="1280" height="720" fill="var(--canvas)"/>
+      <rect width="1280" height="720" fill="url(#presentation-grid)"/>
+
+      <text data-role="diagram-title" data-bbox="500,20,280,24"
+            class="diagram-title" x="640" y="38" text-anchor="middle">[项目名称] 系统架构图</text>
+      <text class="diagram-subtitle" x="640" y="58" text-anchor="middle">生产环境 · 主请求链路 · 16:9 演示视图</text>
+
+      <g data-role="boundary" data-id="cloud-region" data-bbox="240,100,1000,480">
+        <rect x="240" y="100" width="1000" height="480" rx="12"
+              fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="8 4"/>
+        <text class="group-label" x="260" y="124">云区域 / 生产环境</text>
+      </g>
+
+      <g aria-label="连接路由">
+        <path data-role="edge-route" data-edge-id="users-gateway"
+              data-source="users" data-target="gateway" data-kind="sync"
+              data-source-side="right" data-target-side="left"
+              data-points="200,280 278,280" d="M 200 280 L 278 280"
+              class="route" marker-end="url(#presentation-arrow)"/>
+        <path data-role="edge-route" data-edge-id="gateway-api"
+              data-source="gateway" data-target="api" data-kind="sync"
+              data-source-side="right" data-target-side="left"
+              data-points="420,280 470,280 470,250 518,250"
+              d="M 420 280 L 470 280 L 470 250 L 518 250"
+              class="route" marker-end="url(#presentation-arrow)"/>
+        <path data-role="edge-route" data-edge-id="auth-api"
+              data-source="auth" data-target="api" data-kind="auth"
+              data-source-side="top" data-target-side="bottom"
+              data-points="600,380 600,282" d="M 600 380 L 600 282"
+              class="route route-auth" marker-end="url(#presentation-arrow-rose)"/>
+
+        <path data-role="bus-trunk" data-bus-id="api-data" data-source="api"
+              data-source-side="right" data-points="680,250 700,250"
+              d="M 680 250 L 700 250" class="route"/>
+        <path data-role="edge-route" data-edge-id="api-db" data-bus-id="api-data"
+              data-source="api" data-target="db" data-kind="sync" data-target-side="left"
+              data-points="700,250 720,250 720,210 778,210"
+              d="M 700 250 L 720 250 L 720 210 L 778 210"
+              class="route" marker-end="url(#presentation-arrow)"/>
+        <path data-role="edge-route" data-edge-id="api-redis" data-bus-id="api-data"
+              data-source="api" data-target="redis" data-kind="sync" data-target-side="left"
+              data-points="700,250 700,330 778,330"
+              d="M 700 250 L 700 330 L 778 330"
+              class="route" marker-end="url(#presentation-arrow)"/>
+        <path data-role="edge-route" data-edge-id="db-observe"
+              data-source="db" data-target="observe" data-kind="async"
+              data-source-side="right" data-target-side="left"
+              data-points="920,210 980,210 980,250 1038,250"
+              d="M 920 210 L 980 210 L 980 250 L 1038 250"
+              class="route route-async" marker-end="url(#presentation-arrow-orange)"/>
+      </g>
+
+      <g data-role="component" data-id="users" data-type="external" data-bbox="60,250,140,60">
+        <title>用户终端&#10;类型：外部系统&#10;入口：浏览器 / 移动端</title>
+        <rect data-role="mask" x="60" y="250" width="140" height="60" rx="6" fill="var(--mask)"/>
+        <rect data-role="box" class="node-box" x="60" y="250" width="140" height="60" rx="6"/>
+        <text class="node-label" x="130" y="276" text-anchor="middle">用户</text>
+        <text class="node-subtitle" x="130" y="294" text-anchor="middle">浏览器 / 移动端</text>
+      </g>
+
+      <g data-role="component" data-id="gateway" data-type="gateway" data-group="cloud-region"
+         data-bbox="280,250,140,60">
+        <title>API 网关&#10;类型：网关&#10;功能：TLS 终止与路由</title>
+        <rect data-role="mask" x="280" y="250" width="140" height="60" rx="6" fill="var(--mask)"/>
+        <rect data-role="box" class="node-box" x="280" y="250" width="140" height="60" rx="6"/>
+        <text class="node-label" x="350" y="276" text-anchor="middle">API 网关</text>
+        <text class="node-subtitle" x="350" y="294" text-anchor="middle">TLS / 路由</text>
+      </g>
+
+      <g data-role="component" data-id="api" data-type="backend" data-group="cloud-region"
+         data-bbox="520,220,160,60">
+        <title>API 服务&#10;类型：后端服务&#10;实例：3</title>
+        <rect data-role="mask" x="520" y="220" width="160" height="60" rx="6" fill="var(--mask)"/>
+        <rect data-role="box" class="node-box" x="520" y="220" width="160" height="60" rx="6"/>
+        <g class="node-icon" aria-hidden="true">
+          <rect x="592" y="228" width="16" height="12" rx="1"/>
+          <line x1="595" y1="232" x2="605" y2="232"/>
+        </g>
+        <text class="node-label" x="600" y="256" text-anchor="middle">API 服务</text>
+        <text class="node-subtitle" x="600" y="272" text-anchor="middle">3 个实例</text>
+      </g>
+
+      <g data-role="component" data-id="auth" data-type="security" data-group="cloud-region"
+         data-bbox="520,380,160,60">
+        <title>认证服务&#10;类型：安全&#10;协议：OAuth2 + PKCE</title>
+        <rect data-role="mask" x="520" y="380" width="160" height="60" rx="6" fill="var(--mask)"/>
+        <rect data-role="box" class="node-box" x="520" y="380" width="160" height="60" rx="6"/>
+        <text class="node-label" x="600" y="406" text-anchor="middle">认证服务</text>
+        <text class="node-subtitle" x="600" y="424" text-anchor="middle">OAuth2 + PKCE</text>
+      </g>
+
+      <g data-role="component" data-id="db" data-type="database" data-group="cloud-region"
+         data-bbox="780,180,140,60">
+        <title>PostgreSQL&#10;类型：数据库&#10;部署：多可用区</title>
+        <rect data-role="mask" x="780" y="180" width="140" height="60" rx="6" fill="var(--mask)"/>
+        <rect data-role="box" class="node-box" x="780" y="180" width="140" height="60" rx="6"/>
+        <text class="node-label" x="850" y="206" text-anchor="middle">PostgreSQL</text>
+        <text class="node-subtitle" x="850" y="224" text-anchor="middle">多可用区</text>
+      </g>
+
+      <g data-role="component" data-id="redis" data-type="cache" data-group="cloud-region"
+         data-bbox="780,300,140,60">
+        <title>Redis&#10;类型：缓存&#10;部署：集群模式</title>
+        <rect data-role="mask" x="780" y="300" width="140" height="60" rx="6" fill="var(--mask)"/>
+        <rect data-role="box" class="node-box" x="780" y="300" width="140" height="60" rx="6"/>
+        <text class="node-label" x="850" y="326" text-anchor="middle">Redis</text>
+        <text class="node-subtitle" x="850" y="344" text-anchor="middle">集群模式</text>
+      </g>
+
+      <g data-role="component" data-id="observe" data-type="observability" data-group="cloud-region"
+         data-bbox="1040,220,160,60">
+        <title>可观测性平台&#10;类型：可观测性&#10;信号：指标 / 日志 / 追踪</title>
+        <rect data-role="mask" x="1040" y="220" width="160" height="60" rx="6" fill="var(--mask)"/>
+        <rect data-role="box" class="node-box" x="1040" y="220" width="160" height="60" rx="6"/>
+        <text class="node-label" x="1120" y="246" text-anchor="middle">可观测性平台</text>
+        <text class="node-subtitle" x="1120" y="264" text-anchor="middle">Metrics / Logs / Traces</text>
+      </g>
+
+      <g aria-label="连接标签">
+        <text data-role="edge-label" data-edge-id="users-gateway" data-bbox="218,260,42,14"
+              class="edge-label" x="239" y="271" text-anchor="middle">HTTPS</text>
+        <text data-role="edge-label" data-edge-id="gateway-api" data-bbox="438,258,28,14"
+              class="edge-label" x="452" y="269" text-anchor="middle">路由</text>
+        <text data-role="edge-label" data-edge-id="auth-api" data-bbox="610,326,48,14"
+              class="edge-label edge-label-auth" x="634" y="337" text-anchor="middle">令牌校验</text>
+        <text data-role="edge-label" data-edge-id="api-db" data-bbox="734,190,26,14"
+              class="edge-label" x="747" y="201" text-anchor="middle">SQL</text>
+        <text data-role="edge-label" data-edge-id="api-redis" data-bbox="724,310,30,14"
+              class="edge-label" x="739" y="321" text-anchor="middle">缓存</text>
+        <text data-role="edge-label" data-edge-id="db-observe" data-bbox="938,190,30,14"
+              class="edge-label edge-label-async" x="953" y="201" text-anchor="middle">指标</text>
+      </g>
+
+      <g data-role="legend" data-id="legend" data-bbox="900,630,360,70">
+        <rect x="900" y="630" width="360" height="70" rx="8"
+              fill="#1e293b" fill-opacity="0.92" stroke="#475569"/>
+        <text x="1080" y="646" text-anchor="middle" font-size="9" font-weight="600">图例</text>
+        <g data-role="legend-item" data-type="external"><circle cx="924" cy="661" r="4" fill="#94a3b8"/><text class="muted" x="934" y="664" font-size="7">外部</text></g>
+        <g data-role="legend-item" data-type="gateway"><circle cx="982" cy="661" r="4" fill="#22d3ee"/><text class="muted" x="992" y="664" font-size="7">网关</text></g>
+        <g data-role="legend-item" data-type="backend"><circle cx="1040" cy="661" r="4" fill="#34d399"/><text class="muted" x="1050" y="664" font-size="7">后端</text></g>
+        <g data-role="legend-item" data-type="security"><circle cx="1098" cy="661" r="4" fill="#fb7185"/><text class="muted" x="1108" y="664" font-size="7">安全</text></g>
+        <g data-role="legend-item" data-type="database"><circle cx="1160" cy="661" r="4" fill="#a78bfa"/><text class="muted" x="1170" y="664" font-size="7">数据库</text></g>
+        <g data-role="legend-item" data-type="cache"><circle cx="1222" cy="661" r="4" fill="#c084fc"/><text class="muted" x="1232" y="664" font-size="7">缓存</text></g>
+        <g data-role="legend-item" data-type="observability"><circle cx="1034" cy="684" r="4" fill="#2dd4bf"/><text class="muted" x="1044" y="687" font-size="7">可观测性</text></g>
+      </g>
+    </svg>
+  </main>
+</body>
+</html>

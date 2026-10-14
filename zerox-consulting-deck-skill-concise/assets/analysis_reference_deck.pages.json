@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "pages": [
+    {
+      "page": 1,
+      "proves": "净减少0.8亿元，可直接从贡献桥读出",
+      "form": "kit.waterfall"
+    },
+    {
+      "page": 2,
+      "proves": "收入增长60%，新业务份额提高15个百分点",
+      "form": "kit.stacked"
+    },
+    {
+      "page": 3,
+      "proves": "窄列中的5个单位，仍应有完整可查的分项",
+      "form": "kit.mekko"
+    },
+    {
+      "page": 4,
+      "proves": "商超解释主要降幅，比较表把规模、差额和线索放在同一行",
+      "form": "kit.comparisonTable"
+    },
+    {
+      "page": 5,
+      "proves": "进入下一阶段，需同时明确责任、交付物与放行条件",
+      "form": "kit.processFlow"
+    },
+    {
+      "page": 6,
+      "proves": "口径不同的增长信号，保留表格更准确",
+      "form": "kit.comparisonTable"
+    }
+  ]
+}

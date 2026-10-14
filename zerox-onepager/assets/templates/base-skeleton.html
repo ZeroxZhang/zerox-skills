@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnePage</title>
+
+    <!-- [OPTIONAL_FONT_IMPORT]: Network fonts enhance the design; keep system fallbacks complete -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+    </style>
+
+    <style>
+        /* ============================================
+           SVG ICON SYSTEM
+           All icons use 24x24 viewBox, stroke-based
+           Icons are referenced via <use href="#icon-name"/>
+           ============================================ */
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            vertical-align: middle;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-lg { width: 32px; height: 32px; }
+        .icon-fill { fill: currentColor; stroke: none; }
+
+        /* ============================================
+           BASE RESET & VARIABLES
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* [COLORS]: Replace with values from design-styles.md */
+            --color-bg: #ffffff;
+            --color-surface: #f8f9fa;
+            --color-primary: #18181b;
+            --color-accent: #dc2626;
+            --color-text: #334155;
+            --color-text-secondary: #94a3b8;
+            --color-border: #e2e8f0;
+
+            /* [TYPOGRAPHY] */
+            --font-heading: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+
+            /* [SPACING] — 8pt Grid rhythm */
+            --page-padding: 48px;
+            --section-gap: 40px;
+            --card-radius: 8px;
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+
+            /* [COLOR BUDGET] — 60-30-10 mapping */
+            --color-primary-60: var(--color-bg);       /* 60% — background */
+            --color-secondary-30: var(--color-surface); /* 30% — surfaces/cards */
+            --color-accent-10: var(--color-accent);    /* 10% — accent/CTA */
+        }
+
+        /* ============================================
+           PAGE CONTAINER
+           Use .page-a1 / .page-a2 / .page-a3 / .page-a4
+           for size-specific overrides.
+           ============================================ */
+        .page {
+            width: 800px;            /* A1 default */
+            margin: 0 auto;
+            padding: var(--page-padding);
+            background: var(--color-bg);
+            font-family: var(--font-body);
+            color: var(--color-text);
+            font-size: 15px;
+            line-height: 1.8;
+            letter-spacing: 0.02em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Size-specific page classes */
+        .page-a1 { width: 800px; min-height: 100vh; }
+        .page-a2 {
+            width: 1920px; height: 1080px;
+            /* A2: MUST declare grid-template-rows on child grids */
+        }
+        .page-a3 {
+            width: 1080px; height: 1080px;
+            /* A3: MUST declare grid-template-rows on child grids */
+        }
+        .page-a4 {
+            width: 1080px; height: 1440px;
+            /* A4: MUST declare grid-template-rows on child grids */
+        }
+
+        /* ============================================
+           DECORATIVE BACKGROUND ELEMENTS
+           [STYLE]: Add per design-styles.md
+           NOTE: No default decorative blob — add per style only.
+           ============================================ */
+
+        .page > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .header {
+            text-align: center;
+            margin-bottom: var(--section-gap);
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .header h1 {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--color-text);
+            margin-bottom: 12px;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            font-weight: 400;
+        }
+
+        /* ============================================
+           BIGNUMBER MODULE
+           Required on every OnePage (if E1 selected).
+           Visual impact first.
+           ============================================ */
+        .bignum-module {
+            margin-bottom: var(--section-gap);
+            padding: var(--space-lg) 0;
+        }
+
+        .bignum-grid {
+            display: grid;
+            gap: var(--space-lg);
+            /* Default: 3 columns for A2, override per size */
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .bignum-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .bignum-value {
+            font-family: var(--font-mono);
+            font-size: 120px;        /* A2 default. A1: 72-96px, A3: 96-144px, A4: 96-140px */
+            font-weight: 700;
+            color: var(--color-accent);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .bignum-unit {
+            font-size: 40px;         /* ~33% of value size */
+            color: var(--color-text-secondary);
+            font-weight: 400;
+            vertical-align: super;
+            margin-left: 4px;
+        }
+
+        .bignum-label {
+            font-family: var(--font-body);
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            margin-top: 12px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .bignum-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .bignum-trend.up { color: #14b8a6; }
+        .bignum-trend.down { color: #f87171; }
+        .bignum-trend.neutral { color: var(--color-text-secondary); }
+
+        /* BigNumber decorative line — per style override */
+        .bignum-item::after {
+            content: '';
+            display: block;
+            width: 48px;
+            height: 4px;
+            background: var(--color-accent);
+            margin-top: 16px;
+            /* Styles override: border-radius, background, width, height */
+        }
+
+        /* ============================================
+           QUOTE BLOCK (E2 alternative to BigNumber)
+           Use when user chooses E2 (no BigNumber).
+           ============================================ */
+        .quote-block {
+            margin-bottom: var(--section-gap);
+            padding: var(--space-xl) var(--space-lg);
+            border-left: 4px solid var(--color-accent);
+            background: var(--color-surface);
+        }
+
+        .quote-block .quote-text {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--color-text);
+        }
+
+        .quote-block .quote-source {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        /* ============================================
+           KEY INSIGHT BLOCK (E2 alternative to BigNumber)
+           Use when user chooses E2 (no BigNumber).
+           ============================================ */
+        .key-insight {
+            margin-bottom: var(--section-gap);
+            padding: var(--space-lg);
+            text-align: center;
+        }
+
+        .key-insight .insight-text {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1.2;
+            color: var(--color-accent);
+        }
+
+        .key-insight .insight-label {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ============================================
+           CONTENT SECTIONS
+           ============================================ */
+        .section {
+            margin-bottom: var(--section-gap);
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 3px solid var(--color-accent);
+        }
+
+        .section-body {
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           CARD COMPONENT
+           ============================================ */
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--card-radius);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* ============================================
+           GRID LAYOUTS
+
+           A2/A3/A4: MUST add grid-template-rows and align-content: start.
+           A1: Optional (height is auto).
+           ============================================ */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* ============================================
+           EDITORIAL SPLIT LAYOUT
+           For asymmetric layouts (e.g., 1:2, 2:1)
+           ============================================ */
+        .editorial-split {
+            display: grid;
+            gap: var(--space-lg);
+        }
+        .editorial-split-1-2 {
+            grid-template-columns: 1fr 2fr;
+        }
+        .editorial-split-2-1 {
+            grid-template-columns: 2fr 1fr;
+        }
+        .editorial-split-1-3 {
+            grid-template-columns: 1fr 3fr;
+        }
+
+        /* ============================================
+           COLOR BLOCK
+           For solid color background blocks (B4/B5/B9)
+           ============================================ */
+        .color-block {
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* ============================================
+           BOLD DIVIDER
+           For heavy horizontal rules (B2/B4)
+           ============================================ */
+        .hr-bold {
+            border: none;
+            height: 4px;
+            background: var(--color-primary);
+            margin: var(--space-lg) 0;
+        }
+        .hr-bold-thick {
+            height: 8px;
+        }
+
+        /* ============================================
+           DIAGRAM CONTAINERS
+           [DIAGRAMS]: Populate per diagram-guide.md
+           ============================================ */
+        .diagram-container {
+            margin: 24px 0;
+            padding: 24px;
+            border-radius: var(--card-radius);
+            background: var(--color-surface);
+        }
+
+        .diagram-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            margin-top: var(--section-gap);
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        .signature {
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            opacity: 0.7;
+        }
+
+        /* ============================================
+           B9 GOOGLE NATIVE — COLOR BLOCK VARIANTS
+           Use .color-block-blue etc. for brand four-color sections.
+           ============================================ */
+        .color-block-blue { background: #4285f4; color: #ffffff; }
+        .color-block-red { background: #ea4335; color: #ffffff; }
+        .color-block-yellow { background: #fbbc04; color: #202124; }
+        .color-block-green { background: #34a853; color: #ffffff; }
+    </style>
+</head>
+<body>
+    <!-- SVG Icon Definitions — Inline, zero external dependency -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <!-- Arrows -->
+        <symbol id="icon-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+        <symbol id="icon-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></symbol>
+        <symbol id="icon-trend-up" viewBox="0 0 24 24"><path d="M23 6l-9 9-5-5-8 8M23 6h-6M23 6v6"/></symbol>
+        <symbol id="icon-trend-down" viewBox="0 0 24 24"><path d="M23 18l-9-9-5 5-8-8M23 18h-6M23 18v-6"/></symbol>
+        <symbol id="icon-trend-flat" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+
+        <!-- Data / Chart -->
+        <symbol id="icon-bar-chart" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></symbol>
+        <symbol id="icon-pie-chart" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+        <symbol id="icon-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+
+        <!-- Status -->
+        <symbol id="icon-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+        <symbol id="icon-check-circle" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+        <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+        <symbol id="icon-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+
+        <!-- Function -->
+        <symbol id="icon-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+        <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+        <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+        <symbol id="icon-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+        <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+
+        <!-- Extended icons for common OnePage scenarios -->
+        <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+        <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+        <symbol id="icon-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+        <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+        <symbol id="icon-lightbulb" viewBox="0 0 24 24"><path d="M9 21h6M12 3a6 6 0 0 0-4 10.5V17h8v-3.5A6 6 0 0 0 12 3z"/></symbol>
+        <symbol id="icon-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></symbol>
+        <symbol id="icon-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    </svg>
+
+    <div class="page page-a1">
+        <!-- HEADER: ~15% of canvas height — title + subtitle + value proposition -->
+        <div class="header">
+            <h1><!-- [主标题/核心论点] --></h1>
+            <p class="subtitle"><!-- [副标题/价值主张一句话] --></p>
+        </div>
+
+        <!-- BIGNUMBER MODULE: Required if E1 selected; skip if E2 -->
+        <div class="bignum-module">
+            <div class="bignum-grid">
+                <div class="bignum-item">
+                    <div class="bignum-value">
+                        <!-- [数字] --><span class="bignum-unit"><!-- [单位] --></span>
+                    </div>
+                    <div class="bignum-label"><!-- [标签] --></div>
+                    <div class="bignum-trend up">
+                        <svg class="icon"><use href="#icon-trend-up"/></svg>
+                        <span><!-- [趋势值] --></span>
+                    </div>
+                </div>
+                <!-- [2-4 个数据项] -->
+            </div>
+        </div>
+
+        <!-- QUOTE BLOCK: Alternative to BigNumber when E2 selected -->
+        <!-- <div class="quote-block">
+            <div class="quote-text"><!-- [核心金句/结论] --></div>
+            <div class="quote-source"><!-- [来源/出处] --></div>
+        </div> -->
+
+        <!-- KEY INSIGHT: Another E2 alternative -->
+        <!-- <div class="key-insight">
+            <div class="insight-text"><!-- [核心洞察数字/关键词] --></div>
+            <div class="insight-label"><!-- [标签说明] --></div>
+        </div> -->
+
+        <!-- [CONTENT SECTIONS]: Repeat as needed -->
+        <div class="section">
+            <h2 class="section-title"><!-- [小标题] --></h2>
+            <div class="section-body">
+                <!-- [正文内容] -->
+            </div>
+        </div>
+
+        <!-- [DIAGRAM]: Insert per diagram-guide.md -->
+        <div class="diagram-container">
+            <p class="diagram-title"><!-- [图表标题] --></p>
+            <!-- [SVG/CSS 图表代码] -->
+        </div>
+
+        <!-- FOOTER: ~15% of canvas height — CTA + trust signals + contact -->
+        <div class="footer">
+            <div class="cta"><!-- [明确、单一、可执行的行动号召] --></div>
+            <div class="trust-signals"><!-- [信任背书：数据/客户/认证] --></div>
+            <div class="signature"><!-- [署名] · [日期] --></div>
+        </div>
+    </div>
+</body>
+</html>

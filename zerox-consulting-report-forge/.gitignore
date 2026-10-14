@@ -1,0 +1,18 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.font-venv/
+node_modules/
+*.log
+
+# 运行时产出（单页预览 PNG、整册渲染、导出 PDF）
+renders/
+
+# 本地工作文件（不随仓库分发）
+AGENTS.md
+OPTIMIZATION.md
+research_raw_data/
+/research/

@@ -1,0 +1,32 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  layout-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 运行回归测试
+        run: python3 -m unittest discover -s tests -v
+
+      - name: 校验标准与演示模板
+        run: |
+          python3 scripts/validate_diagram.py assets/template.html --strict
+          python3 scripts/validate_diagram.py assets/template-presentation.html --strict
+
+      - name: 校验 HTML 与 SVG 一致性
+        run: |
+          python3 scripts/extract_svg.py assets/template.html /tmp/architecture-template.svg
+          python3 scripts/validate_diagram.py assets/template.html --compare /tmp/architecture-template.svg --strict
+          python3 scripts/extract_svg.py assets/template-presentation.html /tmp/architecture-presentation-template.svg
+          python3 scripts/validate_diagram.py assets/template-presentation.html --compare /tmp/architecture-presentation-template.svg --strict

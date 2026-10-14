@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <style>
+@page {
+    size: A4;
+    margin: 25mm 20mm 20mm 20mm;
+
+    @top-center {
+        content: "Onepager 产品横纵分析报告  |  横纵分析法深度研究报告";
+        font-family: "Droid Sans Fallback", Helvetica, Arial, sans-serif;
+        font-size: 8pt;
+        color: #95a5a6;
+        border-bottom: 0.5pt solid #ecf0f1;
+        padding-bottom: 3mm;
+    }
+
+    @bottom-center {
+        content: "第 " counter(page) " 页";
+        font-family: "Droid Sans Fallback", Helvetica, Arial, sans-serif;
+        font-size: 8pt;
+        color: #95a5a6;
+        border-top: 0.8pt solid #1a5276;
+        padding-top: 2mm;
+    }
+}
+
+@page :first {
+    @top-center { content: none; }
+    @bottom-center { content: none; }
+}
+
+body {
+    font-family: "Droid Sans Fallback", Helvetica, Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.75;
+    color: #2c3e50;
+    text-align: justify;
+}
+
+/* 封面 */
+.cover {
+    page-break-after: always;
+    text-align: center;
+    padding-top: 45%;
+}
+.cover h1 {
+    font-size: 28pt;
+    color: #1a5276;
+    margin-bottom: 8mm;
+    font-weight: bold;
+    letter-spacing: 2pt;
+}
+.cover .subtitle {
+    font-size: 14pt;
+    color: #95a5a6;
+    margin-bottom: 6mm;
+}
+.cover .meta {
+    font-size: 11pt;
+    color: #95a5a6;
+    margin-bottom: 4mm;
+}
+.cover .divider {
+    width: 60%;
+    margin: 8mm auto;
+    border: none;
+    border-top: 1.5pt solid #1a5276;
+}
+
+/* 一级标题 */
+h1 {
+    font-size: 20pt;
+    color: #1a5276;
+    margin-top: 16mm;
+    margin-bottom: 6mm;
+    padding-bottom: 3mm;
+    border-bottom: 2pt solid #1a5276;
+    page-break-before: always;
+    font-weight: bold;
+}
+
+/* 二级标题 */
+h2 {
+    font-size: 14pt;
+    color: #1e8449;
+    margin-top: 10mm;
+    margin-bottom: 5mm;
+    font-weight: bold;
+}
+
+/* 三级标题 */
+h3 {
+    font-size: 12pt;
+    color: #2e86c1;
+    margin-top: 6mm;
+    margin-bottom: 3mm;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 11pt;
+    color: #5b2c6f;
+    margin-top: 5mm;
+    margin-bottom: 2mm;
+    font-weight: bold;
+}
+
+/* 段落 */
+p {
+    margin-top: 1.5mm;
+    margin-bottom: 1.5mm;
+    orphans: 3;
+    widows: 3;
+}
+
+/* 引用块 */
+blockquote {
+    margin: 4mm 0;
+    padding: 4mm 4mm 4mm 10mm;
+    background: #f8f9fa;
+    border-left: 3pt solid #1a5276;
+    color: #5d6d7e;
+    font-size: 10pt;
+}
+blockquote p {
+    margin: 1mm 0;
+}
+
+/* 粗体 */
+strong, b {
+    font-weight: bold;
+    color: #1a252f;
+}
+
+/* 行内代码 */
+code {
+    font-family: "Courier New", Courier, monospace;
+    background: #fdf2e9;
+    color: #c0392b;
+    padding: 0.5mm 1.5mm;
+    border-radius: 2pt;
+    font-size: 9.5pt;
+}
+
+/* 表格 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+}
+thead th {
+    background: #1a5276;
+    color: white;
+    padding: 3mm;
+    text-align: left;
+    font-weight: bold;
+}
+tbody td {
+    padding: 2.5mm 3mm;
+    border-bottom: 0.5pt solid #bdc3c7;
+}
+tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* 分隔线 */
+hr {
+    border: none;
+    border-top: 0.5pt solid #bdc3c7;
+    margin: 4mm 0;
+}
+
+/* 列表 */
+ul, ol {
+    margin: 2mm 0;
+    padding-left: 8mm;
+}
+li {
+    margin-bottom: 1mm;
+}
+
+/* 链接 */
+a {
+    color: #2e86c1;
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+    <div class="cover">
+        <h1 style="page-break-before: avoid; border: none;">Onepager 产品横纵分析报告</h1>
+        <div class="subtitle">横纵分析法深度研究报告</div>
+        <div class='meta'>研究时间：2026-08-08 | 所属领域：AI 原生信息设计 / Agent Skill | 研究对象类型：开源产品</div>
+        <hr class="divider">
+        <div class="meta">作者: Zerox 产品研究</div>
+    </div>
+    
+
+<blockquote>
+<p>研究时间：2026-08-08 | 所属领域：AI 原生信息设计 / Agent Skill | 研究对象类型：开源产品</p>
+</blockquote>
+<h2>一、一句话定义</h2>
+<p>Onepager 不是一个普通的 Markdown 转图片工具，也不应该继续被定义为“九种风格的海报生成 Skill”。</p>
+<p>它真正有机会成为的是：</p>
+<blockquote>
+<p><strong>面向 AI Agent 的单页视觉编译器：把复杂内容编译成可信、可控、可复现、可继续编辑的单页视觉资产。</strong></p>
+</blockquote>
+<p>这里的关键词不是“漂亮”，而是“编译”。</p>
+<p>漂亮只是一次结果。编译意味着存在稳定输入、结构化中间层、明确规则、确定性输出、错误报告和可重复构建。上一轮优化已经补上了质量门禁，但如果产品只停在“Prompt 生成 HTML，再截图成 PNG”，它仍然是一个能力很强的一次性生成器，还不是能长期积累用户资产的产品。</p>
+<h2>二、核心结论</h2>
+<h3>2.1 Onepager 当前最强的不是模板，而是内容判断</h3>
+<p>绝大多数同类项目从排版开始：用户给 Markdown，工具负责换主题、分页和导出。Onepager 从内容理解开始，会判断信息类型、叙事结构、密度、关键数据和视觉层级。这是它和 Madopic、MD2Card、markdown-poster 最实质的区别。</p>
+<p>用户真正付出的高成本，往往不是把字变成图片，而是决定：</p>
+<ul>
+<li>这一页到底要讲什么；</li>
+<li>哪些信息应该删掉；</li>
+<li>什么应该成为视觉中心；</li>
+<li>内容之间是流程、对比、层级还是论证关系；</li>
+<li>读者看完应该记住什么、做什么。</li>
+</ul>
+<p>Onepager 已经在 MECE、金字塔、SCQA、So What、类型差异化等部分积累了大量规则。这些规则不是设计装饰，它们是产品的内容决策引擎。</p>
+<h3>2.2 当前最大的问题是“生成前太重，生成后太轻”</h3>
+<p>生成前，用户需要面对尺寸、风格、密度、类型、BigNumber、署名六个维度。只计算四尺寸、九风格、三密度、四类型和 BigNumber 开关，就有 864 种基础组合，还没有算 focus 和 B9 子模式。</p>
+<p>这套组合系统对设计者有价值，对普通用户却是决策负担。</p>
+<p>用户说“把这份方案做成一页图”，本意是减少设计决策，不是接手一个设计控制台。Agent 应该先给结果，再让用户沿着少数高价值维度调整。</p>
+<p>生成后，用户拿到 HTML 和 PNG。理论上 HTML 可编辑，实际上多数目标用户不会打开 CSS 修改某个区块。他们真正想说的是：</p>
+<ul>
+<li>第二块文字太长，压缩一点；</li>
+<li>锁住标题，只换下面的布局；</li>
+<li>这组数据不要 BigNumber，换成对比；</li>
+<li>保持这个品牌，再做一个 16:9 版本；</li>
+<li>给我三个方向并排比较；</li>
+<li>只重做右下角，不要整张重新生成。</li>
+</ul>
+<p>这些都是产品级编辑动作。当前 Onepager 仍主要依赖 Agent 重新理解自然语言并修改最终 HTML，缺少稳定的局部编辑模型。</p>
+<h3>2.3 最大的直接威胁不是另一个海报 Skill，而是 AntV Infographic</h3>
+<p>截至 2026-08-08，AntV Infographic 约 5,688 Stars、440 Forks。它的关键优势不是 Stars，也不是约 200 个模板，而是建立了一个高层信息图语法。</p>
+<p>AI 生成的不是最终像素，也不是低层 SVG 坐标，而是一份人和模型都能读懂的 DSL：</p>
+<pre><code class="language-text">infographic list-row-simple-horizontal-arrow
+data
+  lists
+    - label Step 1
+      desc Start
+</code></pre>
+<p>这份中间产物可以流式生成、实时渲染、人工修改、版本管理，并继续输出 SVG。AntV 还提供内置编辑器以及 Claude Code、Codex、Obsidian、Slidev、VS Code、Markdown 等生态集成。</p>
+<p>Onepager 直接让模型生成 HTML/CSS，视觉自由度更高，但也把语义、布局、样式、渲染全部耦合进最终文件。修改一个信息关系，模型常常需要重新理解整份 HTML。AntV 的模板化视觉上限可能不如自由 HTML 海报，但它在可编辑性、生态和长期资产价值上已经领先一个产品代际。</p>
+<h3>2.4 正确路线不是放弃 HTML，而是在 HTML 前面增加 Onepager IR</h3>
+<p>Onepager 不需要复制 AntV 的全部 DSL，也不应该退化成模板渲染器。</p>
+<p>更合理的架构是：</p>
+<pre><code class="language-text">原始内容
+  ↓
+内容分析与事实包
+  ↓
+Onepager IR（语义、叙事、模块、证据、设计意图）
+  ↓
+布局配方与品牌约束
+  ↓
+HTML / SVG / PNG 渲染器
+</code></pre>
+<p>IR 可以是 JSON 或受约束的 YAML。它至少应该包含：</p>
+<ul>
+<li>核心论点；</li>
+<li>目标读者与传播场景；</li>
+<li>内容类型与逻辑关系；</li>
+<li>模块 ID、模块角色、文案和事实来源；</li>
+<li>数据值、单位、来源、是否允许改写；</li>
+<li>视觉优先级；</li>
+<li>建议图表类型；</li>
+<li>画布和品牌约束；</li>
+<li>锁定状态；</li>
+<li>渲染配方版本。</li>
+</ul>
+<p>一旦有了 IR，“换风格”“换尺寸”“只改一个模块”“导出 SVG”“比较三个版本”“保存为配方”才会成为低成本动作。</p>
+<h2>三、纵向分析：Onepager 如何走到今天</h2>
+<h3>3.1 第一阶段：先解决“能不能生成”</h3>
+<p>2026 年 3 月，项目以 OnePage Generator Skill 起步。早期提交大量集中在目录结构、命名、安装位置、展示图和基础风格。</p>
+<p>这是典型的工具萌芽期：先证明 Agent 能把文字变成 HTML，再通过截图形成可分享图片。此时产品价值非常直接，用户提供内容，Skill 代替前端设计师完成单页。</p>
+<p>这个阶段形成了两个后来一直保留的基因：</p>
+<ol>
+<li>
+<p><strong>HTML/CSS 是主要渲染媒介。</strong><br>
+   它比图像模型更适合中文、长文字、精确数据和稳定布局。</p>
+</li>
+<li>
+<p><strong>Skill 本身就是产品入口。</strong><br>
+   用户不需要打开一个独立 SaaS，可以在 Claude Code、Trae 等环境里直接调用。</p>
+</li>
+</ol>
+<p>这两个选择今天仍然成立。问题在于，当能力持续增加，原本轻量的 Skill 开始承担内容策略、设计系统、渲染器、质检器和交付器等多重角色。</p>
+<h3>3.2 第二阶段：从排版工具升级成内容智能</h3>
+<p>2026 年 4 月，项目加入内容智能、类型差异化、视觉标准、质量检查、A4、BigNumber 开关、署名和文件命名。</p>
+<p>这是 Onepager 最重要的一次产品跃迁。</p>
+<p>它不再满足于“把输入排得好看”，而是试图回答“输入应该如何被重新组织”。T1 商业说服、T2 使用指南、T3 信息图、T4 宣传海报，本质上是四种不同的传播任务。</p>
+<p>这次跃迁带来了真正的差异化，也埋下复杂度：</p>
+<ul>
+<li>内容类型影响模块必备项；</li>
+<li>密度影响改写和布局；</li>
+<li>风格影响字体、色彩、图标；</li>
+<li>画布影响信息容量；</li>
+<li>BigNumber 又影响数据要求。</li>
+</ul>
+<p>如果这些变量只存在于系统内部，它们是智能路由。如果全部交给用户，它们就是配置表单。</p>
+<p>Onepager 当前正处于这个分岔点。</p>
+<h3>3.3 第三阶段：审美强化与规则膨胀</h3>
+<p>2026 年 5 月，项目加入 B9 Google Native、T4 海报、视觉放大器、设计意图声明和更细的交叉规则。</p>
+<p>这一阶段明显提升了最终作品的视觉识别度，但 Git 历史也出现多次“原则化”“去模板化”“重新生成”“回滚”。这不是偶然。</p>
+<p>海报设计存在一个难以完全形式化的矛盾：</p>
+<ul>
+<li>规则越具体，输出越稳定，但越容易模板化；</li>
+<li>原则越抽象，模型自由度越高，但结果越不稳定；</li>
+<li>示例越强，模型越容易模仿示例，而不是理解内容；</li>
+<li>风格选项越多，用户越容易认为产品价值就是“换皮肤”。</li>
+</ul>
+<p>当前项目用大量文字规范试图同时获得稳定性与创造力，但缺少一个结构化中间层来划分“什么必须稳定，什么允许自由”。</p>
+<p>应该稳定的是信息事实、叙事关系、模块角色、品牌边界和画布约束。</p>
+<p>应该自由的是构图节奏、视觉隐喻、局部形式和艺术表达。</p>
+<h3>3.4 第四阶段：工程可靠性补课</h3>
+<p>最近一轮优化补充了配置 Schema、静态质检、浏览器渲染质检、fail-closed 截图、自动测试与 CI。</p>
+<p>这一步非常重要，因为正式汇报、方案介绍和数据海报不能接受文字裁切、字体缺失、数据编造或尺寸错误。</p>
+<p>但质量门禁只能保证产品“没有明显坏掉”，不能自动创造用户价值。下一阶段不应继续把主要精力放在新增检查项，而应让这些工程能力变成用户可感知的承诺：</p>
+<ul>
+<li>可复现；</li>
+<li>不编数据；</li>
+<li>输出前自动验证；</li>
+<li>同一源内容能稳定生成多尺寸版本；</li>
+<li>每个结果都带生成清单和证据状态；</li>
+<li>局部修改不会破坏已确认部分。</li>
+</ul>
+<h2>四、横向分析：同类产品分别赢在哪里</h2>
+<h3>4.1 AntV Infographic：赢在中间语言与生态</h3>
+<p>AntV Infographic 是最重要的直接参照。它定位为“声明式信息图可视化引擎”，提供 AI 友好语法、约 200 个模板、主题系统、编辑器、流式渲染和 SVG 输出。</p>
+<p>它的产品判断非常清楚：</p>
+<blockquote>
+<p>AI 不应该直接画最终图，AI 应该生成一个稳定、可执行、可修改的信息结构。</p>
+</blockquote>
+<p>它由此获得四个优势：</p>
+<ol>
+<li>模型生成成本更低，DSL 比完整 HTML 更短；</li>
+<li>错误更容易定位，不需要在几百行 CSS 里找问题；</li>
+<li>人类可以修改结构文本；</li>
+<li>社区可以围绕模板、主题、编辑器、插件和渲染器扩展。</li>
+</ol>
+<p>其短板也明确：模板决定了表达边界。复杂海报、强品牌视觉、特殊中文构图和内容型叙事并不一定适合标准信息图模板。实际 Issues 中也出现模板不足、架构图需求、PNG 文本裁切和模板失败。</p>
+<p>Onepager 不应该和 AntV 比模板数量。它应该在 AntV 不擅长的部分建立优势：</p>
+<ul>
+<li>单页整体叙事，而不是单个图形组件；</li>
+<li>中文高密度内容；</li>
+<li>商业说服、宣传海报等非纯图表任务；</li>
+<li>内容删改和表达策略；</li>
+<li>设计意图与品牌气质；</li>
+<li>输出前事实和几何质检。</li>
+</ul>
+<p>同时，Onepager 完全可以把 AntV 作为内部图表渲染器，减少自己维护流程图、矩阵、层级图等基础组件的成本。</p>
+<h3>4.2 Madopic：赢在即时编辑</h3>
+<p>Madopic 约 206 Stars，产品路径简单：左侧写 Markdown，右侧实时预览，调整背景、字号、边距和模式，然后导出 PNG、PDF 或 HTML。</p>
+<p>它支持 Mermaid、ECharts、KaTeX、代码块和图片，适合技术内容、学习笔记和学术表达。</p>
+<p>Madopic 没有 Onepager 那么强的内容重构能力，但用户始终知道：</p>
+<ul>
+<li>当前源内容是什么；</li>
+<li>改一行会发生什么；</li>
+<li>导出前是什么样；</li>
+<li>哪些部分能自己控制。</li>
+</ul>
+<p>Onepager 的自然语言交互更聪明，却更不透明。用户看不到模型如何理解内容，也看不到模块结构，直到最终 HTML 生成完。</p>
+<p>应该借鉴的不是 Markdown 编辑器本身，而是<strong>连续反馈</strong>：内容结构、视觉草图、最终渲染不应该在最后一次性揭晓。</p>
+<h3>4.3 AI Infographic Generator：赢在完整生成工作台</h3>
+<p>这个项目 Stars 不高，但产品思路完整：</p>
+<ul>
+<li>Claude 生成可编辑 HTML；</li>
+<li>Gemini 生成视觉更自由的 PNG；</li>
+<li>Haiku 将简单主题增强成结构化 brief；</li>
+<li>每次生成保存 HTML、PNG、Prompt、模型、Token 和成本；</li>
+<li>支持历史列表、网格比较、参考图、模型切换和多平台尺寸。</li>
+</ul>
+<p>它最值得借鉴的是“每次生成都是一个可追溯项目”，而不是散落在目录里的两个文件。</p>
+<p>Onepager 当前的 HTML 和 PNG 文件名可以避免覆盖，但没有标准 manifest，也没有历史浏览和版本关系。用户无法快速回答：</p>
+<ul>
+<li>这张图用了哪个配置；</li>
+<li>是从哪个源文件生成；</li>
+<li>上一版改了什么；</li>
+<li>哪个版本通过了哪些检查；</li>
+<li>这一版能否复现；</li>
+<li>如何基于它生成另一个尺寸。</li>
+</ul>
+<h3>4.4 Astra Graphic：赢在品牌和双引擎</h3>
+<p>Astra Graphic 把 AI 直出、HTML 精排版和混合模式拆成三条路线，并为客户维护 <code>brand.json</code>、CSS 和 AI 风格约束。</p>
+<p>它的“28 万种组合”并不是值得照搬的产品表达。组合数很容易变成营销数字，不能代表真实质量。</p>
+<p>真正值得借鉴的是：</p>
+<ul>
+<li>用户保存的是品牌，而不是每次重新选风格；</li>
+<li>图像模型负责氛围、插画、封面；</li>
+<li>HTML 负责文字、数据和内容页；</li>
+<li>混合模式将两者组合；</li>
+<li>系统根据任务自动路由，用户可以覆盖。</li>
+</ul>
+<p>Onepager 当前每次都要求选择 B1-B9。对高频用户而言，最常见的需求不是每次换一个风格，而是“永远保持我的品牌，只根据内容改变结构”。</p>
+<h3>4.5 Article Poster Generator：赢在单一场景</h3>
+<p>这个项目只有约 22 Stars，但一句话就能理解：</p>
+<blockquote>
+<p>输入一篇长文章，自动拆成 5-8 张适合公众号、小红书、朋友圈的高清信息图海报。</p>
+</blockquote>
+<p>它的能力不如 Onepager 泛化，产品价值却更容易传播。</p>
+<p>Onepager 当前同时覆盖产品介绍、方案、指南、信息图、宣传海报、团队汇报、数据概览。每一项都成立，但合在一起后，用户很难形成具体心智。</p>
+<p>开源产品早期更需要一个楔子，而不是一个完整能力地图。</p>
+<h3>4.6 Slidev、Marp 与 Mermaid：赢在源文件和生态</h3>
+<p>Slidev 约 48,005 Stars，Marp 约 12,317 Stars，Mermaid 约 89,630 Stars。它们的成功不来自一次性生成质量，而来自可积累的源文件和扩展生态。</p>
+<p>用户可以把 Markdown 或 DSL：</p>
+<ul>
+<li>放进 Git；</li>
+<li>在编辑器里预览；</li>
+<li>在 CI 中批量构建；</li>
+<li>应用主题；</li>
+<li>嵌入文档；</li>
+<li>交给其他人继续修改；</li>
+<li>多年后重新生成。</li>
+</ul>
+<p>Onepager 的 HTML 可以进 Git，但它不是理想源文件。它更像编译产物。</p>
+<p>如果 Onepager 想从 Skill 变成产品，必须区分：</p>
+<ul>
+<li><strong>源内容</strong>：用户事实与原始表达；</li>
+<li><strong>视觉语义</strong>：Onepager IR；</li>
+<li><strong>主题和配方</strong>：品牌、风格、布局能力；</li>
+<li><strong>构建产物</strong>：HTML、SVG、PNG、PDF；</li>
+<li><strong>构建记录</strong>：manifest 与质检报告。</li>
+</ul>
+<h2>五、产品设计深度诊断</h2>
+<h3>5.1 目标用户尚未收敛</h3>
+<p>当前文档同时在服务四类人：</p>
+<ol>
+<li>不会设计、只想快速出图的内容创作者；</li>
+<li>需要正式汇报和方案交付的产品、咨询、管理人员；</li>
+<li>想在 Agent 中自动化生成视觉内容的开发者；</li>
+<li>对字体、网格、风格哲学有强偏好的设计型用户。</li>
+</ol>
+<p>四类用户的产品要求不同。</p>
+<p>内容创作者要快、要平台尺寸、要系列化。<br>
+商务用户要可信、要品牌、要数据来源、要可修改。<br>
+开发者要 CLI、Schema、批处理、可复现。<br>
+设计型用户要控制力、预览和细节调整。</p>
+<p>当前 Onepager 用 <code>A/B/C/T/E/F</code> 将四类需求组织成一份渐进式配置协议。这套编码降低了自然语言确认成本，应当保留。需要优化的不是取消选择，而是让推荐理由更贴合当前内容，并把用户选择沉淀为可复用配置；高级用户缺少的仍是真正的局部控制。</p>
+<p>建议选择一个主用户：</p>
+<blockquote>
+<p><strong>主用户：需要把复杂中文内容快速变成正式单页视觉的知识工作者和内容生产者。</strong></p>
+</blockquote>
+<p>开发者是分发渠道和扩展者，不是主交互对象。设计师不是主要替代目标。</p>
+<h3>5.2 价值主张需要从“风格多”转为“复杂内容讲清楚”</h3>
+<p>README 当前强调尺寸、九种风格、三种密度、四种类型、BigNumber 和图表。</p>
+<p>这些是能力，不是价值。</p>
+<p>更强的首页表达应该是：</p>
+<blockquote>
+<p>把方案、报告和长文，压缩成一张讲得清、改得动、可直接发布的视觉单页。</p>
+</blockquote>
+<p>下面再给三个承诺：</p>
+<ol>
+<li><strong>先读懂，再设计</strong>：自动提炼主线，不是把原文塞进模板；</li>
+<li><strong>事实不乱编</strong>：数字和来源可追溯，缺数据会明确提示；</li>
+<li><strong>结果可继续改</strong>：文案、结构、品牌和尺寸可以局部调整。</li>
+</ol>
+<h3>5.3 首次体验不应从六维菜单开始</h3>
+<p>推荐的新用户流程：</p>
+<ol>
+<li>用户提供内容和一句用途；</li>
+<li>系统分析受众、内容类型、密度和尺寸，形成推荐但不替用户决定；</li>
+<li>先展示一份“内容蓝图”：</li>
+<li>核心论点；</li>
+<li>3-5 个模块；</li>
+<li>将删除或压缩的内容；</li>
+<li>缺失事实；</li>
+<li>推荐视觉路径；</li>
+<li>展示完整 <code>A/B/C/T/E/F</code> 菜单、推荐组合与逐项理由；</li>
+<li>用户确认推荐，或覆盖任意一个或多个维度；</li>
+<li>系统生成一个主方案和一个差异明显的备选；</li>
+<li>用户在生成后做局部调整。</li>
+</ol>
+<p><code>A/B/C/T/E/F</code> 不是应被隐藏的专业参数，而是 Onepager 的核心交互语言。产品要做的是减少解释成本、保存用户选择并支持单维度修改。</p>
+<p>默认体验要做到：</p>
+<blockquote>
+<p>用户不需要理解设计理论，也能通过 A/B/C/T/E/F 菜单做出明确选择。</p>
+</blockquote>
+<h3>5.4 产品需要“内容蓝图”，而不只是设计意图</h3>
+<p>当前已有设计意图声明，但它发生在内容重构之后，且主要指导 CSS。</p>
+<p>应该增加用户可见的内容蓝图：</p>
+<pre><code class="language-yaml">goal: 让管理层理解为什么需要建设 AI Agent 平台
+audience: 业务负责人
+core_claim: Agent 平台的价值不是模型接入，而是可复用的业务执行能力
+modules:
+  - id: problem
+    role: tension
+    source_refs: [p2, p3]
+  - id: solution
+    role: answer
+    source_refs: [p5]
+  - id: evidence
+    role: proof
+    source_refs: [table1]
+missing:
+  - ROI 数据
+</code></pre>
+<p>它能让用户在花费生成成本前纠正理解错误，也能成为 IR 的第一部分。</p>
+<h3>5.5 “可编辑 HTML”不是足够的可编辑性</h3>
+<p>产品层面的可编辑应该包含：</p>
+<ul>
+<li>选中模块后修改文字；</li>
+<li>模块排序；</li>
+<li>模块锁定；</li>
+<li>选择替代布局；</li>
+<li>改变信息密度；</li>
+<li>切换品牌；</li>
+<li>将某个模块换成图表；</li>
+<li>只重生成选中区域；</li>
+<li>回到上一版本；</li>
+<li>对比两个版本。</li>
+</ul>
+<p>近期不需要做完整 Canva 式画布。一个本地轻量预览器就足够：</p>
+<ul>
+<li>左侧 IR/YAML；</li>
+<li>中间实时画布；</li>
+<li>右侧属性；</li>
+<li>顶部版本与质检状态。</li>
+</ul>
+<h3>5.6 应优先建设品牌系统，而不是第十种风格</h3>
+<p>风格是一次性选择，品牌是持续资产。</p>
+<p>建议新增：</p>
+<pre><code class="language-json">{
+  &quot;brand&quot;: &quot;zerox&quot;,
+  &quot;colors&quot;: {
+    &quot;background&quot;: &quot;#ffffff&quot;,
+    &quot;text&quot;: &quot;#202124&quot;,
+    &quot;accent&quot;: &quot;#1a73e8&quot;
+  },
+  &quot;fonts&quot;: {
+    &quot;heading&quot;: [&quot;Inter&quot;, &quot;Noto Sans SC&quot;],
+    &quot;body&quot;: [&quot;Noto Sans SC&quot;]
+  },
+  &quot;logo&quot;: &quot;assets/logo.svg&quot;,
+  &quot;rules&quot;: {
+    &quot;forbidden_colors&quot;: [&quot;#6366f1&quot;],
+    &quot;max_radius&quot;: 8,
+    &quot;tone&quot;: [&quot;克制&quot;, &quot;清晰&quot;, &quot;可信&quot;]
+  }
+}
+</code></pre>
+<p>首次创建品牌时让用户回答受众、品牌性格和审美方向，之后默认复用。</p>
+<h3>5.7 单页不是所有内容的正确答案</h3>
+<p>当前产品叫 Onepager，单页是重要边界。但输入可能远超一页容量。</p>
+<p>产品应该明确三种结果：</p>
+<ol>
+<li><strong>OnePage</strong>：单页摘要；</li>
+<li><strong>Card Series</strong>：3-8 张社媒卡片；</li>
+<li><strong>Visual Component</strong>：一个可插入 PPT/文章的信息图组件。</li>
+</ol>
+<p>系统先判断内容容量。如果强行压成一页会丢失关键逻辑，应主动建议 Card Series，而不是降低字号或堆满卡片。</p>
+<p>这不是产品扩张，而是对“一页边界”的诚实处理。</p>
+<h2>六、建议的产品架构</h2>
+<h3>6.1 四层结构</h3>
+<h4>第一层：Content Intelligence</h4>
+<ul>
+<li>文档解析；</li>
+<li>事实与来源抽取；</li>
+<li>目标受众；</li>
+<li>叙事主线；</li>
+<li>内容压缩；</li>
+<li>信息结构识别；</li>
+<li>缺失数据提示。</li>
+</ul>
+<h4>第二层：Onepager IR</h4>
+<ul>
+<li>稳定 Schema；</li>
+<li>模块 ID；</li>
+<li>内容和来源；</li>
+<li>视觉权重；</li>
+<li>锁定状态；</li>
+<li>设计意图；</li>
+<li>容量预算。</li>
+</ul>
+<h4>第三层：Recipe / Brand</h4>
+<ul>
+<li>信息结构模板；</li>
+<li>画布配方；</li>
+<li>品牌；</li>
+<li>字体与资源；</li>
+<li>图表组件；</li>
+<li>版本和兼容性。</li>
+</ul>
+<h4>第四层：Renderer / Delivery</h4>
+<ul>
+<li>HTML + Playwright；</li>
+<li>SVG；</li>
+<li>PNG；</li>
+<li>PDF；</li>
+<li>manifest；</li>
+<li>质检报告。</li>
+</ul>
+<h3>6.2 不建议近期建设的能力</h3>
+<ul>
+<li>完整自由拖拽白板；</li>
+<li>多人实时协作；</li>
+<li>大而全在线 SaaS；</li>
+<li>数百个低质量模板；</li>
+<li>独立模型托管平台；</li>
+<li>复杂数据 BI；</li>
+<li>完整 PPT 编辑器。</li>
+</ul>
+<p>这些方向都会把产品拖进成熟平台的主战场。</p>
+<h2>七、优先级路线图</h2>
+<h3>P0：把一次生成变成可复现项目</h3>
+<p>时间建议：2-4 周。</p>
+<ol>
+<li>定义 Onepager IR v1；</li>
+<li>每次生成输出 <code>manifest.json</code>；</li>
+<li>保存源文件、IR、HTML、PNG、配置和质检结果；</li>
+<li>支持 <code>onepager rebuild manifest.json</code>；</li>
+<li>保留 <code>A/B/C/T/E/F</code> 六维菜单，并为每项提供内容相关的推荐理由；</li>
+<li>增加用户可见内容蓝图；</li>
+<li>给每个结果稳定项目目录和版本号。</li>
+</ol>
+<p>验收指标：</p>
+<ul>
+<li>同一 manifest 重建结果视觉差异为零；</li>
+<li>新用户从输入到首图不超过 3 分钟；</li>
+<li>80% 用户能在一次交互内确认或修改 <code>A/B/C/T/E/F</code>；</li>
+<li>每个数据模块都能追溯来源或明确标记缺失。</li>
+</ul>
+<h3>P1：建立生成后局部迭代</h3>
+<p>时间建议：4-8 周。</p>
+<ol>
+<li>模块稳定 ID；</li>
+<li>锁定模块；</li>
+<li>只改选中模块的文案、布局和密度；</li>
+<li>版本 diff；</li>
+<li>两个候选方向并排预览；</li>
+<li>轻量本地预览器；</li>
+<li>品牌配置文件和品牌向导。</li>
+</ol>
+<p>验收指标：</p>
+<ul>
+<li>70% 修改不需要重生成整页；</li>
+<li>第二版生成时间低于第一版的 30%；</li>
+<li>品牌用户连续生成 10 张图时无需重复选择风格；</li>
+<li>用户能在不编辑 HTML 的情况下完成常见修改。</li>
+</ul>
+<h3>P2：扩展可编辑输出和生态</h3>
+<p>时间建议：8-12 周。</p>
+<ol>
+<li>SVG 渲染器或 AntV Infographic 组件集成；</li>
+<li>Recipe 包规范；</li>
+<li>模板 gallery；</li>
+<li><code>npx skills</code> 或通用 Skill 安装；</li>
+<li>CLI 批量构建；</li>
+<li>VS Code/浏览器预览；</li>
+<li>社区贡献的截图回归和质量评分。</li>
+</ol>
+<p>验收指标：</p>
+<ul>
+<li>至少 20 个高质量 Recipe，每个有适用场景和容量边界；</li>
+<li>支持 HTML/PNG/SVG 三种稳定输出；</li>
+<li>一条命令完成安装和环境检查；</li>
+<li>社区 Recipe PR 自动完成 Schema、渲染和视觉回归。</li>
+</ul>
+<h2>八、建议重写的产品叙事</h2>
+<h3>当前叙事</h3>
+<p>多尺寸、九种风格、三种密度、四种内容类型、可选 BigNumber、智能图表和质量检查。</p>
+<h3>建议叙事</h3>
+<p><strong>把复杂内容，编译成一张讲得清的视觉单页。</strong></p>
+<ul>
+<li>先读懂：提炼结论、证据和叙事，不是套模板；</li>
+<li>不乱编：数据和来源可追溯；</li>
+<li>改得动：结构、文案、品牌和尺寸可以局部调整；</li>
+<li>出得稳：HTML、SVG、PNG 自动验证并可重复构建。</li>
+</ul>
+<h3>推荐首页 Demo</h3>
+<p>不要只展示一张最终海报。展示完整闭环：</p>
+<pre><code class="language-text">原始长文
+→ 内容蓝图
+→ 两个设计候选
+→ 用户说“锁住标题，把第二块换成对比”
+→ 局部更新
+→ PNG + SVG + manifest + PASS
+</code></pre>
+<p>这个 Demo 比九张不同风格的图更能说明产品价值。</p>
+<h2>九、横纵交汇：历史如何塑造了今天</h2>
+<p>Onepager 今天的优势和短板来自同一个历史选择：直接生成完整 HTML。</p>
+<p>这个选择让它很早就获得了强视觉自由、中文精确文字和像素级布局，也让项目可以迅速吸收各种设计哲学。但每次新增能力，都继续以 Prompt、参考文档和 CSS 规则叠加。于是风格越丰富，规则越复杂，回滚越频繁。</p>
+<p>AntV 从一开始选择 DSL，所以视觉自由受模板约束，却自然拥有编辑器、SVG、流式渲染和生态。Madopic 选择 Markdown，所以内容忠实但不主动重构。Astra 选择双引擎，所以可以在视觉自由和文字精确之间路由。</p>
+<p>Onepager 不必否定自己的历史。它需要在现有 HTML 引擎前补上缺失的一层。</p>
+<p>今天的内容智能，是 IR 的语义来源。<br>
+今天的交叉规则，是 Recipe 的原型。<br>
+今天的配置 Schema，是编译参数的开端。<br>
+今天的质量检查，是编译器诊断。<br>
+今天的 HTML 和 PNG，是构建产物。</p>
+<p>把这些重新组织起来，Onepager 就不再是一份越来越长的 Skill Prompt，而是一套真正的视觉编译系统。</p>
+<h2>十、未来三个剧本</h2>
+<h3>最可能剧本：成为小而强的 Agent Skill</h3>
+<p>项目继续优化内容理解、中文设计和可靠输出，在 Agent 用户中保持高口碑。它不会成为大型设计平台，但会成为“需要一张正式视觉单页时”的专业工具。</p>
+<p>条件：降低首次配置摩擦，完善安装和案例，保持质量。</p>
+<p>风险：缺少结构化资产和生成后编辑，用户偶尔使用，难以形成持续习惯。</p>
+<h3>最危险剧本：继续增加风格与规则</h3>
+<p>项目加入第十种风格、更多放大器、更多类型、更多例外。最终 Skill 越来越长，模型执行更不稳定，用户也无法理解产品边界。</p>
+<p>此时 AntV、HTML Anything 或双引擎产品会在模板、编辑器、生态和工作台方面快速领先。Onepager 只剩“某些案例很好看”，但没有可复用的系统优势。</p>
+<h3>最乐观剧本：成为单页视觉编译器标准</h3>
+<p>Onepager 建立 IR、Recipe、Brand、Renderer 和 Manifest 五个稳定层。它可以作为 Skill、CLI、MCP 或本地预览器运行，并支持 HTML/SVG/PNG。</p>
+<p>用户把方案、报告、会议纪要、研究文档交给它，它先生成可信内容蓝图，再输出可编辑视觉资产。社区贡献的不是随意 Prompt，而是带 Schema、适用边界和金标准截图的 Recipe。</p>
+<p>它不和 Canva 比画布，不和 Slidev 比演示，不和 AntV 比模板数量。</p>
+<p>它拥有一个更窄但更有价值的位置：</p>
+<blockquote>
+<p><strong>复杂内容到可信单页视觉资产的标准编译链。</strong></p>
+</blockquote>
+<h2>十一、最终优化清单</h2>
+<h3>立即做</h3>
+<ol>
+<li>重写 README 首屏价值主张；</li>
+<li>保留 <code>A/B/C/T/E/F</code> 交互协议，强化逐项推荐、组合回复和单维度修改；</li>
+<li>增加内容蓝图确认；</li>
+<li>定义 IR v1；</li>
+<li>输出 manifest；</li>
+<li>保存项目目录与版本；</li>
+<li>增加品牌配置；</li>
+<li>为现有九种风格改名为“视觉方向”，避免用户把它理解为换皮。</li>
+</ol>
+<h3>随后做</h3>
+<ol>
+<li>模块 ID 与局部重生成；</li>
+<li>锁定内容和布局；</li>
+<li>A/B 候选比较；</li>
+<li>本地实时预览；</li>
+<li>SVG 输出或 AntV 组件集成；</li>
+<li>Recipe 规范与 Gallery；</li>
+<li>CLI 批量构建；</li>
+<li>Skill 安装与触发评测。</li>
+</ol>
+<h3>暂时不做</h3>
+<ol>
+<li>完整拖拽设计器；</li>
+<li>多人实时协作；</li>
+<li>大型在线 SaaS；</li>
+<li>继续无边界增加风格；</li>
+<li>用模板数量作为主要增长指标。</li>
+</ol>
+<h2>十二、北极星指标</h2>
+<p>不建议用“生成图片数量”作为唯一指标。它会鼓励一次性生成和无效重试。</p>
+<p>建议北极星指标：</p>
+<blockquote>
+<p><strong>通过质检并被用户确认的可复用视觉项目数。</strong></p>
+</blockquote>
+<p>辅助指标：</p>
+<ul>
+<li>首次成功时间；</li>
+<li>首版确认率；</li>
+<li>平均重生成次数；</li>
+<li>局部修改占比；</li>
+<li>30 天内项目复用率；</li>
+<li>品牌复用次数；</li>
+<li>多尺寸派生率；</li>
+<li>事实缺失拦截数；</li>
+<li>构建 PASS 率；</li>
+<li>Recipe 被重复使用次数。</li>
+</ul>
+<h2>十三、信息来源</h2>
+<p>以下资料访问于 2026-08-08：</p>
+<ol>
+<li>Onepager 本地仓库 Git 历史、README、SKILL.md 与 references。</li>
+<li><a href="https://github.com/ZeroxZhang/onepager">Onepager GitHub</a></li>
+<li><a href="https://github.com/antvis/Infographic">AntV Infographic GitHub</a></li>
+<li><a href="https://github.com/antvis/Infographic/blob/main/README.zh-CN.md">AntV Infographic 中文 README</a></li>
+<li><a href="https://github.com/antvis/Infographic/issues/220">AntV Infographic Issue #220：模板机器可读说明</a></li>
+<li><a href="https://github.com/antvis/Infographic/issues/226">AntV Infographic Issue #226 / PR #244：PNG 文本裁切</a></li>
+<li><a href="https://github.com/xiaolinbaba/xiaolin-madopic">Madopic GitHub</a></li>
+<li><a href="https://github.com/arunenoah/AI_Inforgraphic_gen">AI Infographic Generator</a></li>
+<li><a href="https://github.com/Astralune-ai/Astra-graphic">Astra Graphic</a></li>
+<li><a href="https://github.com/tengj/article-poster-generator">Article Poster Generator</a></li>
+<li><a href="https://github.com/iotate/infomagic">InfoMagic</a></li>
+<li><a href="https://github.com/uhhc/md2card">MD2Card</a></li>
+<li><a href="https://github.com/nexu-io/html-anything">HTML Anything</a></li>
+<li><a href="https://github.com/slidevjs/slidev">Slidev</a></li>
+<li><a href="https://github.com/marp-team/marp">Marp</a></li>
+<li><a href="https://github.com/mermaid-js/mermaid">Mermaid</a></li>
+<li><a href="https://github.com/excalidraw/excalidraw">Excalidraw</a></li>
+<li><a href="https://github.com/vercel/satori">Satori</a></li>
+<li><a href="https://agentskills.io/specification">Agent Skills Specification</a></li>
+<li><a href="https://github.com/vercel-labs/skills">Vercel Skills CLI</a></li>
+</ol>
+<p>Stars 与 Forks 通过 GitHub REST API 获取，是 2026-08-08 的时间点快照，不作为产品质量的单一依据。</p>
+<h2>十四、方法论说明</h2>
+<p>本报告使用横纵分析法：纵向追踪 Onepager 从模板生成、内容智能、审美规则到工程质控的演进；横向比较 AI 信息图、Markdown 视觉工具、Agent Skill、DSL/SVG 引擎和文本驱动视觉生态；最后将历史选择与当前竞争位置交叉，形成产品路线判断。</p>
+</body>
+</html>

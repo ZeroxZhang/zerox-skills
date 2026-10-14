@@ -1,0 +1,149 @@
+{
+  "rankedBar": {
+    "items": [
+      {
+        "label": "乙",
+        "value": 2
+      },
+      {
+        "label": "甲",
+        "value": 5,
+        "selected": true
+      }
+    ],
+    "baseline": 3
+  },
+  "groupedBar": {
+    "categories": [
+      "甲",
+      "乙"
+    ],
+    "series": [
+      {
+        "name": "本期",
+        "values": [
+          8,
+          -2
+        ]
+      },
+      {
+        "name": "上期",
+        "values": [
+          6,
+          1
+        ]
+      }
+    ]
+  },
+  "timeSeries": {
+    "periods": [
+      "2024",
+      "2025"
+    ],
+    "series": [
+      {
+        "name": "收入",
+        "values": [
+          10,
+          12
+        ]
+      }
+    ]
+  },
+  "composition": {
+    "mode": "percent",
+    "items": [
+      {
+        "label": "甲",
+        "segments": [
+          {
+            "label": "核心",
+            "value": 80
+          },
+          {
+            "label": "新业务",
+            "value": 20
+          }
+        ]
+      }
+    ]
+  },
+  "histogram": {
+    "bins": [
+      {
+        "label": "0–10",
+        "value": 3
+      },
+      {
+        "label": "10–20",
+        "value": 7
+      },
+      {
+        "label": "20–30",
+        "value": 2
+      }
+    ]
+  },
+  "scatter": {
+    "items": [
+      {
+        "label": "甲",
+        "x": 1,
+        "y": 2,
+        "size": 100
+      },
+      {
+        "label": "乙",
+        "x": 2,
+        "y": 1,
+        "size": 25
+      }
+    ]
+  },
+  "heatmap": {
+    "rows": [
+      "市场"
+    ],
+    "columns": [
+      "规模",
+      "增长"
+    ],
+    "values": [
+      [
+        4,
+        5
+      ]
+    ],
+    "min": 1,
+    "max": 5
+  },
+  "sankey": {
+    "nodes": [
+      "入口",
+      "成交"
+    ],
+    "links": [
+      {
+        "source": "入口",
+        "target": "成交",
+        "value": 8
+      }
+    ]
+  },
+  "tree": {
+    "root": {
+      "label": "利润",
+      "value": 888,
+      "children": [
+        {
+          "label": "收入",
+          "value": 999
+        },
+        {
+          "label": "成本",
+          "value": 111
+        }
+      ]
+    }
+  }
+}

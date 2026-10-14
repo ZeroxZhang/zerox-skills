@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zerox-paper-to-course — 论文转交互式教程</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+    </style>
+
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --c-bg: #0a0a0f;
+            --c-surface: #111118;
+            --c-border: #1e293b;
+            --c-accent: #f59e0b;
+            --c-text: #e2e8f0;
+            --c-dim: #64748b;
+
+            --f-heading: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --f-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+
+            --radius: 8px;
+        }
+
+        .icon { width: 24px; height: 24px; display: inline-block; vertical-align: middle; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-sm { width: 16px; height: 16px; }
+
+        body { background: var(--c-bg); margin: 0; padding: 0; }
+
+        .page {
+            width: 800px; margin: 0 auto; padding: 48px;
+            background: var(--c-bg);
+            font-family: var(--f-heading); color: var(--c-text);
+            font-size: 14px; line-height: 1.8; letter-spacing: 0.02em;
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+        }
+        .page > * { position: relative; z-index: 1; }
+
+        /* HEADER */
+        .header { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--c-border); }
+        .header-tag {
+            font-family: var(--f-mono); font-size: 11px; font-weight: 500;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--c-accent); border: 1px solid var(--c-accent);
+            border-radius: 4px; padding: 3px 10px; display: inline-block; margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .header h1 { font-size: 40px; font-weight: 800; line-height: 1.3; color: var(--c-text); margin-bottom: 12px; }
+        .header h1 span { color: var(--c-accent); }
+        .header .subtitle { font-size: 16px; color: var(--c-dim); font-weight: 400; line-height: 1.7; max-width: 640px; }
+
+        /* BIGNUMBER */
+        .bignum-module { margin-bottom: 32px; padding: 24px 0; }
+        .bignum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .bignum-item {
+            background: var(--c-surface); border: 1px solid var(--c-border);
+            border-radius: var(--radius); padding: 16px 20px; text-align: center;
+        }
+        .bignum-value { font-family: var(--f-mono); font-size: 32px; font-weight: 700; color: var(--c-accent); line-height: 1; letter-spacing: -0.02em; }
+        .bignum-label { font-size: 11px; color: var(--c-dim); margin-top: 8px; letter-spacing: 0.05em; }
+
+        /* SECTIONS */
+        .section { margin-bottom: 28px; }
+        .section-title {
+            font-size: 20px; font-weight: 600; color: var(--c-text);
+            margin-bottom: 14px; padding-left: 14px;
+            border-left: 3px solid var(--c-accent); line-height: 1.4;
+        }
+        .section-title .title-num {
+            font-family: var(--f-mono); font-size: 12px; font-weight: 500;
+            color: var(--c-dim); display: block; margin-bottom: 2px; letter-spacing: 0.08em;
+        }
+
+        /* PAIN / SOLUTION */
+        .pain-solution { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .pain-card {
+            background: var(--c-surface); border: 1px solid var(--c-border);
+            border-radius: var(--radius); padding: 20px; border-left: 3px solid var(--c-dim);
+        }
+        .solution-card {
+            background: var(--c-surface); border: 1px solid var(--c-border);
+            border-radius: var(--radius); padding: 20px; border-left: 3px solid var(--c-accent);
+        }
+        .pain-card .label, .solution-card .label {
+            font-family: var(--f-mono); font-size: 10px; font-weight: 500;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+        }
+        .pain-card .label { color: var(--c-dim); }
+        .solution-card .label { color: var(--c-accent); }
+        .pain-card ul, .solution-card ul { list-style: none; padding: 0; }
+        .pain-card li, .solution-card li {
+            font-size: 13px; color: var(--c-text); padding: 5px 0;
+            border-bottom: 1px solid var(--c-border); line-height: 1.6;
+        }
+        .pain-card li:last-child, .solution-card li:last-child { border-bottom: none; }
+        .pain-card li::before { content: '×'; color: var(--c-dim); margin-right: 8px; font-weight: 700; }
+        .solution-card li::before { content: '→'; color: var(--c-accent); margin-right: 8px; font-weight: 700; }
+
+        /* FEATURES GRID */
+        .features-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .feature-card {
+            background: var(--c-surface); border: 1px solid var(--c-border);
+            border-radius: var(--radius); padding: 16px;
+        }
+        .feature-card .feat-icon {
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            background: var(--c-bg); border-radius: 6px; margin-bottom: 10px; color: var(--c-accent);
+        }
+        .feature-card .feat-icon .icon { width: 16px; height: 16px; }
+        .feature-card h4 { font-size: 13px; font-weight: 600; color: var(--c-text); margin-bottom: 6px; }
+        .feature-card p { font-size: 12px; color: var(--c-dim); line-height: 1.6; }
+        .feature-card code { font-family: var(--f-mono); font-size: 11px; color: var(--c-accent); background: var(--c-bg); padding: 1px 4px; border-radius: 3px; }
+
+        /* ELEMENTS GRID */
+        .elements-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .element-item {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--c-surface); border: 1px solid var(--c-border);
+            border-radius: 6px; padding: 10px 14px;
+        }
+        .element-num { font-family: var(--f-mono); font-size: 11px; font-weight: 700; color: var(--c-accent); min-width: 20px; }
+        .element-name { font-size: 12px; font-weight: 500; color: var(--c-text); }
+        .element-desc { font-size: 11px; color: var(--c-dim); margin-left: auto; max-width: 180px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* PIPELINE */
+        .pipeline { display: flex; flex-direction: column; gap: 0; }
+        .pipeline-step { display: flex; align-items: flex-start; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--c-border); }
+        .pipeline-step:last-child { border-bottom: none; }
+        .step-marker { display: flex; flex-direction: column; align-items: center; min-width: 36px; }
+        .step-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--c-bg); border: 2px solid var(--c-accent);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--f-mono); font-size: 12px; font-weight: 700; color: var(--c-accent);
+        }
+        .step-line { width: 2px; height: 20px; background: var(--c-border); margin-top: 4px; }
+        .pipeline-step:last-child .step-line { display: none; }
+        .step-content h4 { font-size: 14px; font-weight: 600; color: var(--c-text); margin-bottom: 4px; }
+        .step-content p { font-size: 12px; color: var(--c-dim); line-height: 1.6; }
+        .step-content .step-tag {
+            font-family: var(--f-mono); font-size: 10px; font-weight: 500;
+            color: var(--c-accent); background: var(--c-bg);
+            padding: 2px 8px; border-radius: 3px; display: inline-block; margin-top: 4px;
+        }
+        .step-content code { font-family: var(--f-mono); font-size: 12px; color: var(--c-accent); }
+
+        /* DESIGN SECTION */
+        .design-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .design-card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 16px; }
+        .design-card h4 { font-size: 12px; font-weight: 600; color: var(--c-text); margin-bottom: 10px; letter-spacing: 0.04em; }
+        .palette-row { display: flex; gap: 6px; margin-bottom: 8px; }
+        .palette-swatch { width: 32px; height: 20px; border-radius: 4px; border: 1px solid var(--c-border); }
+        .sw-bg { background: var(--c-bg); }
+        .sw-surface { background: var(--c-surface); }
+        .sw-accent { background: var(--c-accent); }
+        .sw-text { background: var(--c-text); }
+        .sw-dim { background: var(--c-dim); }
+        .sw-border { background: var(--c-border); }
+        .palette-label { font-family: var(--f-mono); font-size: 10px; color: var(--c-dim); margin-top: 2px; }
+        .palette-note { font-size: 11px; color: var(--c-dim); margin-top: 8px; line-height: 1.5; }
+        .font-sample { margin-bottom: 6px; }
+        .font-name { font-family: var(--f-mono); font-size: 10px; color: var(--c-accent); margin-bottom: 2px; }
+        .font-preview { font-size: 16px; color: var(--c-text); font-weight: 500; }
+        .font-preview-sm { font-size: 14px; color: var(--c-text); font-weight: 400; }
+        .font-mono-preview { font-family: var(--f-mono); font-size: 14px; color: var(--c-text); }
+        .breakpoint-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .breakpoint-tag {
+            font-family: var(--f-mono); font-size: 11px; color: var(--c-text);
+            background: var(--c-bg); border: 1px solid var(--c-border);
+            border-radius: 4px; padding: 4px 10px;
+        }
+
+        /* PHILOSOPHY */
+        .philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .philo-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 12px 14px; background: var(--c-surface);
+            border: 1px solid var(--c-border); border-radius: 6px;
+        }
+        .philo-num { font-family: var(--f-mono); font-size: 18px; font-weight: 700; color: var(--c-accent); line-height: 1; min-width: 24px; opacity: 0.6; }
+        .philo-text { font-size: 13px; color: var(--c-text); line-height: 1.6; }
+        .philo-text strong { color: var(--c-text); font-weight: 600; }
+
+        /* HOW-TO / CTA */
+        .howto-section { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 20px; }
+        .howto-desc { font-size: 13px; color: var(--c-dim); line-height: 1.6; }
+        .howto-desc code { font-family: var(--f-mono); font-size: 12px; color: var(--c-text); background: var(--c-bg); padding: 2px 6px; border-radius: 3px; }
+        .howto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        .howto-item { background: var(--c-bg); border: 1px solid var(--c-border); border-radius: 6px; padding: 12px 14px; }
+        .howto-item .howto-label {
+            font-family: var(--f-mono); font-size: 10px; font-weight: 500;
+            color: var(--c-accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;
+        }
+        .howto-item code { font-family: var(--f-mono); font-size: 12px; color: var(--c-text); }
+        .howto-item p { font-size: 12px; color: var(--c-dim); margin-top: 4px; line-height: 1.5; }
+        .cta-bar {
+            margin-top: 16px; padding: 14px 20px;
+            background: var(--c-accent); border-radius: 6px; text-align: center;
+        }
+        .cta-bar span { font-size: 15px; font-weight: 700; color: var(--c-bg); letter-spacing: 0.02em; }
+
+        /* FOOTER */
+        .footer { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--c-border); display: flex; justify-content: space-between; align-items: center; }
+        .footer-left { font-family: var(--f-mono); font-size: 11px; color: var(--c-dim); letter-spacing: 0.02em; }
+        .footer-right { font-size: 12px; color: var(--c-dim); }
+        .footer-right .credit { color: var(--c-accent); font-weight: 500; }
+
+        /* DIVIDER */
+        .hr-subtle { border: none; height: 1px; background: var(--c-border); margin: 28px 0; }
+    </style>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+        <symbol id="icon-trend-up" viewBox="0 0 24 24"><path d="M23 6l-9 9-5-5-8 8M23 6h-6M23 6v6"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+        <symbol id="icon-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+        <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+        <symbol id="icon-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+        <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+        <symbol id="icon-sliders" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></symbol>
+        <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+        <symbol id="icon-puzzle" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9m17 0a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2m17 0h-2.5a1.5 1.5 0 0 0 0 3H20m-17 0h2.5a1.5 1.5 0 0 1 0 3H3"/></symbol>
+    </svg>
+
+    <div class="page">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-tag">Claude Code Skill</div>
+            <h1>Paper-to-<span>Course</span></h1>
+            <p class="subtitle">给一篇 PDF 或 arXiv 链接，生成自包含的交互式 HTML 教程。分步公式推导、伪代码逐行解读、交互实验、测验、术语提示与研究脉络树。浏览器打开即可，零构建工具、零服务器、零配置。</p>
+        </div>
+
+        <!-- BIGNUMBER -->
+        <div class="bignum-module">
+            <div class="bignum-grid">
+                <div class="bignum-item"><div class="bignum-value">18</div><div class="bignum-label">交互元素类型</div></div>
+                <div class="bignum-item"><div class="bignum-value">5</div><div class="bignum-label">阶段流水线</div></div>
+                <div class="bignum-item"><div class="bignum-value">2,784</div><div class="bignum-label">行预构建代码</div></div>
+                <div class="bignum-item"><div class="bignum-value">0</div><div class="bignum-label">框架依赖</div></div>
+            </div>
+        </div>
+
+        <!-- PAIN → SOLUTION -->
+        <div class="section">
+            <h2 class="section-title"><span class="title-num">WHY</span>传统读论文为什么失败</h2>
+            <div class="pain-solution">
+                <div class="pain-card">
+                    <div class="label"><svg class="icon icon-sm"><use href="#icon-file"/></svg> 传统阅读困境</div>
+                    <ul>
+                        <li>从头读，卡在公式 3，跳到结论</li>
+                        <li>只记住摘要的大致意思</li>
+                        <li>论文默认的前置知识你并不具备</li>
+                        <li>形式化在前、直觉在后，认知倒挂</li>
+                    </ul>
+                </div>
+                <div class="solution-card">
+                    <div class="label"><svg class="icon icon-sm"><use href="#icon-check"/></svg> zerox-paper-to-course 翻转顺序</div>
+                    <ul>
+                        <li>先建立直觉，再讲形式化</li>
+                        <li>先讲背景，再讲论文贡献</li>
+                        <li>先提问，再给答案</li>
+                        <li>模块 0 给你词汇表，再进入正文</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr-subtle">
+
+        <!-- 18 INTERACTIVE ELEMENTS -->
+        <div class="section">
+            <h2 class="section-title"><span class="title-num">ELEMENTS</span>18 种交互元素，CSS + JS 引擎零配置</h2>
+            <div class="elements-grid">
+                <div class="element-item"><span class="element-num">00</span><span class="element-name">封面页</span><span class="element-desc">英雄区块 + 开始学习 CTA</span></div>
+                <div class="element-item"><span class="element-num">01</span><span class="element-name">数学推导</span><span class="element-desc">分步点击式 KaTeX 公式</span></div>
+                <div class="element-item"><span class="element-num">02</span><span class="element-name">伪代码走读</span><span class="element-desc">逐行高亮 + 同步解释</span></div>
+                <div class="element-item"><span class="element-num">03</span><span class="element-name">结果对比</span><span class="element-desc">切换指标 + 动画条形图</span></div>
+                <div class="element-item"><span class="element-num">04</span><span class="element-name">研究脉络树</span><span class="element-desc">点击节点展开相关工作</span></div>
+                <div class="element-item"><span class="element-num">05</span><span class="element-name">研究对话</span><span class="element-desc">研究者群聊式消息展示</span></div>
+                <div class="element-item"><span class="element-num">06</span><span class="element-name">SVG 图表</span><span class="element-desc">内联响应式可视化</span></div>
+                <div class="element-item"><span class="element-num">07</span><span class="element-name">选择题</span><span class="element-desc">测应用能力，错误有解释</span></div>
+                <div class="element-item"><span class="element-num">08</span><span class="element-name">拖拽匹配</span><span class="element-desc">触屏 + 鼠标匹配练习</span></div>
+                <div class="element-item"><span class="element-num">09</span><span class="element-name">找出假设</span><span class="element-desc">点击识别假设挑战</span></div>
+                <div class="element-item"><span class="element-num">10</span><span class="element-name">消融切换</span><span class="element-desc">开关层/组件看效果变化</span></div>
+                <div class="element-item"><span class="element-num">11</span><span class="element-name">提示框</span><span class="element-desc">洞见、警告、顿悟时刻</span></div>
+                <div class="element-item"><span class="element-num">12</span><span class="element-name">贡献卡片</span><span class="element-desc">论文贡献可视化卡片</span></div>
+                <div class="element-item"><span class="element-num">13</span><span class="element-name">引用卡片</span><span class="element-desc">一句话摘要引用卡片</span></div>
+                <div class="element-item"><span class="element-num">14</span><span class="element-name">流程图</span><span class="element-desc">JSON 驱动动画步骤序列</span></div>
+                <div class="element-item"><span class="element-num">15</span><span class="element-name">术语提示</span><span class="element-desc">fixed 定位双语悬浮提示</span></div>
+                <div class="element-item"><span class="element-num">16</span><span class="element-name">步骤卡片</span><span class="element-desc">带图标的编号步骤序列</span></div>
+                <div class="element-item"><span class="element-num">17</span><span class="element-name">图标标签行</span><span class="element-desc">属性/方法紧凑标签行</span></div>
+            </div>
+        </div>
+
+        <hr class="hr-subtle">
+
+        <!-- 5-PHASE PIPELINE -->
+        <div class="section">
+            <h2 class="section-title"><span class="title-num">PIPELINE</span>五阶段流水线：从 PDF 到交互课程</h2>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="step-marker"><div class="step-dot">1</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h4>深度阅读</h4>
+                        <p>三遍阅读：略读结构 → 提取公式/结果/数据集 → 识别叙事弧线。目标：理解到能教别人的程度。</p>
+                        <span class="step-tag">3-pass reading</span>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-marker"><div class="step-dot">2</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h4>知识扩展</h4>
+                        <p>WebSearch 补充前置概念、相关工作与研究脉络。"好奇的实践者"不知道什么？论文默认了哪些背景知识？</p>
+                        <span class="step-tag">web search expansion</span>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-marker"><div class="step-dot">3</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h4>课程设计</h4>
+                        <p>5-8 个模块，按故事线组织：背景 → 问题 → 研究脉络 → 核心洞见 → 方法 → 实验 → 启示。模块 0 为必选。</p>
+                        <span class="step-tag">5-8 modules · story arc</span>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-marker"><div class="step-dot">3.5</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h4>模块简报（复杂论文）</h4>
+                        <p>7+ 模块时先写简报：教学弧线、预提取公式、交互元素清单。支持并行子代理分发，每批 3 个模块。</p>
+                        <span class="step-tag">parallel subagent dispatch</span>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-marker"><div class="step-dot">4</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h4>构建</h4>
+                        <p>创建目录，复制 CSS/JS/Footer/Build 脚本，自定义 HTML 壳，编写封面与各模块，一条 <code>cat</code> 命令组装为 index.html。</p>
+                        <span class="step-tag">cat → index.html</span>
+                    </div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-marker"><div class="step-dot">5</div></div>
+                    <div class="step-content">
+                        <h4>审查与打开</h4>
+                        <p>15 条检查清单：术语提示、数学直觉、视觉密度 50%+、响应式布局、局限性暴露、模块过渡。</p>
+                        <span class="step-tag">15-item review checklist</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr-subtle">
+
+        <!-- CORE FEATURES -->
+        <div class="section">
+            <h2 class="section-title"><span class="title-num">FEATURES</span>核心能力</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feat-icon"><svg class="icon"><use href="#icon-zap"/></svg></div>
+                    <h4>零依赖运行</h4>
+                    <p>IIFE 架构，无框架。仅 Google Fonts + KaTeX CDN，首次加载后可离线使用。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feat-icon"><svg class="icon"><use href="#icon-code"/></svg></div>
+                    <h4>一键组装</h4>
+                    <p><code>cat _base _cover modules _footer > index</code>，无 bundler。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feat-icon"><svg class="icon"><use href="#icon-globe"/></svg></div>
+                    <h4>双语术语</h4>
+                    <p>默认简体中文输出，自动检测语言切换。中文解释（English Term）。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feat-icon"><svg class="icon"><use href="#icon-sliders"/></svg></div>
+                    <h4>5 色调色板</h4>
+                    <p>Vermillion / Coral / Teal / Amber / Forest。在 _base.html 中选一个，其余自动完成。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feat-icon"><svg class="icon"><use href="#icon-target"/></svg></div>
+                    <h4>测试应用能力</h4>
+                    <p>选择题优先测"你会怎么预测"和"哪里出了问题"，错误答案有鼓励性解释。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feat-icon"><svg class="icon"><use href="#icon-puzzle"/></svg></div>
+                    <h4>并行构建</h4>
+                    <p>复杂论文（7+ 模块）通过模块简报 + 子代理分发，每批 3 模块并行写作。</p>
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr-subtle">
+
+        <!-- DESIGN SYSTEM -->
+        <div class="section">
+            <h2 class="section-title"><span class="title-num">DESIGN</span>设计系统</h2>
+            <div class="design-grid">
+                <div class="design-card">
+                    <h4>配色系统</h4>
+                    <div class="palette-row">
+                        <div><div class="palette-swatch sw-bg"></div><div class="palette-label">主背景</div></div>
+                        <div><div class="palette-swatch sw-surface"></div><div class="palette-label">次背景</div></div>
+                        <div><div class="palette-swatch sw-accent"></div><div class="palette-label">强调色</div></div>
+                        <div><div class="palette-swatch sw-text"></div><div class="palette-label">主文字</div></div>
+                        <div><div class="palette-swatch sw-dim"></div><div class="palette-label">次要文字</div></div>
+                        <div><div class="palette-swatch sw-border"></div><div class="palette-label">边框</div></div>
+                    </div>
+                    <p class="palette-note">5 种强调色板：Vermillion / Coral / Teal / Amber / Forest，在 _base.html 中一行切换</p>
+                </div>
+                <div class="design-card">
+                    <h4>字体与响应式</h4>
+                    <div class="font-sample">
+                        <div class="font-name">Bricolage Grotesque — 标题</div>
+                        <div class="font-preview">论文变成教程</div>
+                    </div>
+                    <div class="font-sample">
+                        <div class="font-name">DM Sans — 正文</div>
+                        <div class="font-preview-sm">直觉优先，形式化在后</div>
+                    </div>
+                    <div class="font-sample">
+                        <div class="font-name">JetBrains Mono — 代码/数学</div>
+                        <div class="font-mono-preview">cat _base.html > index.html</div>
+                    </div>
+                    <div class="breakpoint-row">
+                        <span class="breakpoint-tag">1024px 折叠</span>
+                        <span class="breakpoint-tag">768px 平板</span>
+                        <span class="breakpoint-tag">480px 手机</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="hr-subtle">
+
+        <!-- TEACHING PHILOSOPHY -->
+        <div class="section">
+            <h2 class="section-title"><span class="title-num">PHILOSOPHY</span>教学理念</h2>
+            <div class="philosophy-grid">
+                <div class="philo-item"><span class="philo-num">1</span><span class="philo-text"><strong>直觉优先</strong>，每个公式先日常语言解释，再给数学</span></div>
+                <div class="philo-item"><span class="philo-num">2</span><span class="philo-text"><strong>论文的故事</strong>，每个模块是章节，不是摘要</span></div>
+                <div class="philo-item"><span class="philo-num">3</span><span class="philo-text"><strong>50%+ 视觉</strong>，每块文本最多 2-3 句，列表变卡片</span></div>
+                <div class="philo-item"><span class="philo-num">4</span><span class="philo-text"><strong>一屏一概念</strong>，杜绝文字墙</span></div>
+                <div class="philo-item"><span class="philo-num">5</span><span class="philo-text"><strong>质疑一切</strong>，暴露局限性、挑战假设</span></div>
+                <div class="philo-item"><span class="philo-num">6</span><span class="philo-text"><strong>知识扩展</strong>，前置概念 + 研究脉络 + 相关工作</span></div>
+                <div class="philo-item"><span class="philo-num">7</span><span class="philo-text"><strong>引导入门</strong>，模块 0 先给学习者词汇表</span></div>
+                <div class="philo-item"><span class="philo-num">8</span><span class="philo-text"><strong>双语术语</strong>，中文解释（English Term）</span></div>
+            </div>
+        </div>
+
+        <hr class="hr-subtle">
+
+        <!-- HOW TO USE + CTA -->
+        <div class="section">
+            <h2 class="section-title"><span class="title-num">GET STARTED</span>如何使用</h2>
+            <div class="howto-section">
+                <p class="howto-desc">安装到 <code>~/.claude/skills/</code> 后，使用触发短语 + 论文来源即可。</p>
+                <div class="howto-grid">
+                    <div class="howto-item">
+                        <div class="howto-label">本地 PDF</div>
+                        <code>"turn ./paper.pdf into a course"</code>
+                        <p>直接提供本地文件路径</p>
+                    </div>
+                    <div class="howto-item">
+                        <div class="howto-label">arXiv URL</div>
+                        <code>"make a tutorial from arxiv.org/abs/..."</code>
+                        <p>自动抓取论文内容</p>
+                    </div>
+                    <div class="howto-item">
+                        <div class="howto-label">DOI</div>
+                        <code>"用这篇 DOI 做教程"</code>
+                        <p>自动解析 DOI 获取论文</p>
+                    </div>
+                    <div class="howto-item">
+                        <div class="howto-label">中文触发</div>
+                        <code>"把论文变成教程" / "帮我读懂这篇论文"</code>
+                        <p>自动切换中文输出</p>
+                    </div>
+                </div>
+                <div class="cta-bar">
+                    <span>Give it a paper. Get back a course. Open in browser.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-left">Apache License 2.0 · Inspired by codebase-to-course</div>
+            <div class="footer-right"><span class="credit">Zerox在探索</span> · 2025</div>
+        </div>
+    </div>
+</body>
+</html>

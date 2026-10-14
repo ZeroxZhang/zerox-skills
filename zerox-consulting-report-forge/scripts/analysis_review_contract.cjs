@@ -1,0 +1,77 @@
+/* 前置分析审查：绑定真实文件版本与审查覆盖，绝不生成通过结论。 */
+'use strict';
+const fs=require('node:fs'),path=require('node:path');
+const analysis=require('./analysis_contract.cjs'),contract=require('./report_contract.cjs');
+const text=v=>typeof v==='string'&&v.trim();
+function validate(record,doc,{task,baseDir}={}){
+  const errors=[];
+  const caps=require('./contract_capabilities.cjs').capabilities(task||{version:2});
+  if(record?.schemaVersion!==caps.analysisReview)return ['analysis-review.schemaVersion 须为 '+caps.analysisReview];
+  if(caps.strict){
+    const projection=require('./analysis_projection.cjs');
+    if(record.status!=='complete'||record.analysisAlgorithm!==caps.algorithm)errors.push('严格分析审查未完成或算法身份错误');
+    if(!record.analysisProjection||contract.hash(contract.stable(record.analysisProjection))!==record.analysisSha256)errors.push('严格分析审查缺少与摘要一致的可审投影');
+    if(record.analysisProjection)for(const change of projection.differences(record.analysisProjection,projection.project(doc).projection))errors.push('分析投影变化：'+change.pointer+' '+JSON.stringify({before:change.before,after:change.after}));
+  }
+  if(record.analysisSha256!==analysis.digest(doc,task))errors.push('分析审查对应旧版本：重新审查变化判断与全局综合');
+  if(!baseDir&&doc.artifacts?.length)errors.push('核对分析附件须提供 baseDir');
+  else errors.push(...analysis.artifactErrors(doc,baseDir));
+  const used=analysis.adopted(doc),reviews=Array.isArray(record.reviews)?record.reviews:[];
+  const roles=task?.complexity==='complex'||task?.majorConclusion?['author','independent']:['author'];
+  const composition=require('./composition_contract.cjs');
+  /* 能力查询而非字符串相等：narrative-focus-1 包含 evidence-composition-1 的全部检查，
+     换了策略值不能让组合覆盖静默失效（同一教训见 contract_capabilities 的集中查询说明）。 */
+  const visualCaps=(()=>{try{return require('./contract_capabilities.cjs').visualPolicy(task?.policyVersions?.visual);}catch(_){return null;}})();
+  const compositionPolicy=!!visualCaps?.composition;
+  const narrativePolicy=!!visualCaps?.narrative;
+  const expectedVisual=task?.policyVersions?.visual;
+  const identities=new Map();
+  for(const r of reviews){
+    if(!text(r.reviewer)||!text(r.instanceId)||!['author','independent'].includes(r.role)||!text(r.basis)||!['ready','conditional'].includes(r.conclusion))errors.push('分析审查身份、依据或结论未就绪');
+    for(const identity of [r.reviewer,r.instanceId]){if(identities.has(identity)&&identities.get(identity)!==r.role)errors.push('作者与独立审查实例重叠');identities.set(identity,r.role);}
+    if(r.conclusion==='conditional'&&(!Array.isArray(r.limitationClaimRefs)||!r.limitationClaimRefs.length||r.limitationClaimRefs.some(id=>!used.claimRefs.includes(id))))errors.push('有条件通过须引用已采纳限制主张');
+    if(caps.strict&&(!Array.isArray(r.coverage?.slideRefs)||r.coverage.slideRefs.some(id=>!doc.slides.some(s=>s.id===id))))errors.push('严格分析审查 coverage.slideRefs 无效');
+    for(const k of ['claimRefs','issueRefs','optionRefs'])if(!Array.isArray(r.coverage?.[k])||r.coverage[k].some(id=>!({claimRefs:doc.claims,issueRefs:doc.analysis.issues,optionRefs:doc.analysis.options}[k]||[]).some(x=>x.id===id)))errors.push('分析审查 coverage.'+k+' 无效');
+    // 新策略条件审查身份：analysisSha256 不含 task.policyVersions，仅切策略时旧签署摘要仍会匹配。
+    // 必须拒绝没有对应策略身份与组合覆盖的旧签署，不能把「被签名」当成「被审查」。
+    if(compositionPolicy){
+      if(r.policyVersions?.visual!==expectedVisual)errors.push('分析审查缺少策略身份 '+expectedVisual+'：仅切换视觉策略不改分析摘要，旧签署不能沿用；须实际重审');
+      for(const slide of doc.slides){
+        if(!r.coverage?.slideRefs?.includes(slide.id))continue;
+        const expectedPanels=composition.panelIds(slide),expectedRelations=composition.relationRefs(slide);
+        const coveredPanels=Array.isArray(r.coverage?.panelRefs)?r.coverage.panelRefs:[];
+        const coveredRelations=Array.isArray(r.coverage?.relationRefs)?r.coverage.relationRefs:[];
+        for(const panelId of expectedPanels)if(!coveredPanels.includes(slide.id+':'+panelId)&&!coveredPanels.includes(panelId))errors.push('分析审查缺少组合覆盖 '+slide.id+' panel '+panelId+'；清单由合同派生，审查者填写实际所见');
+        for(const relId of expectedRelations)if(!coveredRelations.includes(slide.id+':'+relId)&&!coveredRelations.includes(relId))errors.push('分析审查缺少关系覆盖 '+slide.id+' relation '+relId);
+      }
+    }else if(r.policyVersions!==undefined&&r.policyVersions.visual!==undefined&&!['legacy-1','structural-lines-1'].includes(r.policyVersions.visual))errors.push('分析审查的策略身份与当前任务不一致');
+    /* 叙事主线同样需要条件审查身份：它改变的是整册推进方式，而 analysisSha256 不含 policyVersions。
+       要求逐页覆盖 + 一段审查者自己的连读依据；只列 slideRefs 是签名，不是读过。 */
+    if(narrativePolicy){
+      if(r.policyVersions?.visual!==expectedVisual)errors.push('分析审查缺少策略身份 '+expectedVisual+'：仅切换策略不改分析摘要，旧签署不能沿用；须实际重审');
+      const covered=Array.isArray(r.coverage?.narrativeRefs)?r.coverage.narrativeRefs:[];
+      for(const slide of doc.slides){
+        if(!require('./narrative_contract.cjs').NARRATIVE_ROLES.has(slide.pageRole))continue;
+        if(!r.coverage?.slideRefs?.includes(slide.id))continue;
+        if(!covered.includes(slide.id))errors.push('分析审查缺少叙事覆盖 '+slide.id+'：逐页核对本页相对上一页新增的理解是否成立');
+      }
+      if(!text(r.coverage?.arcBasis)||String(r.coverage.arcBasis).trim().length<12)errors.push('分析审查须在 coverage.arcBasis 写至少12字：为什么声明的弧线与逐页新增理解确实构成一条推进，而不是若干页的并列');
+    }
+  }
+  for(const role of roles){
+    const relevant=reviews.filter(r=>r.role===role);if(!relevant.length)errors.push('缺少 '+role+' 分析审查');
+    if(caps.strict)for(const slide of doc.slides)if(!relevant.some(r=>r.coverage?.slideRefs?.includes(slide.id)))errors.push(role+' 分析审查缺少展示论断 '+slide.id);
+    for(const k of ['claimRefs','issueRefs','optionRefs'])for(const ref of used[k])if(!relevant.some(r=>r.coverage?.[k]?.includes(ref)))errors.push(role+' 分析审查缺少 '+ref);
+  }
+  if(!Array.isArray(record.issues))errors.push('分析审查须明确 issues');
+  for(const i of record.issues||[])if(!text(i.description)||!['minor','major','blocking'].includes(i.severity)||!['open','resolved'].includes(i.status)||(i.severity!=='minor'&&i.status==='open')||(i.status==='resolved'&&!text(i.resolution)))errors.push('分析审查存在未解决问题或缺处置依据');
+  return [...new Set(errors)];
+}
+function check(doc,{task,baseDir}={}){
+  if(task?.workMode==='editorial')return [];
+  const ref=task?.analysisReview;
+  if(!ref?.record||!ref.sha256||!baseDir)return ['缺少绑定的 analysisReview.record/sha256 或其基准目录；只能显式 --preview'];
+  try{const file=path.resolve(baseDir,ref.record);if(contract.fileHash(file)!==ref.sha256)return ['analysisReview 文件摘要变化'];return validate(JSON.parse(fs.readFileSync(file,'utf8')),doc,{task,baseDir});}
+  catch(e){return ['analysisReview 无法核对：'+e.message];}
+}
+module.exports={validate,check};

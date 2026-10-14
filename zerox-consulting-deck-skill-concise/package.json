@@ -1,0 +1,17 @@
+{
+  "name": "zerox-consulting-deck-skill-concise-runtime",
+  "version": "13.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Pinned build/runtime dependencies for deck assembly, ECharts SVG rendering, PDF export and PDF geometry audits.",
+  "scripts": {
+    "setup-fonts": "sh scripts/setup_font_venv.sh"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.9",
+    "echarts": "6.1.0",
+    "fontkit": "2.0.4",
+    "pdfjs-dist": "^4.10.38",
+    "playwright": "^1.63.0"
+  }
+}

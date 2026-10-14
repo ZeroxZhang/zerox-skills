@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Validate scripts
+        run: |
+          bash -n scripts/install_deps.sh
+          python -m py_compile scripts/*.py
+
+      - name: Run test suite
+        run: python -m unittest discover -s tests -v
+
+      - name: Check current showcase
+        shell: bash
+        run: |
+          set +e
+          python scripts/quality_check.py \
+            onepager-A4-B9-T4-20260531.html \
+            --style B9 \
+            --size A4
+          rc=$?
+          set -e
+          test "$rc" -lt 2

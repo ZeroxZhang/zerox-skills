@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>架构图生成器 — Architecture Diagram Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+    </style>
+    <style>
+        /* ============================================
+           BASE RESET & VARIABLES — B3 清新自然
+           ============================================ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --color-bg-start: #fefffe;
+            --color-bg-end: #f0fdf4;
+            --color-surface: rgba(255,255,255,0.55);
+            --color-surface-hover: rgba(255,255,255,0.75);
+            --color-primary: #10b981;
+            --color-accent-cyan: #06b6d4;
+            --color-accent-purple: #8b5cf6;
+            --color-text: #374151;
+            --color-text-secondary: #9ca3af;
+            --color-text-tertiary: #6b7280;
+            --color-border: rgba(255,255,255,0.7);
+            --color-grad-1: #a7f3d0;
+            --color-grad-2: #67e8f9;
+            --color-grad-3: #c4b5fd;
+
+            --font-heading: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+
+            --card-radius: 16px;
+            --card-shadow: 0 8px 32px rgba(0,0,0,0.05);
+            --card-border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        html, body {
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            font-family: var(--font-body);
+            color: var(--color-text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============================================
+           PAGE CONTAINER — A2 固定 1920×1080
+           grid-template-rows 显式声明，align-content: start
+           ============================================ */
+        .page {
+            width: 1920px;
+            height: 1080px;
+            padding: 48px 64px;
+            background: linear-gradient(175deg, var(--color-bg-start) 0%, #f5fdf8 40%, var(--color-bg-end) 100%);
+            display: grid;
+            grid-template-rows: 88px 348px 466px 40px;
+            align-content: start;
+            row-gap: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ============================================
+           DECORATIVE AURA BLOBS — B3 弥散光影
+           z-index: 0, pointer-events: none
+           ============================================ */
+        .aura {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .aura-1 {
+            top: -180px; right: -120px;
+            width: 620px; height: 620px;
+            background: radial-gradient(circle, rgba(167,243,208,0.14) 0%, rgba(167,243,208,0.03) 60%, transparent 75%);
+        }
+        .aura-2 {
+            bottom: -200px; left: -100px;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(196,181,253,0.11) 0%, rgba(196,181,253,0.02) 55%, transparent 72%);
+        }
+        .aura-3 {
+            top: 280px; right: 420px;
+            width: 380px; height: 380px;
+            background: radial-gradient(circle, rgba(103,232,249,0.09) 0%, rgba(103,232,249,0.02) 50%, transparent 70%);
+        }
+
+        /* Ensure all content is above decorations */
+        .page > header,
+        .page > .row-2,
+        .page > .row-3,
+        .page > footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           HEADER — Row 1 (88px)
+           ============================================ */
+        .header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .header h1 {
+            font-family: var(--font-heading);
+            font-size: 52px;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1.2;
+            letter-spacing: 0.06em;
+            margin-bottom: 2px;
+        }
+        .header h1 .accent {
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .en-title {
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+        .header .tagline {
+            font-size: 16px;
+            color: var(--color-text-tertiary);
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+
+        /* ============================================
+           ROW 2 — 项目概述 + 核心数据 (350px)
+           ============================================ */
+        .row-2 {
+            display: flex;
+            gap: 24px;
+            align-items: stretch;
+        }
+        .row-2 .col-overview {
+            flex: 0 0 970px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .row-2 .col-highlights {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        /* Section title shared style */
+        .sec-title {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+            padding-left: 14px;
+            border-left: 3px solid var(--color-primary);
+            line-height: 1.3;
+            letter-spacing: 0.04em;
+        }
+
+        /* Overview card */
+        .overview-card {
+            flex: 1;
+            background: var(--color-surface);
+            border: var(--card-border);
+            border-radius: var(--card-radius);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--card-shadow);
+            padding: 24px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .overview-card p {
+            font-size: 17px;
+            line-height: 1.9;
+            color: #4b5563;
+            letter-spacing: 0.02em;
+        }
+        .overview-card .meta-row {
+            display: flex;
+            gap: 24px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .overview-card .meta-item {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .overview-card .meta-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .meta-dot.green { background: #10b981; }
+        .meta-dot.cyan { background: #06b6d4; }
+        .meta-dot.purple { background: #8b5cf6; }
+
+        /* Highlight stat cards — 2×2 grid */
+        .highlights-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+        }
+        .stat-card {
+            background: var(--color-surface);
+            border: var(--card-border);
+            border-radius: var(--card-radius);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 18px;
+            transition: box-shadow 0.3s ease;
+        }
+        .stat-card .stat-num {
+            font-family: var(--font-heading);
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-card .stat-label {
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+            line-height: 1.4;
+        }
+        .stat-card .stat-sublabel {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            line-height: 1.3;
+        }
+        .stat-card.c1 .stat-num { color: #10b981; }
+        .stat-card.c2 .stat-num { color: #06b6d4; }
+        .stat-card.c3 .stat-num { color: #8b5cf6; }
+        .stat-card.c4 .stat-num { color: #f59e0b; }
+
+        /* ============================================
+           ROW 3 — 工作流程 + 配色表 + 输出格式 (468px)
+           ============================================ */
+        .row-3 {
+            display: flex;
+            gap: 24px;
+            align-items: stretch;
+        }
+        .row-3 .col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-width: 0;
+        }
+
+        /* Col card container */
+        .col-card {
+            flex: 1;
+            background: var(--color-surface);
+            border: var(--card-border);
+            border-radius: var(--card-radius);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--card-shadow);
+            padding: 20px 22px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ---- Workflow Timeline ---- */
+        .timeline {
+            position: relative;
+            padding-left: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 4px;
+            bottom: 4px;
+            width: 2px;
+            background: linear-gradient(to bottom, #a7f3d0, #67e8f9, #c4b5fd);
+            border-radius: 1px;
+        }
+        .step {
+            position: relative;
+            padding-left: 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 56px;
+        }
+        .step-marker {
+            position: absolute;
+            left: 4px;
+            top: 16px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #10b981;
+            font-family: var(--font-mono);
+            z-index: 2;
+            flex-shrink: 0;
+        }
+        .step:nth-child(3) .step-marker,
+        .step:nth-child(4) .step-marker { border-color: #06b6d4; color: #06b6d4; }
+        .step:nth-child(5) .step-marker,
+        .step:nth-child(6) .step-marker { border-color: #8b5cf6; color: #8b5cf6; }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            line-height: 1.3;
+            letter-spacing: 0.03em;
+        }
+        .step-desc {
+            font-size: 12.5px;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+            letter-spacing: 0.02em;
+        }
+
+        /* ---- Color Palette ---- */
+        .palette-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(7, 1fr);
+            gap: 1px 16px;
+            align-content: start;
+        }
+        .palette-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+            min-height: 48px;
+        }
+        .palette-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .palette-swatch::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 7px;
+            border: 1.5px solid var(--swatch-stroke, #999);
+        }
+        .palette-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+        }
+        .palette-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            line-height: 1.4;
+            letter-spacing: 0.03em;
+        }
+        .palette-type {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            line-height: 1.3;
+            font-family: var(--font-mono);
+        }
+
+        /* ---- Output & Structure ---- */
+        .output-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .output-cards {
+            display: flex;
+            gap: 10px;
+        }
+        .output-card {
+            flex: 1;
+            background: rgba(255,255,255,0.45);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+        .output-card .oc-label {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 6px;
+            letter-spacing: 0.02em;
+        }
+        .output-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .output-card li {
+            font-size: 11.5px;
+            color: #6b7280;
+            line-height: 1.7;
+            padding-left: 12px;
+            position: relative;
+            letter-spacing: 0.02em;
+        }
+        .output-card li::before {
+            content: '·';
+            position: absolute;
+            left: 2px;
+            color: #10b981;
+            font-weight: 700;
+        }
+        .file-tree {
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            line-height: 1.8;
+            color: #4b5563;
+            letter-spacing: 0.01em;
+            white-space: pre;
+        }
+        .file-tree .ft-dir { color: #10b981; font-weight: 500; }
+        .file-tree .ft-file { color: #6b7280; }
+
+        /* ============================================
+           FOOTER — Row 4 (40px)
+           在 grid 内作为最后一行，无绝对定位
+           ============================================ */
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            letter-spacing: 0.04em;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            padding-top: 12px;
+        }
+        .footer span { color: #d1d5db; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Background Aura Blobs -->
+        <div class="aura aura-1"></div>
+        <div class="aura aura-2"></div>
+        <div class="aura aura-3"></div>
+
+        <!-- ======== HEADER ======== -->
+        <header class="header">
+            <h1><span class="accent">架构图</span>生成器</h1>
+            <div class="en-title">Architecture Diagram Generator</div>
+            <div class="tagline">从自然语言描述到专业系统架构图 — 自包含 HTML + SVG 双格式输出，零依赖，浏览器即开即用</div>
+        </header>
+
+        <!-- ======== ROW 2: 项目概述 + 核心数据 ======== -->
+        <div class="row-2">
+            <!-- Left: 项目概述 -->
+            <div class="col-overview">
+                <div class="sec-title">项目概述</div>
+                <div class="overview-card">
+                    <p>基于 <strong>Cocoon-AI/architecture-diagram-generator</strong> 优化开发的 Claude Code 技能。将系统架构描述自动转化为精美技术架构图，覆盖前端、后端、数据库、云服务、安全、AI/ML 等 <strong>13 种组件类型</strong>的语义化配色，支持浅色/深色双主题、图标模式、泳道分层、多区域部署及 16:9 演示模式。内置严格 6 步工作流与审查机制，确保输出质量。</p>
+                    <div class="meta-row">
+                        <div class="meta-item"><span class="meta-dot green"></span> Version 4.0</div>
+                        <div class="meta-item"><span class="meta-dot cyan"></span> MIT License</div>
+                        <div class="meta-item"><span class="meta-dot purple"></span> Author: ZeroxZhang</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: 核心数据 -->
+            <div class="col-highlights">
+                <div class="sec-title">核心能力</div>
+                <div class="highlights-grid">
+                    <div class="stat-card c1">
+                        <div class="stat-num">13</div>
+                        <div class="stat-label">组件类型</div>
+                        <div class="stat-sublabel">语义化配色方案</div>
+                    </div>
+                    <div class="stat-card c2">
+                        <div class="stat-num">2</div>
+                        <div class="stat-label">输出格式</div>
+                        <div class="stat-sublabel">HTML + 独立 SVG</div>
+                    </div>
+                    <div class="stat-card c3">
+                        <div class="stat-num">6</div>
+                        <div class="stat-label">严格步骤</div>
+                        <div class="stat-sublabel">规划 → 生成 → 审查</div>
+                    </div>
+                    <div class="stat-card c4">
+                        <div class="stat-num">0</div>
+                        <div class="stat-label">外部依赖</div>
+                        <div class="stat-sublabel">浏览器即开即用</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======== ROW 3: 工作流程 + 配色表 + 输出格式 ======== -->
+        <div class="row-3">
+            <!-- Col 1: 工作流程 -->
+            <div class="col">
+                <div class="sec-title">工作原理</div>
+                <div class="col-card">
+                    <div class="timeline">
+                        <div class="step">
+                            <div class="step-marker">1</div>
+                            <div class="step-title">需求确认</div>
+                            <div class="step-desc">主题 · 语言 · 模式 · 分层 · 范围</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-marker">2</div>
+                            <div class="step-title">布局规划</div>
+                            <div class="step-desc">ASCII 坐标布局 · 组件/连接声明</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-marker">3</div>
+                            <div class="step-title">坐标计算</div>
+                            <div class="step-desc">精确公式 · 总线式多连线路由</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-marker">4</div>
+                            <div class="step-title">SVG 生成</div>
+                            <div class="step-desc">设计系统驱动 · 图标/泳道/箭头</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-marker">5</div>
+                            <div class="step-title">审查修复</div>
+                            <div class="step-desc">系统化检查清单 · 防重叠/错连</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-marker">6</div>
+                            <div class="step-title">SVG 提取</div>
+                            <div class="step-desc">纯 SVG 导出 · 独立可用</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Col 2: 设计系统配色 -->
+            <div class="col">
+                <div class="sec-title">设计系统配色</div>
+                <div class="col-card">
+                    <div class="palette-grid">
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(236,254,255,0.95);--swatch-stroke:#0891b2"></div>
+                            <div class="palette-info"><span class="palette-name">前端 / API 网关</span><span class="palette-type">Cyan · #0891b2</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(236,253,245,0.95);--swatch-stroke:#059669"></div>
+                            <div class="palette-info"><span class="palette-name">后端 / 服务</span><span class="palette-type">Emerald · #059669</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(245,243,255,0.95);--swatch-stroke:#7c3aed"></div>
+                            <div class="palette-info"><span class="palette-name">数据库</span><span class="palette-type">Violet · #7c3aed</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(250,245,255,0.95);--swatch-stroke:#9333ea"></div>
+                            <div class="palette-info"><span class="palette-name">缓存 / Redis</span><span class="palette-type">Purple · #9333ea</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(255,251,235,0.95);--swatch-stroke:#d97706"></div>
+                            <div class="palette-info"><span class="palette-name">云服务 / AWS</span><span class="palette-type">Amber · #d97706</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(255,241,242,0.95);--swatch-stroke:#e11d48"></div>
+                            <div class="palette-info"><span class="palette-name">安全 / 认证</span><span class="palette-type">Rose · #e11d48</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(255,247,237,0.95);--swatch-stroke:#ea580c"></div>
+                            <div class="palette-info"><span class="palette-name">消息总线</span><span class="palette-type">Orange · #ea580c</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(239,246,255,0.95);--swatch-stroke:#2563eb"></div>
+                            <div class="palette-info"><span class="palette-name">容器 / K8s</span><span class="palette-type">Blue · #2563eb</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(253,242,248,0.95);--swatch-stroke:#db2777"></div>
+                            <div class="palette-info"><span class="palette-name">AI / ML</span><span class="palette-type">Pink · #db2777</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(240,253,250,0.95);--swatch-stroke:#0d9488"></div>
+                            <div class="palette-info"><span class="palette-name">可观测性</span><span class="palette-type">Teal · #0d9488</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(238,242,255,0.95);--swatch-stroke:#4f46e5"></div>
+                            <div class="palette-info"><span class="palette-name">对象存储</span><span class="palette-type">Indigo · #4f46e5</span></div>
+                        </div>
+                        <div class="palette-item">
+                            <div class="palette-swatch" style="background:rgba(248,250,252,0.95);--swatch-stroke:#64748b"></div>
+                            <div class="palette-info"><span class="palette-name">外部 / 通用</span><span class="palette-type">Slate · #64748b</span></div>
+                        </div>
+                        <div class="palette-item" style="visibility:hidden;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Col 3: 输出格式 + 项目结构 -->
+            <div class="col">
+                <div class="sec-title">输出与结构</div>
+                <div class="col-card">
+                    <div class="output-section">
+                        <div class="output-cards">
+                            <div class="output-card">
+                                <div class="oc-label">.html 页面</div>
+                                <ul>
+                                    <li>内嵌 CSS + SVG</li>
+                                    <li>主题感知样式</li>
+                                    <li>悬停交互提示</li>
+                                    <li>摘要卡片 + 页脚</li>
+                                </ul>
+                            </div>
+                            <div class="output-card">
+                                <div class="oc-label">.svg 矢量图</div>
+                                <ul>
+                                    <li>纯 SVG 无外壳</li>
+                                    <li>样式定义内联</li>
+                                    <li>任意缩放不失真</li>
+                                    <li>可嵌入文档/PPT</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="file-tree"><span class="ft-dir">architecture-diagram/</span>
+<span class="ft-dir">├──</span> <span class="ft-file">SKILL.md</span>          <span style="color:#9ca3af;">技能指令与设计系统</span>
+<span class="ft-dir">├──</span> <span class="ft-file">README.md</span>         <span style="color:#9ca3af;">项目说明文档</span>
+<span class="ft-dir">└──</span> <span class="ft-dir">assets/</span>
+<span class="ft-dir">    └──</span> <span class="ft-file">template.html</span>  <span style="color:#9ca3af;">HTML/SVG 基础模板</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======== FOOTER ======== -->
+        <footer class="footer">
+            <span>Version 4.0</span>
+            <span>|</span>
+            <span>MIT License</span>
+            <span>|</span>
+            <span>github.com/Cocoon-AI/architecture-diagram-generator</span>
+            <span>|</span>
+            <span>ZeroxZhang</span>
+        </footer>
+    </div>
+</body>
+</html>

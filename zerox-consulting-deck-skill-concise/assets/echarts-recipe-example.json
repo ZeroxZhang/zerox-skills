@@ -1,0 +1,16 @@
+{
+  "recipe": "rankedBar",
+  "theme_id": "mckinsey",
+  "width": 720,
+  "height": 360,
+  "spec": {
+    "unit": "亿元",
+    "baseline": 35,
+    "baselineLabel": "目标",
+    "items": [
+      {"label": "市场甲", "value": 42, "selected": true},
+      {"label": "市场乙", "value": 31},
+      {"label": "市场丙", "value": 24}
+    ]
+  }
+}

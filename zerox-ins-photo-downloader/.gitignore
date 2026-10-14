@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Sensitive: contains Instagram login session — never commit
+cookies.json
+
+# Intermediate / generated data
+posts_meta.json
+instagram_photos/
+*.log

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "interaction_order": ["A", "B", "C", "T", "E", "F"],
+  "sizes": {
+    "A1": {
+      "name": "纵向长图",
+      "width": 800,
+      "height": "auto",
+      "fixed_height": false
+    },
+    "A2": {
+      "name": "横向宽图",
+      "width": 1920,
+      "height": 1080,
+      "fixed_height": true
+    },
+    "A3": {
+      "name": "正方形",
+      "width": 1080,
+      "height": 1080,
+      "fixed_height": true
+    },
+    "A4": {
+      "name": "竖版海报",
+      "width": 1080,
+      "height": 1440,
+      "fixed_height": true
+    }
+  },
+  "styles": {
+    "B1": {"name": "暗夜编辑"},
+    "B2": {"name": "瑞士精密"},
+    "B3": {"name": "有机自然"},
+    "B4": {"name": "建筑粗野"},
+    "B5": {"name": "新波普编辑"},
+    "B6": {"name": "极简东方"},
+    "B7": {"name": "数据新闻"},
+    "B8": {"name": "赛博街道"},
+    "B9": {
+      "name": "谷歌原生",
+      "modes": ["Light", "Dark", "Poster"],
+      "default_mode": "Light",
+      "mode_rules": {
+        "T4": "Poster"
+      }
+    }
+  },
+  "densities": {
+    "C1": {"name": "低密度"},
+    "C2": {"name": "中密度"},
+    "C3": {"name": "高密度"}
+  },
+  "types": {
+    "T1": {
+      "name": "商业说服",
+      "focus": ["product", "solution"],
+      "default_focus": "product"
+    },
+    "T2": {
+      "name": "使用指南",
+      "focus": ["steps", "spec"],
+      "default_focus": "steps"
+    },
+    "T3": {"name": "信息图"},
+    "T4": {"name": "宣传海报"}
+  },
+  "bignumber": {
+    "E1": {"name": "包含"},
+    "E2": {"name": "不包含"},
+    "default": "E1",
+    "missing_verified_data_fallback": "E2"
+  },
+  "signature": {
+    "key": "F",
+    "default_resolution": ["git_config_user_name", "whoami", "匿名"],
+    "none_value": "无",
+    "custom_value": true
+  }
+}

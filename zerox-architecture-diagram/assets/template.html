@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[项目名称] 架构说明</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      color-scheme: light;
+      --page: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    body.dark {
+      color-scheme: dark;
+      --page: #020617;
+      --surface: #0f172a;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: clamp(12px, 3vw, 32px);
+      background: var(--page);
+      color: var(--text);
+      font-family: 'SimHei', 'Microsoft YaHei', 'PingFang SC',
+        'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    .page {
+      width: min(1200px, 100%);
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin: 0 auto 24px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: #0f766e;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    body.dark .eyebrow { color: #5eead4; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 34px);
+      line-height: 1.2;
+    }
+
+    .page-subtitle {
+      max-width: 720px;
+      margin: 10px auto 0;
+      overflow-wrap: anywhere;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .diagram-card {
+      margin: 0;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .diagram-scroll {
+      overflow: auto;
+      overscroll-behavior-inline: contain;
+      padding: 16px;
+    }
+
+    .diagram-scroll:focus-visible {
+      outline: 3px solid #14b8a6;
+      outline-offset: -3px;
+    }
+
+    .diagram-scroll svg {
+      display: block;
+      width: 100%;
+      min-width: 900px;
+      height: auto;
+    }
+
+    figcaption {
+      padding: 10px 16px 14px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .card {
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .footer {
+      margin: 20px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .diagram-scroll { padding: 8px; }
+      figcaption { padding-inline: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">Architecture Overview</p>
+      <h1>[项目名称] 架构说明</h1>
+      <p class="page-subtitle">[用一句话说明系统范围、关键约束与读图方式]</p>
+    </header>
+
+    <figure class="diagram-card">
+      <div class="diagram-scroll" tabindex="0" aria-label="系统架构图，可横向滚动查看完整内容">
+        <!--
+          LAYOUT PLAN
+          MODE standard  THEME light  DIRECTION TB  GRID base=10 major=20
+          LANE access       order=0 label="接入层"
+          LANE application  order=1 label="应用层"
+          LANE data         order=2 label="数据层"
+          GROUP aws-west    parent=- label="AWS 区域: us-west-2"
+          NODE users       rank=0 lane=access      group=-        x=120 y=120 w=120 h=60 type=external icon=user
+          NODE cloudfront  rank=0 lane=access      group=aws-west x=300 y=120 w=120 h=60 type=cloud icon=cloud
+          NODE alb         rank=0 lane=access      group=aws-west x=480 y=120 w=120 h=60 type=gateway icon=-
+          NODE api         rank=1 lane=application group=aws-west x=470 y=260 w=140 h=60 type=backend icon=server
+          NODE auth        rank=1 lane=application group=aws-west x=700 y=260 w=140 h=60 type=security icon=shield
+          NODE db          rank=2 lane=data        group=aws-west x=700 y=420 w=140 h=60 type=database icon=database
+          NODE redis       rank=2 lane=data        group=aws-west x=700 y=520 w=140 h=60 type=cache icon=-
+          EDGE users-cloudfront users:right -> cloudfront:left kind=sync label="HTTPS"
+          EDGE cloudfront-alb cloudfront:right -> alb:left kind=sync label=-
+          EDGE alb-api alb:bottom -> api:top kind=sync label="TCP :443"
+          EDGE api-db api:right -> db:left kind=sync label="SQL" bus=api-data
+          EDGE api-redis api:right -> redis:left kind=sync label="TCP :6379" bus=api-data
+          EDGE auth-db auth:bottom -> db:top kind=auth label="JWT 验证"
+        -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="1000"
+             height="760"
+             viewBox="0 0 1000 760"
+             preserveAspectRatio="xMidYMin meet"
+             role="img"
+             aria-labelledby="diagram-title diagram-desc"
+             data-diagram-version="1"
+             data-mode="standard"
+             data-theme="light"
+             data-direction="TB"
+             data-base-grid="10"
+             data-major-grid="20">
+          <title id="diagram-title">[项目名称] 系统架构图</title>
+          <desc id="diagram-desc">用户请求经 CloudFront 与 ALB 进入 API 服务，并访问认证、PostgreSQL 与 Redis。</desc>
+          <metadata id="diagram-model">{
+            "nodes":[
+              {"id":"users","type":"external","lane":"access","group":null},
+              {"id":"cloudfront","type":"cloud","lane":"access","group":"aws-west"},
+              {"id":"alb","type":"gateway","lane":"access","group":"aws-west"},
+              {"id":"api","type":"backend","lane":"application","group":"aws-west"},
+              {"id":"auth","type":"security","lane":"application","group":"aws-west"},
+              {"id":"db","type":"database","lane":"data","group":"aws-west"},
+              {"id":"redis","type":"cache","lane":"data","group":"aws-west"}
+            ],
+            "edges":[
+              {"id":"users-cloudfront","source":"users","target":"cloudfront","kind":"sync"},
+              {"id":"cloudfront-alb","source":"cloudfront","target":"alb","kind":"sync"},
+              {"id":"alb-api","source":"alb","target":"api","kind":"sync"},
+              {"id":"api-db","source":"api","target":"db","kind":"sync","bus":"api-data"},
+              {"id":"api-redis","source":"api","target":"redis","kind":"sync","bus":"api-data"},
+              {"id":"auth-db","source":"auth","target":"db","kind":"auth"}
+            ]
+          }</metadata>
+
+          <defs>
+            <style>
+              svg {
+                font-family: 'SimHei', 'Microsoft YaHei', 'PingFang SC',
+                  'JetBrains Mono', ui-monospace, monospace;
+                --canvas: #ffffff;
+                --grid: #e2e8f0;
+                --text: #1e293b;
+                --muted: #64748b;
+                --mask: #ffffff;
+                --line: #64748b;
+                --rose-route: #e11d48;
+                --legend-fill: #f8fafc;
+                --legend-stroke: #cbd5e1;
+                --lane-access: #f8fafc;
+                --lane-application: #ecfdf5;
+                --lane-data: #f5f3ff;
+              }
+              svg[data-theme='dark'] {
+                --canvas: #0f172a;
+                --grid: #1e293b;
+                --text: #f1f5f9;
+                --muted: #94a3b8;
+                --mask: #0f172a;
+                --line: #94a3b8;
+                --rose-route: #fb7185;
+                --legend-fill: #1e293b;
+                --legend-stroke: #475569;
+                --lane-access: #1e293b;
+                --lane-application: #064e3b;
+                --lane-data: #4c1d95;
+              }
+              text { fill: var(--text); }
+              .muted { fill: var(--muted); }
+              .diagram-title { font-size: 20px; font-weight: 700; }
+              .diagram-subtitle { font-size: 10px; fill: var(--muted); }
+              .lane-label, .group-label { font-size: 10px; font-weight: 600; }
+              .group-label { fill: #b45309; }
+              svg[data-theme='dark'] .group-label { fill: #fbbf24; }
+              .route {
+                fill: none;
+                stroke: var(--line);
+                stroke-width: 1.5;
+                vector-effect: non-scaling-stroke;
+              }
+              .route-auth { stroke: var(--rose-route); stroke-dasharray: 5 5; }
+              .edge-label { font-size: 8px; fill: var(--muted); }
+              .edge-label-auth { fill: var(--rose-route); }
+              .node-box {
+                fill: var(--node-fill);
+                fill-opacity: 0.9;
+                stroke: var(--node-stroke);
+                stroke-width: 1.5;
+                vector-effect: non-scaling-stroke;
+              }
+              svg[data-theme='dark'] .node-box { fill-opacity: 0.45; }
+              .node-label { fill: var(--node-text); font-size: 11px; font-weight: 600; }
+              .node-subtitle { fill: var(--muted); font-size: 9px; }
+              .node-icon { fill: none; stroke: var(--node-stroke); stroke-width: 1.2; }
+              [data-type='external'] { --node-fill: #f8fafc; --node-stroke: #64748b; --node-text: #334155; }
+              [data-type='cloud'] { --node-fill: #fffbeb; --node-stroke: #d97706; --node-text: #92400e; }
+              [data-type='gateway'] { --node-fill: #ecfeff; --node-stroke: #0891b2; --node-text: #155e75; }
+              [data-type='backend'] { --node-fill: #ecfdf5; --node-stroke: #059669; --node-text: #065f46; }
+              [data-type='security'] { --node-fill: #fff1f2; --node-stroke: #e11d48; --node-text: #9f1239; }
+              [data-type='database'] { --node-fill: #f5f3ff; --node-stroke: #7c3aed; --node-text: #5b21b6; }
+              [data-type='cache'] { --node-fill: #faf5ff; --node-stroke: #9333ea; --node-text: #6b21a8; }
+              svg[data-theme='dark'] [data-type='external'] { --node-fill: #334155; --node-stroke: #94a3b8; --node-text: #cbd5e1; }
+              svg[data-theme='dark'] [data-type='cloud'] { --node-fill: #78350f; --node-stroke: #fbbf24; --node-text: #fde68a; }
+              svg[data-theme='dark'] [data-type='gateway'] { --node-fill: #164e63; --node-stroke: #22d3ee; --node-text: #a5f3fc; }
+              svg[data-theme='dark'] [data-type='backend'] { --node-fill: #064e3b; --node-stroke: #34d399; --node-text: #6ee7b7; }
+              svg[data-theme='dark'] [data-type='security'] { --node-fill: #881337; --node-stroke: #fb7185; --node-text: #fda4af; }
+              svg[data-theme='dark'] [data-type='database'] { --node-fill: #4c1d95; --node-stroke: #a78bfa; --node-text: #c4b5fd; }
+              svg[data-theme='dark'] [data-type='cache'] { --node-fill: #581c87; --node-stroke: #c084fc; --node-text: #d8b4fe; }
+            </style>
+
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 L 0 40" fill="none" stroke="var(--grid)" stroke-width="0.5"/>
+            </pattern>
+            <marker id="arrow-neutral" markerWidth="8" markerHeight="8" refX="8" refY="4"
+                    orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M 0 0 L 8 4 L 0 8 Z" fill="var(--line)"/>
+            </marker>
+            <marker id="arrow-rose" markerWidth="8" markerHeight="8" refX="8" refY="4"
+                    orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M 0 0 L 8 4 L 0 8 Z" fill="var(--rose-route)"/>
+            </marker>
+          </defs>
+
+          <rect data-role="background" width="1000" height="760" fill="var(--canvas)"/>
+          <rect width="1000" height="760" fill="url(#grid)"/>
+
+          <text data-role="diagram-title" data-bbox="360,16,280,26"
+                class="diagram-title" x="500" y="36" text-anchor="middle">[项目名称] 系统架构图</text>
+          <text class="diagram-subtitle" x="500" y="56" text-anchor="middle">接入、应用与数据服务总览</text>
+
+          <g data-role="boundary" data-id="aws-west" data-bbox="260,80,600,540">
+            <rect x="260" y="80" width="600" height="540" rx="12"
+                  fill="none" stroke="#d97706" stroke-width="1" stroke-dasharray="8 4"/>
+            <text class="group-label" x="272" y="101">AWS 区域: us-west-2</text>
+          </g>
+
+          <g data-role="lane" data-id="access" data-bbox="20,80,960,140"
+             data-content-bbox="120,120,840,80">
+            <rect x="20" y="80" width="960" height="140" rx="4"
+                  fill="var(--lane-access)" fill-opacity="0.35"/>
+            <text class="lane-label muted" x="40" y="111">接入层</text>
+          </g>
+          <g data-role="lane" data-id="application" data-bbox="20,220,960,160"
+             data-content-bbox="120,260,840,100">
+            <rect x="20" y="220" width="960" height="160" rx="4"
+                  fill="var(--lane-application)" fill-opacity="0.28"/>
+            <text class="lane-label muted" x="40" y="251">应用层</text>
+          </g>
+          <g data-role="lane" data-id="data" data-bbox="20,380,960,240"
+             data-content-bbox="120,420,840,180">
+            <rect x="20" y="380" width="960" height="240" rx="4"
+                  fill="var(--lane-data)" fill-opacity="0.22"/>
+            <text class="lane-label muted" x="40" y="411">数据层</text>
+          </g>
+
+          <g aria-label="连接路由">
+            <path data-role="edge-route" data-edge-id="users-cloudfront"
+                  data-source="users" data-target="cloudfront" data-kind="sync"
+                  data-source-side="right" data-target-side="left"
+                  data-points="240,150 298,150" d="M 240 150 L 298 150"
+                  class="route" marker-end="url(#arrow-neutral)"/>
+            <path data-role="edge-route" data-edge-id="cloudfront-alb"
+                  data-source="cloudfront" data-target="alb" data-kind="sync"
+                  data-source-side="right" data-target-side="left"
+                  data-points="420,150 478,150" d="M 420 150 L 478 150"
+                  class="route" marker-end="url(#arrow-neutral)"/>
+            <path data-role="edge-route" data-edge-id="alb-api"
+                  data-source="alb" data-target="api" data-kind="sync"
+                  data-source-side="bottom" data-target-side="top"
+                  data-points="540,180 540,258" d="M 540 180 L 540 258"
+                  class="route" marker-end="url(#arrow-neutral)"/>
+
+            <path data-role="bus-trunk" data-bus-id="api-data" data-source="api"
+                  data-source-side="right" data-points="610,290 640,290"
+                  d="M 610 290 L 640 290" class="route"/>
+            <path data-role="edge-route" data-edge-id="api-db" data-bus-id="api-data"
+                  data-source="api" data-target="db" data-kind="sync"
+                  data-target-side="left" data-points="640,290 660,290 660,450 698,450"
+                  d="M 640 290 L 660 290 L 660 450 L 698 450"
+                  class="route" marker-end="url(#arrow-neutral)"/>
+            <path data-role="edge-route" data-edge-id="api-redis" data-bus-id="api-data"
+                  data-source="api" data-target="redis" data-kind="sync"
+                  data-target-side="left" data-points="640,290 640,550 698,550"
+                  d="M 640 290 L 640 550 L 698 550"
+                  class="route" marker-end="url(#arrow-neutral)"/>
+            <path data-role="edge-route" data-edge-id="auth-db"
+                  data-source="auth" data-target="db" data-kind="auth"
+                  data-source-side="bottom" data-target-side="top"
+                  data-points="770,320 770,418" d="M 770 320 L 770 418"
+                  class="route route-auth" marker-end="url(#arrow-rose)"/>
+          </g>
+
+          <g data-role="component" data-id="users" data-type="external" data-lane="access"
+             data-bbox="120,120,120,60">
+            <title>用户终端&#10;类型：外部系统&#10;设备：浏览器 / iOS / Android</title>
+            <rect data-role="mask" x="120" y="120" width="120" height="60" rx="6" fill="var(--mask)"/>
+            <rect data-role="box" class="node-box" x="120" y="120" width="120" height="60" rx="6"/>
+            <text class="node-label" x="180" y="146" text-anchor="middle">用户</text>
+            <text class="node-subtitle" x="180" y="164" text-anchor="middle">浏览器 / 移动端</text>
+          </g>
+
+          <g data-role="component" data-id="cloudfront" data-type="cloud" data-lane="access"
+             data-group="aws-west" data-bbox="300,120,120,60">
+            <title>CloudFront CDN&#10;类型：云服务&#10;功能：内容分发与边缘缓存</title>
+            <rect data-role="mask" x="300" y="120" width="120" height="60" rx="6" fill="var(--mask)"/>
+            <rect data-role="box" class="node-box" x="300" y="120" width="120" height="60" rx="6"/>
+            <g class="node-icon" aria-hidden="true">
+              <path d="M 350 137 C 350 132 356 129 360 133 C 365 129 373 133 372 139 C 378 139 379 147 373 149 H 349 C 343 148 344 139 350 137 Z"/>
+            </g>
+            <text class="node-label" x="360" y="157" text-anchor="middle">CloudFront</text>
+            <text class="node-subtitle" x="360" y="172" text-anchor="middle">CDN 分发</text>
+          </g>
+
+          <g data-role="component" data-id="alb" data-type="gateway" data-lane="access"
+             data-group="aws-west" data-bbox="480,120,120,60">
+            <title>应用负载均衡器&#10;类型：API 网关&#10;端口：443 / 80</title>
+            <rect data-role="mask" x="480" y="120" width="120" height="60" rx="6" fill="var(--mask)"/>
+            <rect data-role="box" class="node-box" x="480" y="120" width="120" height="60" rx="6"/>
+            <text class="node-label" x="540" y="146" text-anchor="middle">ALB</text>
+            <text class="node-subtitle" x="540" y="164" text-anchor="middle">负载均衡 :443</text>
+          </g>
+
+          <g data-role="component" data-id="api" data-type="backend" data-lane="application"
+             data-group="aws-west" data-bbox="470,260,140,60">
+            <title>API 服务器&#10;类型：后端服务&#10;技术栈：FastAPI + Python 3.12&#10;端口：8000</title>
+            <rect data-role="mask" x="470" y="260" width="140" height="60" rx="6" fill="var(--mask)"/>
+            <rect data-role="box" class="node-box" x="470" y="260" width="140" height="60" rx="6"/>
+            <g class="node-icon" aria-hidden="true">
+              <rect x="532" y="268" width="16" height="12" rx="1"/>
+              <line x1="535" y1="272" x2="545" y2="272"/>
+              <circle cx="545" cy="277" r="1" fill="var(--node-stroke)" stroke="none"/>
+            </g>
+            <text class="node-label" x="540" y="296" text-anchor="middle">API 服务器</text>
+            <text class="node-subtitle" x="540" y="312" text-anchor="middle">FastAPI :8000</text>
+          </g>
+
+          <g data-role="component" data-id="auth" data-type="security" data-lane="application"
+             data-group="aws-west" data-bbox="700,260,140,60">
+            <title>认证服务&#10;类型：安全&#10;协议：OAuth2 + PKCE&#10;提供商：Cognito</title>
+            <rect data-role="mask" x="700" y="260" width="140" height="60" rx="6" fill="var(--mask)"/>
+            <rect data-role="box" class="node-box" x="700" y="260" width="140" height="60" rx="6"/>
+            <g class="node-icon" aria-hidden="true">
+              <path d="M 770 268 L 776 270 V 276 C 776 282 772 286 770 288 C 768 286 764 282 764 276 V 270 Z"/>
+            </g>
+            <text class="node-label" x="770" y="296" text-anchor="middle">认证服务</text>
+            <text class="node-subtitle" x="770" y="312" text-anchor="middle">Cognito / OAuth2</text>
+          </g>
+
+          <g data-role="component" data-id="db" data-type="database" data-lane="data"
+             data-group="aws-west" data-bbox="700,420,140,60">
+            <title>PostgreSQL 数据库&#10;类型：数据库&#10;版本：15&#10;端口：5432</title>
+            <rect data-role="mask" x="700" y="420" width="140" height="60" rx="6" fill="var(--mask)"/>
+            <rect data-role="box" class="node-box" x="700" y="420" width="140" height="60" rx="6"/>
+            <g class="node-icon" aria-hidden="true">
+              <ellipse cx="770" cy="431" rx="8" ry="3"/>
+              <path d="M 762 431 V 440 C 762 444 778 444 778 440 V 431"/>
+              <path d="M 762 436 C 762 440 778 440 778 436"/>
+            </g>
+            <text class="node-label" x="770" y="456" text-anchor="middle">PostgreSQL</text>
+            <text class="node-subtitle" x="770" y="472" text-anchor="middle">关系型数据库 :5432</text>
+          </g>
+
+          <g data-role="component" data-id="redis" data-type="cache" data-lane="data"
+             data-group="aws-west" data-bbox="700,520,140,60">
+            <title>Redis 缓存&#10;类型：缓存&#10;版本：7&#10;端口：6379</title>
+            <rect data-role="mask" x="700" y="520" width="140" height="60" rx="6" fill="var(--mask)"/>
+            <rect data-role="box" class="node-box" x="700" y="520" width="140" height="60" rx="6"/>
+            <text class="node-label" x="770" y="547" text-anchor="middle">Redis</text>
+            <text class="node-subtitle" x="770" y="565" text-anchor="middle">缓存 :6379</text>
+          </g>
+
+          <g aria-label="连接标签">
+            <text data-role="edge-label" data-edge-id="users-cloudfront" data-bbox="252,130,34,14"
+                  class="edge-label" x="269" y="141" text-anchor="middle">HTTPS</text>
+            <text data-role="edge-label" data-edge-id="alb-api" data-bbox="550,208,50,14"
+                  class="edge-label" x="575" y="219" text-anchor="middle">TCP :443</text>
+            <text data-role="edge-label" data-edge-id="api-db" data-bbox="664,430,26,14"
+                  class="edge-label" x="677" y="441" text-anchor="middle">SQL</text>
+            <text data-role="edge-label" data-edge-id="api-redis" data-bbox="642,530,52,14"
+                  class="edge-label" x="668" y="541" text-anchor="middle">TCP :6379</text>
+            <text data-role="edge-label" data-edge-id="auth-db" data-bbox="780,360,46,14"
+                  class="edge-label edge-label-auth" x="803" y="371" text-anchor="middle">JWT 验证</text>
+          </g>
+
+          <g data-role="legend" data-id="legend" data-bbox="250,660,500,80">
+            <rect x="250" y="660" width="500" height="80" rx="8"
+                  fill="var(--legend-fill)" fill-opacity="0.92"
+                  stroke="var(--legend-stroke)" stroke-width="1"/>
+            <text x="500" y="678" text-anchor="middle" font-size="10" font-weight="600">图例</text>
+
+            <g data-role="legend-item" data-type="external">
+              <rect x="280" y="690" width="16" height="10" rx="2" fill="#f8fafc" stroke="#64748b"/>
+              <text class="muted" x="302" y="699" font-size="8">外部系统</text>
+            </g>
+            <g data-role="legend-item" data-type="cloud">
+              <rect x="390" y="690" width="16" height="10" rx="2" fill="#fffbeb" stroke="#d97706"/>
+              <text class="muted" x="412" y="699" font-size="8">云服务</text>
+            </g>
+            <g data-role="legend-item" data-type="gateway">
+              <rect x="490" y="690" width="16" height="10" rx="2" fill="#ecfeff" stroke="#0891b2"/>
+              <text class="muted" x="512" y="699" font-size="8">API 网关</text>
+            </g>
+            <g data-role="legend-item" data-type="backend">
+              <rect x="610" y="690" width="16" height="10" rx="2" fill="#ecfdf5" stroke="#059669"/>
+              <text class="muted" x="632" y="699" font-size="8">后端</text>
+            </g>
+            <g data-role="legend-item" data-type="security">
+              <rect x="330" y="714" width="16" height="10" rx="2" fill="#fff1f2" stroke="#e11d48"/>
+              <text class="muted" x="352" y="723" font-size="8">安全</text>
+            </g>
+            <g data-role="legend-item" data-type="database">
+              <rect x="450" y="714" width="16" height="10" rx="2" fill="#f5f3ff" stroke="#7c3aed"/>
+              <text class="muted" x="472" y="723" font-size="8">数据库</text>
+            </g>
+            <g data-role="legend-item" data-type="cache">
+              <rect x="570" y="714" width="16" height="10" rx="2" fill="#faf5ff" stroke="#9333ea"/>
+              <text class="muted" x="592" y="723" font-size="8">缓存</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <figcaption>架构图包含键盘可聚焦的横向滚动区域；独立 SVG 保留同一标题、字体、主题与工具提示。</figcaption>
+    </figure>
+
+    <section class="cards" aria-label="架构摘要">
+      <article class="card">
+        <h2>应用服务</h2>
+        <ul>
+          <li>FastAPI + Python 3.12</li>
+          <li>通过 ALB 承接 HTTPS 流量</li>
+          <li>认证流与数据流分开表达</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>数据服务</h2>
+        <ul>
+          <li>PostgreSQL 15</li>
+          <li>Redis 7</li>
+          <li>共享出口采用单一总线干线</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h2>输出约束</h2>
+        <ul>
+          <li>HTML 与 SVG 均为自包含文件</li>
+          <li>标准模式 viewBox 由内容边界计算</li>
+          <li>交付前运行静态与浏览器检查</li>
+        </ul>
+      </article>
+    </section>
+
+    <p class="footer">[项目名称] · [版本 / 日期 / 所有者]</p>
+  </main>
+</body>
+</html>

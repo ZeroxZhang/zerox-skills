@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "goal": "让业务负责人理解建设 AI Agent 平台的必要性",
+  "audience": "业务负责人",
+  "core_claim": "Agent 平台的价值不是模型接入，而是可复用的业务执行能力",
+  "logic": "narrative",
+  "modules": [
+    {
+      "id": "problem",
+      "role": "tension",
+      "title": "重复建设正在吞噬效率",
+      "summary": "团队各自接入模型，但业务流程、权限和评测无法复用。",
+      "source_refs": ["source:p2", "source:p3"]
+    },
+    {
+      "id": "solution",
+      "role": "answer",
+      "title": "把执行能力沉淀为平台",
+      "summary": "统一规划、工具、权限、评测和运行记录。",
+      "source_refs": ["source:p5"]
+    },
+    {
+      "id": "cta",
+      "role": "cta",
+      "title": "从一个高频流程开始",
+      "summary": "选择一个可量化流程完成试点。",
+      "source_refs": ["source:p8"]
+    }
+  ],
+  "missing": [
+    {
+      "field": "ROI 数据",
+      "reason": "原始资料没有提供可验证的投入产出数据"
+    }
+  ]
+}

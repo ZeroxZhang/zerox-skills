@@ -1,0 +1,67 @@
+{
+  "report": "全球AI生物制药前沿研究",
+  "reportDate": "2026-09-25",
+  "pages": 31,
+  "bodyPages": 26,
+  "method": "Byte-identical copies of final HTML acceptance screenshots; no crop or text changes.",
+  "reviewStatus": "complete",
+  "reviewSha256": "fee8ba53097f0bb261eaf33480a28f07d09f0beaa7d49992f15583cd47735cdb",
+  "auditSha256": "82122fa449c7ebf7fb4ea713a047a9d24fb54758008f8a349485182e5b227939",
+  "reviewedHtmlSha256": "f7f73354836ec27ff601cd68bd25abe828f295e3f8265052197c7ec2d6c27ff9",
+  "reviewedPdfSha256": "70c9315a98c258c819ca84a84ddb3882435affc56e8ca9da622a886ac10e10d2",
+  "images": [
+    {
+      "file": "ai-biopharma-market.png",
+      "physicalPage": 4,
+      "source": "qa/p04.png",
+      "sha256": "4a14e892d83b25a940d619f87a4802801901a5ed8653c38944b09c7fc54527c4",
+      "description": "市场规模与口径"
+    },
+    {
+      "file": "ai-biopharma-landscape.png",
+      "physicalPage": 7,
+      "source": "qa/p07.png",
+      "sha256": "b9d1ec1a7b8b5472728e134e07a661716c03d41301447896cf497276c6085a64",
+      "description": "参与者证据矩阵"
+    },
+    {
+      "file": "ai-biopharma-deals.png",
+      "physicalPage": 14,
+      "source": "qa/p14.png",
+      "sha256": "d0ae1115f8359d978a73f7962ce9fc99bc0338ac3613553497f57f9c07cd3f37",
+      "description": "首付与条件里程碑"
+    },
+    {
+      "file": "ai-biopharma-finance.png",
+      "physicalPage": 16,
+      "source": "qa/p16.png",
+      "sha256": "06adf3f1f671fd3935ba7714a8631c2e9b2c16c0404c92ccc2907f4d8a6fec22",
+      "description": "上市样本财务比较"
+    },
+    {
+      "file": "ai-biopharma-cash.png",
+      "physicalPage": 17,
+      "source": "qa/p17.png",
+      "sha256": "2330b135820f5fd9dd7f26f2f0feb5b7ebe72522f58eff8489102096119fdaee",
+      "description": "现金变动桥"
+    },
+    {
+      "file": "ai-biopharma-valuation.png",
+      "physicalPage": 22,
+      "source": "qa/p22.png",
+      "sha256": "f77113c187615f44389b96c09bceaf5f5b86a5dad0fb2076ee129af6bcfc4050",
+      "description": "条件估值敏感性"
+    },
+    {
+      "file": "ai-biopharma-diligence.png",
+      "physicalPage": 25,
+      "source": "qa/p25.png",
+      "sha256": "f540d68153cec5d51fc70120e27bdf3cb8eaf215a8f3f165386902e2873a2b14",
+      "description": "投资尽调门槛"
+    }
+  ],
+  "runtime": "1.5.0",
+  "acceptanceDate": "2026-09-26",
+  "referencePages": 3,
+  "referenceIds": 42
+}

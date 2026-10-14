@@ -1,0 +1,47 @@
+{
+  "skill_name": "zerox-architecture-diagram",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请为一个电商 SaaS 生成浅色、中文、标准模式的系统架构图，同时输出自包含 HTML 和独立 SVG。使用横向泳道表达接入层、应用层、数据层：接入层包含 Web、移动端、WAF、API 网关；应用层包含订单、库存、支付、认证服务；数据层包含 PostgreSQL、Redis、Kafka 和对象存储。API 网关需要扇出到多个服务，订单服务需要通过共享出口连接 PostgreSQL、Redis 和 Kafka，认证链路用虚线。请保证长中文标签、图例和所有箭头都不重叠。",
+      "expected_output": "标准模式 HTML+SVG；泳道、异宽节点、多分支总线、认证边和长标签均布局清晰，且静态、渲染与 HTML/SVG 一致性校验通过。",
+      "files": [],
+      "expectations": [
+        "同时生成自包含 HTML 与独立 SVG，且两者的 SVG DOM 一致",
+        "SVG 使用 standard 模式、至少 1000×680 的 20px 对齐 viewBox，并包含稳定语义 ID",
+        "rank、lane、group 概念没有混用，所有节点位于正确泳道内容区",
+        "共享总线干线只绘制一次，分支不重复覆盖干线",
+        "节点、边、标签和图例无碰撞，validate_diagram.py --strict 通过",
+        "Chrome 可用时 render_check.py 通过"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "生成一个深色中文的双区域主动-主动支付平台架构图，输出 HTML 与 SVG。全局 DNS 将流量送往华东和华南两个 Region；每个 Region 有网关、支付 API、风控服务、PostgreSQL 和 Redis，并画出跨区域数据库复制、风控事件 Kafka、统一可观测性平台。跨区域链路要有独立走廊与延迟标签，Region 内部不能被跨区箭头穿框，图例放在所有区域下方。",
+      "expected_output": "标准深色多区域 HTML+SVG；复合容器先内后外布局，跨区链路使用边界网关/走廊，无边穿节点和标签碰撞。",
+      "files": [],
+      "expectations": [
+        "两个 Region 的 compound bounds、标题区和内部 padding 清晰且不重叠",
+        "跨区域复制与事件链路使用明确路由走廊，未穿过无关节点或 Region 标题",
+        "深色主题 token 与字体位于 SVG 内，独立 SVG 不依赖 HTML 或远程资源",
+        "节点、边、标签、图例和 viewBox 的联合边界完整，没有裁切",
+        "validate_diagram.py --strict 与 HTML/SVG parity 通过",
+        "Chrome 可用时 render_check.py 通过"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "请做一张可直接放进发布会 PPT 的 16:9 深色 RAG 平台架构图，输出 HTML 和 SVG。链路从用户、API 网关进入编排服务，随后并行访问安全护栏、Embedding 服务、向量数据库、对象存储和大模型；异步评估结果进入消息队列与可观测性平台。需要图标、中文主标签、英文技术副标签，所有内容必须放进 1280×720，图例位于右下角。",
+      "expected_output": "真正的 presentation 模式 1280×720 HTML+SVG；并行扇出、异步边、图标和中英混排均清楚可读，无缩放裁切。",
+      "files": [],
+      "expectations": [
+        "SVG data-mode 为 presentation 且 viewBox 精确为 0 0 1280 720",
+        "图例距右侧和底部各 20px，不错误套用标准模式居中规则",
+        "节点最小文字尺寸可读，中英混排和图标没有溢出组件 bbox",
+        "并行分支使用清晰端口/总线，异步边样式与同步边可区分",
+        "validate_diagram.py --strict 与 HTML/SVG parity 通过",
+        "render_check.py 在 1280×720 视口通过"
+      ]
+    }
+  ]
+}

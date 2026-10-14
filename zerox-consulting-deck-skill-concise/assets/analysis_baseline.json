@@ -1,0 +1,86 @@
+{
+  "description": "v3原组件生成；合成数据；仅作同数据对照，非think-cell官方样例",
+  "width": 585,
+  "height": 360,
+  "waterfall": [
+    {
+      "label": "期初",
+      "type": "total",
+      "value": 11.2
+    },
+    {
+      "label": "电商",
+      "type": "delta",
+      "value": 0.4
+    },
+    {
+      "label": "商超",
+      "type": "delta",
+      "value": -1.1
+    },
+    {
+      "label": "经销",
+      "type": "delta",
+      "value": -0.1
+    },
+    {
+      "label": "期末",
+      "type": "subtotal"
+    }
+  ],
+  "mekko": [
+    {
+      "label": "东区",
+      "segments": [
+        {
+          "label": "核心",
+          "value": 60
+        },
+        {
+          "label": "新业务",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "label": "西区",
+      "segments": [
+        {
+          "label": "核心",
+          "value": 30
+        },
+        {
+          "label": "新业务",
+          "value": 20
+        }
+      ]
+    },
+    {
+      "label": "南区",
+      "segments": [
+        {
+          "label": "核心",
+          "value": 3
+        },
+        {
+          "label": "新业务",
+          "value": 2
+        }
+      ]
+    }
+  ],
+  "svg": {
+    "mckinsey": {
+      "waterfall": "<svg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"分析图\" viewBox=\"0 0 585 360\" width=\"585\" height=\"360\" style=\"font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;font-size:14px\"><title>分析图</title><rect width=\"585\" height=\"360\" fill=\"white\"/><line x1=\"60\" y1=\"295\" x2=\"555\" y2=\"295\" stroke=\"#BFCBD2\" /><rect x=\"65\" y=\"53.62068965517244\" width=\"61.75\" height=\"241.37931034482756\" fill=\"#2251FF\" data-from=\"0\" data-to=\"11.2\"/><text x=\"95.875\" y=\"45.62068965517244\" text-anchor=\"middle\" fill=\"#172C3B\" >11.2</text><text x=\"95.875\" y=\"330\" text-anchor=\"middle\" fill=\"#172C3B\" >期初</text><line x1=\"126.75\" y1=\"53.62068965517244\" x2=\"160\" y2=\"53.62068965517244\" stroke=\"#BFCBD2\" stroke-dasharray=\"4 3\"/><rect x=\"160\" y=\"45\" width=\"61.75\" height=\"8.620689655172441\" fill=\"#2251FF\" data-from=\"11.2\" data-to=\"11.6\"/><text x=\"190.875\" y=\"37\" text-anchor=\"middle\" fill=\"#172C3B\" >+0.4</text><text x=\"190.875\" y=\"330\" text-anchor=\"middle\" fill=\"#172C3B\" >电商</text><line x1=\"221.75\" y1=\"45\" x2=\"255\" y2=\"45\" stroke=\"#BFCBD2\" stroke-dasharray=\"4 3\"/><rect x=\"255\" y=\"45\" width=\"61.75\" height=\"23.706896551724157\" fill=\"#9C5C14\" data-from=\"11.6\" data-to=\"10.5\"/><text x=\"285.875\" y=\"37\" text-anchor=\"middle\" fill=\"#172C3B\" >-1.1</text><text x=\"285.875\" y=\"330\" text-anchor=\"middle\" fill=\"#172C3B\" >商超</text><line x1=\"316.75\" y1=\"68.70689655172416\" x2=\"350\" y2=\"68.70689655172416\" stroke=\"#BFCBD2\" stroke-dasharray=\"4 3\"/><rect x=\"350\" y=\"68.70689655172416\" width=\"61.75\" height=\"2.155172413793082\" fill=\"#9C5C14\" data-from=\"10.5\" data-to=\"10.4\"/><text x=\"380.875\" y=\"60.70689655172416\" text-anchor=\"middle\" fill=\"#172C3B\" >-0.1</text><text x=\"380.875\" y=\"330\" text-anchor=\"middle\" fill=\"#172C3B\" >经销</text><line x1=\"411.75\" y1=\"70.86206896551724\" x2=\"445\" y2=\"70.86206896551724\" stroke=\"#BFCBD2\" stroke-dasharray=\"4 3\"/><rect x=\"445\" y=\"70.86206896551724\" width=\"61.75\" height=\"224.13793103448276\" fill=\"#2251FF\" data-from=\"0\" data-to=\"10.4\"/><text x=\"475.875\" y=\"62.86206896551724\" text-anchor=\"middle\" fill=\"#172C3B\" >10.4</text><text x=\"475.875\" y=\"330\" text-anchor=\"middle\" fill=\"#172C3B\" >期末</text></svg>",
+      "mekko": "<svg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"分析图\" viewBox=\"0 0 585 360\" width=\"585\" height=\"360\" style=\"font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;font-size:14px\"><title>分析图</title><rect width=\"585\" height=\"360\" fill=\"white\"/><rect x=\"40\" y=\"45\" width=\"325.80645161290323\" height=\"150\" fill=\"#2251FF\" stroke=\"white\" data-value=\"60\" data-total=\"100\"/><text x=\"202.90322580645162\" y=\"125\" text-anchor=\"middle\" fill=\"#FFFFFF\" >核心 60</text><rect x=\"40\" y=\"195\" width=\"325.80645161290323\" height=\"100\" fill=\"#007A78\" stroke=\"white\" data-value=\"40\" data-total=\"100\"/><text x=\"202.90322580645162\" y=\"250\" text-anchor=\"middle\" fill=\"#FFFFFF\" >新业务 40</text><text x=\"202.90322580645162\" y=\"317\" text-anchor=\"middle\" fill=\"#172C3B\" >东区</text><text x=\"202.90322580645162\" y=\"340\" text-anchor=\"middle\" fill=\"#586875\" >100</text><rect x=\"365.80645161290323\" y=\"45\" width=\"162.90322580645162\" height=\"150\" fill=\"#2251FF\" stroke=\"white\" data-value=\"30\" data-total=\"50\"/><text x=\"447.258064516129\" y=\"125\" text-anchor=\"middle\" fill=\"#FFFFFF\" >核心 30</text><rect x=\"365.80645161290323\" y=\"195\" width=\"162.90322580645162\" height=\"100\" fill=\"#007A78\" stroke=\"white\" data-value=\"20\" data-total=\"50\"/><text x=\"447.258064516129\" y=\"250\" text-anchor=\"middle\" fill=\"#FFFFFF\" >新业务 20</text><text x=\"447.258064516129\" y=\"317\" text-anchor=\"middle\" fill=\"#172C3B\" >西区</text><text x=\"447.258064516129\" y=\"340\" text-anchor=\"middle\" fill=\"#586875\" >50</text><rect x=\"528.7096774193549\" y=\"45\" width=\"16.29032258064516\" height=\"150\" fill=\"#2251FF\" stroke=\"white\" data-value=\"3\" data-total=\"5\"/><rect x=\"528.7096774193549\" y=\"195\" width=\"16.29032258064516\" height=\"100\" fill=\"#007A78\" stroke=\"white\" data-value=\"2\" data-total=\"5\"/><text x=\"536.8548387096774\" y=\"317\" text-anchor=\"middle\" fill=\"#172C3B\" >南区</text><text x=\"536.8548387096774\" y=\"340\" text-anchor=\"middle\" fill=\"#586875\" >5</text></svg>"
+    },
+    "bcg": {
+      "waterfall": "<svg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"分析图\" viewBox=\"0 0 585 360\" width=\"585\" height=\"360\" style=\"font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;font-size:14px\"><title>分析图</title><rect width=\"585\" height=\"360\" fill=\"white\"/><line x1=\"60\" y1=\"295\" x2=\"555\" y2=\"295\" stroke=\"#BECEC4\" /><rect x=\"65\" y=\"53.62068965517244\" width=\"61.75\" height=\"241.37931034482756\" fill=\"#007A53\" data-from=\"0\" data-to=\"11.2\"/><text x=\"95.875\" y=\"45.62068965517244\" text-anchor=\"middle\" fill=\"#173B30\" >11.2</text><text x=\"95.875\" y=\"330\" text-anchor=\"middle\" fill=\"#173B30\" >期初</text><line x1=\"126.75\" y1=\"53.62068965517244\" x2=\"160\" y2=\"53.62068965517244\" stroke=\"#BECEC4\" stroke-dasharray=\"4 3\"/><rect x=\"160\" y=\"45\" width=\"61.75\" height=\"8.620689655172441\" fill=\"#176BA0\" data-from=\"11.2\" data-to=\"11.6\"/><text x=\"190.875\" y=\"37\" text-anchor=\"middle\" fill=\"#173B30\" >+0.4</text><text x=\"190.875\" y=\"330\" text-anchor=\"middle\" fill=\"#173B30\" >电商</text><line x1=\"221.75\" y1=\"45\" x2=\"255\" y2=\"45\" stroke=\"#BECEC4\" stroke-dasharray=\"4 3\"/><rect x=\"255\" y=\"45\" width=\"61.75\" height=\"23.706896551724157\" fill=\"#9A5F12\" data-from=\"11.6\" data-to=\"10.5\"/><text x=\"285.875\" y=\"37\" text-anchor=\"middle\" fill=\"#173B30\" >-1.1</text><text x=\"285.875\" y=\"330\" text-anchor=\"middle\" fill=\"#173B30\" >商超</text><line x1=\"316.75\" y1=\"68.70689655172416\" x2=\"350\" y2=\"68.70689655172416\" stroke=\"#BECEC4\" stroke-dasharray=\"4 3\"/><rect x=\"350\" y=\"68.70689655172416\" width=\"61.75\" height=\"2.155172413793082\" fill=\"#9A5F12\" data-from=\"10.5\" data-to=\"10.4\"/><text x=\"380.875\" y=\"60.70689655172416\" text-anchor=\"middle\" fill=\"#173B30\" >-0.1</text><text x=\"380.875\" y=\"330\" text-anchor=\"middle\" fill=\"#173B30\" >经销</text><line x1=\"411.75\" y1=\"70.86206896551724\" x2=\"445\" y2=\"70.86206896551724\" stroke=\"#BECEC4\" stroke-dasharray=\"4 3\"/><rect x=\"445\" y=\"70.86206896551724\" width=\"61.75\" height=\"224.13793103448276\" fill=\"#007A53\" data-from=\"0\" data-to=\"10.4\"/><text x=\"475.875\" y=\"62.86206896551724\" text-anchor=\"middle\" fill=\"#173B30\" >10.4</text><text x=\"475.875\" y=\"330\" text-anchor=\"middle\" fill=\"#173B30\" >期末</text></svg>",
+      "mekko": "<svg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"分析图\" viewBox=\"0 0 585 360\" width=\"585\" height=\"360\" style=\"font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;font-size:14px\"><title>分析图</title><rect width=\"585\" height=\"360\" fill=\"white\"/><rect x=\"40\" y=\"45\" width=\"325.80645161290323\" height=\"150\" fill=\"#007A53\" stroke=\"white\" data-value=\"60\" data-total=\"100\"/><text x=\"202.90322580645162\" y=\"125\" text-anchor=\"middle\" fill=\"#FFFFFF\" >核心 60</text><rect x=\"40\" y=\"195\" width=\"325.80645161290323\" height=\"100\" fill=\"#176BA0\" stroke=\"white\" data-value=\"40\" data-total=\"100\"/><text x=\"202.90322580645162\" y=\"250\" text-anchor=\"middle\" fill=\"#FFFFFF\" >新业务 40</text><text x=\"202.90322580645162\" y=\"317\" text-anchor=\"middle\" fill=\"#173B30\" >东区</text><text x=\"202.90322580645162\" y=\"340\" text-anchor=\"middle\" fill=\"#53685F\" >100</text><rect x=\"365.80645161290323\" y=\"45\" width=\"162.90322580645162\" height=\"150\" fill=\"#007A53\" stroke=\"white\" data-value=\"30\" data-total=\"50\"/><text x=\"447.258064516129\" y=\"125\" text-anchor=\"middle\" fill=\"#FFFFFF\" >核心 30</text><rect x=\"365.80645161290323\" y=\"195\" width=\"162.90322580645162\" height=\"100\" fill=\"#176BA0\" stroke=\"white\" data-value=\"20\" data-total=\"50\"/><text x=\"447.258064516129\" y=\"250\" text-anchor=\"middle\" fill=\"#FFFFFF\" >新业务 20</text><text x=\"447.258064516129\" y=\"317\" text-anchor=\"middle\" fill=\"#173B30\" >西区</text><text x=\"447.258064516129\" y=\"340\" text-anchor=\"middle\" fill=\"#53685F\" >50</text><rect x=\"528.7096774193549\" y=\"45\" width=\"16.29032258064516\" height=\"150\" fill=\"#007A53\" stroke=\"white\" data-value=\"3\" data-total=\"5\"/><rect x=\"528.7096774193549\" y=\"195\" width=\"16.29032258064516\" height=\"100\" fill=\"#176BA0\" stroke=\"white\" data-value=\"2\" data-total=\"5\"/><text x=\"536.8548387096774\" y=\"317\" text-anchor=\"middle\" fill=\"#173B30\" >南区</text><text x=\"536.8548387096774\" y=\"340\" text-anchor=\"middle\" fill=\"#53685F\" >5</text></svg>"
+    },
+    "accenture": {
+      "waterfall": "<svg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"分析图\" viewBox=\"0 0 585 360\" width=\"585\" height=\"360\" style=\"font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;font-size:14px\"><title>分析图</title><rect width=\"585\" height=\"360\" fill=\"white\"/><line x1=\"60\" y1=\"295\" x2=\"555\" y2=\"295\" stroke=\"#CDC3D5\" /><rect x=\"65\" y=\"53.62068965517244\" width=\"61.75\" height=\"241.37931034482756\" fill=\"#7500C0\" data-from=\"0\" data-to=\"11.2\"/><text x=\"95.875\" y=\"45.62068965517244\" text-anchor=\"middle\" fill=\"#261C30\" >11.2</text><text x=\"95.875\" y=\"330\" text-anchor=\"middle\" fill=\"#261C30\" >期初</text><line x1=\"126.75\" y1=\"53.62068965517244\" x2=\"160\" y2=\"53.62068965517244\" stroke=\"#CDC3D5\" stroke-dasharray=\"4 3\"/><rect x=\"160\" y=\"45\" width=\"61.75\" height=\"8.620689655172441\" fill=\"#7500C0\" data-from=\"11.2\" data-to=\"11.6\"/><text x=\"190.875\" y=\"37\" text-anchor=\"middle\" fill=\"#261C30\" >+0.4</text><text x=\"190.875\" y=\"330\" text-anchor=\"middle\" fill=\"#261C30\" >电商</text><line x1=\"221.75\" y1=\"45\" x2=\"255\" y2=\"45\" stroke=\"#CDC3D5\" stroke-dasharray=\"4 3\"/><rect x=\"255\" y=\"45\" width=\"61.75\" height=\"23.706896551724157\" fill=\"#A25418\" data-from=\"11.6\" data-to=\"10.5\"/><text x=\"285.875\" y=\"37\" text-anchor=\"middle\" fill=\"#261C30\" >-1.1</text><text x=\"285.875\" y=\"330\" text-anchor=\"middle\" fill=\"#261C30\" >商超</text><line x1=\"316.75\" y1=\"68.70689655172416\" x2=\"350\" y2=\"68.70689655172416\" stroke=\"#CDC3D5\" stroke-dasharray=\"4 3\"/><rect x=\"350\" y=\"68.70689655172416\" width=\"61.75\" height=\"2.155172413793082\" fill=\"#A25418\" data-from=\"10.5\" data-to=\"10.4\"/><text x=\"380.875\" y=\"60.70689655172416\" text-anchor=\"middle\" fill=\"#261C30\" >-0.1</text><text x=\"380.875\" y=\"330\" text-anchor=\"middle\" fill=\"#261C30\" >经销</text><line x1=\"411.75\" y1=\"70.86206896551724\" x2=\"445\" y2=\"70.86206896551724\" stroke=\"#CDC3D5\" stroke-dasharray=\"4 3\"/><rect x=\"445\" y=\"70.86206896551724\" width=\"61.75\" height=\"224.13793103448276\" fill=\"#7500C0\" data-from=\"0\" data-to=\"10.4\"/><text x=\"475.875\" y=\"62.86206896551724\" text-anchor=\"middle\" fill=\"#261C30\" >10.4</text><text x=\"475.875\" y=\"330\" text-anchor=\"middle\" fill=\"#261C30\" >期末</text></svg>",
+      "mekko": "<svg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"分析图\" viewBox=\"0 0 585 360\" width=\"585\" height=\"360\" style=\"font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;font-size:14px\"><title>分析图</title><rect width=\"585\" height=\"360\" fill=\"white\"/><rect x=\"40\" y=\"45\" width=\"325.80645161290323\" height=\"150\" fill=\"#7500C0\" stroke=\"white\" data-value=\"60\" data-total=\"100\"/><text x=\"202.90322580645162\" y=\"125\" text-anchor=\"middle\" fill=\"#FFFFFF\" >核心 60</text><rect x=\"40\" y=\"195\" width=\"325.80645161290323\" height=\"100\" fill=\"#006E9E\" stroke=\"white\" data-value=\"40\" data-total=\"100\"/><text x=\"202.90322580645162\" y=\"250\" text-anchor=\"middle\" fill=\"#FFFFFF\" >新业务 40</text><text x=\"202.90322580645162\" y=\"317\" text-anchor=\"middle\" fill=\"#261C30\" >东区</text><text x=\"202.90322580645162\" y=\"340\" text-anchor=\"middle\" fill=\"#66596F\" >100</text><rect x=\"365.80645161290323\" y=\"45\" width=\"162.90322580645162\" height=\"150\" fill=\"#7500C0\" stroke=\"white\" data-value=\"30\" data-total=\"50\"/><text x=\"447.258064516129\" y=\"125\" text-anchor=\"middle\" fill=\"#FFFFFF\" >核心 30</text><rect x=\"365.80645161290323\" y=\"195\" width=\"162.90322580645162\" height=\"100\" fill=\"#006E9E\" stroke=\"white\" data-value=\"20\" data-total=\"50\"/><text x=\"447.258064516129\" y=\"250\" text-anchor=\"middle\" fill=\"#FFFFFF\" >新业务 20</text><text x=\"447.258064516129\" y=\"317\" text-anchor=\"middle\" fill=\"#261C30\" >西区</text><text x=\"447.258064516129\" y=\"340\" text-anchor=\"middle\" fill=\"#66596F\" >50</text><rect x=\"528.7096774193549\" y=\"45\" width=\"16.29032258064516\" height=\"150\" fill=\"#7500C0\" stroke=\"white\" data-value=\"3\" data-total=\"5\"/><rect x=\"528.7096774193549\" y=\"195\" width=\"16.29032258064516\" height=\"100\" fill=\"#006E9E\" stroke=\"white\" data-value=\"2\" data-total=\"5\"/><text x=\"536.8548387096774\" y=\"317\" text-anchor=\"middle\" fill=\"#261C30\" >南区</text><text x=\"536.8548387096774\" y=\"340\" text-anchor=\"middle\" fill=\"#66596F\" >5</text></svg>"
+    }
+  }
+}

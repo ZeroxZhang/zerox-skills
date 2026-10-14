@@ -1,0 +1,17 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.onepager/
+
+# Generated local outputs. Curated README showcases are force-added explicitly.
+*-A[1-4]-B[1-9]-20*.html
+*-A[1-4]-B[1-9]-20*.png
+
+# Agent session logs and ad-hoc render output
+full-session.jsonl
+onepage_output.*
