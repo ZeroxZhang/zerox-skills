@@ -1,7 +1,33 @@
 # 研究项目含用户资料，应存放在技能包之外。
 /workspaces/
 /outputs/
+/reports/
 __pycache__/
 *.py[cod]
 .DS_Store
 .pytest_cache/
+
+# 本目录按可直接安装的技能发布；开发测试与过程材料只留本地。
+/tests/
+/evals/
+/test-results/
+/playwright-report/
+/debug/
+/screenshots/
+/audits/
+/reviews/
+/drafts/
+/logs/
+/tmp/
+/scratch/
+*.log
+*.tmp
+*.bak
+
+# 测试覆盖率及工具缓存。
+/.coverage
+/.coverage.*
+/coverage/
+/htmlcov/
+.mypy_cache/
+.ruff_cache/

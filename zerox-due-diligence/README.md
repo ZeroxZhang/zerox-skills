@@ -147,6 +147,8 @@ python3 scripts/check_report.py \
 <a id="zh-files"></a>
 ### 文件导航
 
+本目录以可直接安装的技能发布，仅包含使用说明、运行脚本、参考资料、数据契约、模板和渲染资源。开发测试、评估记录、调试材料及生成报告保留在本地，不进入公开版本。
+
 | 目录/文件 | 用途 |
 | --- | --- |
 | [SKILL.md](./SKILL.md) | 触发、主流程、必经门槛与直接索引 |
@@ -290,6 +292,8 @@ Keep the company timeline in the company overview section. Introduce founders an
 
 <a id="en-files"></a>
 ### Package contents
+
+This directory is published as an installable skill containing usage instructions, runtime scripts, references, schemas, templates, and rendering assets. Development tests, evaluation records, debugging materials, and generated reports stay local and are excluded from the public release.
 
 | Path | Purpose |
 | --- | --- |
