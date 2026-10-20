@@ -136,7 +136,7 @@ python3 scripts/scoring.py --project /tmp/dd-example --output /tmp/dd-score.json
 
 每块填写 `type`、`topic`、`title`、`text`、`status`、`evidence_ids`、`limitations`。`supported/partial` 至少有一条真实引用；`partial/unknown` 必须在 `limitations` 说明具体未知及其影响，`unknown` 可以没有引用。`supported` 的限制可为空字符串。渲染为自然的小标题和正文，覆盖状态只在检查输出中呈现。已有基础材料未进入正文属于编辑遗漏，应补回；真实缺证属于研究缺口，应补查并如实说明，不能为了通过检查编造答案。
 
-至少一块 `process` 应标为 `purpose: "business_model"`，包含两个以上业务环节，各项 `basis` 为 `evidence/company_claim/inference/unknown`，对应证据直接支持、公司自述、分析推断、未知。只有 `unknown` 可以使用空引用；其他环节须有依据。公司自述和推断在正文中说明属性与边界，未知环节说明缺口；推荐合作步骤不能充当业务运转图。仅 `transaction_flow` 整体为 `unknown` 且明确写出限制时，允许省略业务图。其他流程可用 `purpose: "recommendation"` 或 `"other"`，也可不填写此字段；`basis` 可选，但未标未知的环节仍须引用。
+至少一块 `process` 或 `diagram` 应标为 `purpose: "business_model"`。`process` 包含两个以上业务环节，各项 `basis` 为 `evidence/company_claim/inference/unknown`，对应证据直接支持、公司自述、分析推断、未知；`diagram` 以参与方与连线呈现业务关系，字段见下文。只有 `unknown` 可以使用空引用；其他环节须有依据。公司自述和推断在正文中说明属性与边界，未知环节说明缺口；推荐合作步骤不能充当业务运转图。仅 `transaction_flow` 整体为 `unknown` 且明确写出限制时，允许省略业务图。其他流程可用 `purpose: "recommendation"` 或 `"other"`，也可不填写此字段；`basis` 可选，但未标未知的环节仍须引用。
 
 `process.ordering` 可选 `sequence` 或 `conceptual`，省略时默认 `sequence` 以兼容历史内容。只有先后顺序已有依据时使用 `sequence`；若只知道环节及参与方，而订单、生产、交付和回款的先后尚未核实，应使用 `conceptual` 关联图，不显示顺序编号与箭头。新模板显式使用 `conceptual`，编辑时按证据选择，不能靠画箭头把未知时序变成事实。该字段控制呈现，不会自动验证时序真实性。
 
@@ -192,6 +192,14 @@ python3 scripts/check_report.py --mode template --report templates/report-full.m
 ```
 
 完整与Quick Markdown模板保留给底稿兼容。无 `--sections` 时也可生成底稿骨架；未填写内容会保留缺口，不得宣称研究已完成。
+
+## 可视化编排与编辑检查
+
+1.2 内容支持 `bar / column / line / donut / proportion / range / waterfall / stacked_bar` 八种数据图，以及独立 `diagram` 关系图。字段见[内容契约](../schemas/report-content.schema.json)，可改写结构见[视觉配方](../references/visual-examples.json)。已有1.2报告无需迁移；选择图型取决于真实数据和读者问题，不要求用遍所有图型。
+
+`proportion` 允许单个有明确量尺的比例，`range` 允许单个有据区间；不用虚构第二个比较对象。`waterfall` 校验首末角色与累计数值，`stacked_bar` 校验分类一致与非负完整值。`diagram` 的节点和边分别有依据属性与引用，只有 `purpose=business_model` 才可满足业务机制图要求；关系图不计入定量图数。
+
+HTML构建输出和检查输出的 `visual_review` 按章节列出视觉类型、计数和编辑线索，自动摘要写入同名 `-audit.md`。检查输出的警告不自动改变研究状态，也不证明文字中的数字足够可比；分析者应逐项决定转图或说明保留原因。无需新增CLI参数，不把审阅面板插入HTML正文。
 
 ## 退出码与安全写入
 

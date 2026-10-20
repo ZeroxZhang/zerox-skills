@@ -46,6 +46,8 @@ A decision-focused company research skill. Resolve the entity and control relati
 - **公司与业务必须讲清**：11 个理解主题覆盖身份、起源团队、产品、客户、交易、经营分工、收入成本、差异化、财务表现、营销与竞争。发展时间线、基于已有资料的独立人物介绍与业务图帮助理解公司，避免用工商表或宣传术语替代解释。
 - **财务、营销与竞争必答**：营收规模、营收构成、毛利率和净利率分别披露主体、期间、来源与缺口；解释营销渠道及获客、转化、复购，按选择依据比较主要竞品。资料不足时逐项说明未知及其影响，不能直接省略这些主题。
 - **有依据的图文表达**：关键数字通过可核验图表呈现，附单位、期间、主体、实际/预测属性、来源与数据表；无可靠数据时用定性图解释，不编造数字。
+- **先选主图，再组织解释**：逐章采用简短导读、主视觉与分析交错的编排。内置八种数据图，覆盖柱状、横向条形、折线、环形、比例条、区间、瀑布和堆叠；业务、资金、渠道与控制关系另用有据关系图呈现。
+- **可视化遗漏检查**：构建与检查返回 `visual_review`，提示连续长文、埋藏数字和核心主题缺少视觉等编辑机会，摘要进入研究底稿。分别统计定量图、结构图、指标、图片和人物；不把装饰图片或文字卡当作数字已被图示。
 - **真实图片与比较矩阵**：可内嵌真实 logo、官网截图、产品、门店或人物图片，记录出处、本次取得日期、使用范围、图注与替代文字；竞品、渠道和财务比较逐格标注依据。图片和定性矩阵不计作定量图，也不自动证明图片中的宣传。
 - **正文与底稿分层**：主报告保留重要判断和限制；模块适用性、完整台账、搜索日志、覆盖记录与请求清单进入独立 `*-audit.md`，正文引用可定位到折叠证据附录。
 - **可运行的本地工具**：七个核心 Python CLI、研究与报告内容契约、CSV 台账及离线 HTML 渲染资源。
@@ -66,6 +68,8 @@ A decision-focused company research skill. Resolve the entity and control relati
 | 风险与决策 | 哪些证据支持结论，哪些未知会改变判断，下一步做什么？ | 关键结论、风险说明与行动建议 |
 
 时间线至少包含两个有日期依据的事件；确实不足时说明具体缺口。人物资料不足或真实图片不可得时如实说明，不凑履历、不用生成图冒充企业素材。财务、营销与竞争仍要逐项回答；无可靠数字时保留定性分析和限制，不绘制虚假趋势、份额或排名。
+
+可视化按材料选择：一个有依据的客户比例也可用量尺条，一个价格上下界可用区间图；完整营收拆分可用堆叠，收入到利润的完整增减可用瀑布。没有转化数据仍能展示真实营销渠道关系，但不能画虚假的转化漏斗。默认模板将主图前置，[视觉配方](./references/visual-examples.json)提供可改写的字段示例。新增图型保持 1.2 内容兼容。
 
 交付包含可直接打开的 `report.html`、完整研究底稿 `report-audit.md`，以及可追溯的 CSV / JSON 台账与材料。主报告保留必要引用、重要限制和折叠证据附录；搜索日志、执行过程、覆盖记录与完整核验表放入底稿。
 
@@ -123,7 +127,7 @@ python3 scripts/search_plan.py \
   --output /tmp/dd-search-plan.json
 
 # 实际研究、填台账和模块后，编辑生成的 report-content.json。
-# 先补全公司与业务解释，再从证据中提炼主线及图表。
+# 按读者问题和证据先选主图，再把公司、业务及分析解释编排到对应图旁。
 python3 scripts/build_report.py \
   --project /tmp/dd-example \
   --content /tmp/dd-example/report-content.json \
@@ -184,6 +188,8 @@ Supports six purposes: **investment, acquisition, strategic/commercial partnersh
 - **Company and business understanding:** eleven topics cover identity, origins and team, products, customers, transactions, operations, revenue and costs, differentiation, financial performance, marketing, and competition. A company timeline, a separate people section based on available evidence, and business diagrams support the explanation.
 - **Required finance, marketing, and competition coverage:** address revenue scale, revenue mix, gross margin, and net margin individually, with entity scope, periods, sources, and gaps. Explain marketing channels, acquisition, conversion, and retention, and justify competitor selection. Disclose missing evidence and its implications instead of omitting these topics.
 - **Evidence-backed visuals:** show key numerical findings in charts with units, periods, entity scope, actual/forecast labels, sources, and readable data tables. Use qualitative diagrams when reliable numbers are unavailable.
+- **Choose the main visual before writing:** interleave a short introduction, the main visual, and analysis within each section. Eight data charts cover vertical and horizontal bars, lines, donuts, proportions, ranges, waterfalls, and stacked bars. Sourced relationship diagrams explain business, money, channels, and control relationships.
+- **Visual omission review:** building and checking return `visual_review`, which flags editorial opportunities such as long prose, buried numbers, and core topics without suitable visuals. Its summary goes into the audit file. Quantitative charts, structural diagrams, metrics, images, and people are counted separately; decorative imagery and text cards do not establish numerical coverage.
 - **Real images and comparison matrices:** embed authentic logos, website screenshots, product, store, or people images with provenance, the date obtained for this research, usage scope, captions, and alternative text. Identify the evidence basis of each comparison cell. Images and qualitative matrices are not quantitative charts and do not verify promotional claims.
 - **Separate reading and audit layers:** keep material conclusions and limitations in the main report. Put full modules, ledgers, logs, coverage records, and request lists in `*-audit.md`; link citations to a collapsible evidence appendix.
 - **Runnable local tools:** seven Python CLIs, research and report-content contracts, CSV ledgers, and offline HTML rendering assets.
@@ -204,6 +210,8 @@ The current HTML content contract is **1.2**. The report follows the reader's pa
 | Risks and decisions | What supports the conclusions, which unknowns could change them, and what should happen next? | Key findings, risk explanations, and recommended actions |
 
 A company timeline needs at least two sourced, dated events; explain a specific shortage when they are unavailable. Disclose insufficient people information or unavailable imagery without inventing biographies or substituting generated company assets. Finance, marketing, and competition still require individual answers. Without reliable numbers, retain qualitative analysis and limitations instead of fabricating trends, shares, or rankings.
+
+Choose visuals from the available material: a single sourced customer proportion can use a scale bar, and a price interval can use a range chart. Complete revenue breakdowns suit stacked bars; complete changes from revenue to profit suit a waterfall. Real marketing relationships can still be shown without conversion data, but fabricated conversion funnels cannot. The default template brings visuals forward, and [visual recipes](./references/visual-examples.json) provide editable field examples. The additional chart types remain compatible with content version 1.2.
 
 Deliverables include a directly readable `report.html`, the full `report-audit.md`, and traceable CSV / JSON ledgers and materials. Keep necessary citations, material limitations, and a collapsible evidence appendix in the main report. Store search logs, execution records, coverage tracking, and full verification tables in the audit file.
 
@@ -261,7 +269,7 @@ python3 scripts/search_plan.py \
   --project /tmp/dd-example \
   --output /tmp/dd-search-plan.json
 
-# After research, explain the company and business in report-content.json, then add analysis and charts.
+# After research, choose visuals for each reader question, then interleave explanations and analysis in report-content.json.
 python3 scripts/build_report.py \
   --project /tmp/dd-example \
   --content /tmp/dd-example/report-content.json \

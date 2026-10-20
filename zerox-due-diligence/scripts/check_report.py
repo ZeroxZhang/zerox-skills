@@ -10,6 +10,7 @@ from report_model import READER_TOPICS
 
 
 MANUAL_REVIEW = [
+    "逐章处理 visual_review 的编辑线索：可比数字、比例、区间、结构和业务关系应有合适图示；记录已转图或保留文字的理由，不用图片数或固定图数替代判断。",
     "核对目标官网身份、相关内页和实际读取记录；无法访问/无官网保留原因，不能只引用媒体或只读首页代替。",
     "有公开人物资料时独立介绍创始人/合伙人；公司介绍以有据时间线说明发展与转折，不把融资公告、计划或前任写成已完成事实/现任。",
     "逐项解释营收规模、营收结构、毛利率和净利率；核对合并范围、期间、GMV与收入区别，未知也保留在正文。",
@@ -33,6 +34,7 @@ MANUAL_REVIEW = [
 
 def check(project=None, report=None, mode="draft"):
     errors, warnings = [], []
+    visual_review = None
     text = Path(report).read_text(encoding="utf-8") if report else ""
     if mode == "template":
         if not report:
@@ -55,7 +57,8 @@ def check(project=None, report=None, mode="draft"):
     html_report = bool(report and (Path(report).suffix.lower() == ".html" or text.lstrip().lower().startswith("<!doctype html")))
     if html_report:
         from check_html_report import inspect_html
-        text, html_errors, html_warnings = inspect_html(report, cfg, data, require_current=complete)
+        visual_review = {}
+        text, html_errors, html_warnings = inspect_html(report, cfg, data, require_current=complete, visual_review=visual_review)
         errors.extend(html_errors)
         warnings.extend(html_warnings)
     try:
@@ -159,6 +162,7 @@ def check(project=None, report=None, mode="draft"):
             errors.append(f"财务输入：{exc}")
     return {"status": "invalid" if errors else "structure_passed", "errors": errors, "warnings": warnings,
             "research_gate": gate, "score": score, "manual_review": MANUAL_REVIEW,
+            "visual_review": visual_review,
             "reading_review": {"status": "requires_independent_reading",
                                "questions": READER_TOPICS,
                                "record": "单独记录各问题的复述、正文定位与未解决问题；机器运行不会自动将理解验收标为通过。"},

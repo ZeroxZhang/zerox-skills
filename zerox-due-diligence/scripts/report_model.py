@@ -1,4 +1,5 @@
 """阅读稿数据校验。只验证可机器判断的约束，事实支持关系仍须人工复核。"""
+from decimal import Decimal, localcontext
 import re
 from datetime import date
 from urllib.parse import urlsplit
@@ -39,6 +40,7 @@ def validate_content(content, cfg, data):
     people_sections = []
     images = 0
     matrices = 0
+    diagrams = 0
 
     def obj(value, required, optional, label):
         if not isinstance(value, dict):
@@ -84,6 +86,123 @@ def validate_content(content, cfg, data):
         if kind == "actual" and any(evidence[eid]["attribute"] in ("forecast", "estimate") for eid in ids):
             fail("预测或估算证据不得标为历史实际数据")
 
+    def basis_refs(item, label):
+        if not isinstance(item["basis"], str) or item["basis"] not in BASIS:
+            fail(f"{label} 依据非法")
+        array(item["evidence_ids"], f"{label} 证据", 0 if item["basis"] == "unknown" else 1)
+        if item["evidence_ids"]:
+            refs(item["evidence_ids"], label)
+
+    def point_attributes(point, block):
+        point_kind = point.get("kind", block["kind"])
+        if not isinstance(point_kind, str) or point_kind not in KINDS or point_kind == "mixed":
+            fail("mixed 图表的每个数据点或分项必须给出独立 kind")
+        if block["kind"] != "mixed" and point_kind != block["kind"]:
+            fail("图级与分项数据属性不一致；不同属性须将图级 kind 标为 mixed")
+        if "period" in point:
+            text(point["period"], "数据点期间")
+        point_refs = point.get("evidence_ids", block["evidence_ids"])
+        refs(point_refs, "数据点")
+        attribute(point_kind, point_refs)
+
+    def extended_chart(block):
+        chart_type = block["chart_type"]
+        attribute(block["kind"], block["evidence_ids"])
+        minimum = 1 if chart_type in ("range", "proportion") else 2
+        maximum = {"waterfall": 12, "stacked_bar": 8, "proportion": 8}.get(chart_type, 24)
+        array(block["points"], "数据点", minimum)
+        if len(block["points"]) > maximum:
+            fail(f"{chart_type} 单图最多 {maximum} 个数据点")
+        if chart_type == "proportion":
+            finite(block["scale_max"], "比例量尺上限")
+            if block["scale_max"] <= 0:
+                fail("比例量尺上限须为正数")
+            if ("%" in block["unit"] or "％" in block["unit"] or "百分比" in block["unit"]) and block["scale_max"] != 100:
+                fail("百分比的 scale_max 必须为 100")
+        labels, known, segment_labels, segment_total = set(), [], None, 0
+        running = None
+        for index, point in enumerate(block["points"]):
+            fields = ["label", "low", "high"] if chart_type == "range" else ["label", "value"]
+            optional = ["kind", "period", "evidence_ids"]
+            if chart_type == "waterfall":
+                fields += ["role"]
+            elif chart_type == "stacked_bar":
+                fields, optional = ["label", "segments"], ["period"]
+            obj(point, fields, optional, "数据点")
+            text(point["label"], "数据点标签")
+            if point["label"] in labels:
+                fail("图表数据点标签重复")
+            labels.add(point["label"])
+            if chart_type == "stacked_bar":
+                if "period" in point:
+                    text(point["period"], "数据点期间")
+                array(point["segments"], "堆叠系列", 2)
+                if len(point["segments"]) > 6:
+                    fail("堆叠图最多六个系列")
+                current_labels = []
+                total = 0
+                for segment in point["segments"]:
+                    obj(segment, ["label", "value"], ["kind", "evidence_ids"], "堆叠分项")
+                    text(segment["label"], "堆叠分项标签")
+                    numeric(segment, "堆叠分项")
+                    if segment["value"] < 0:
+                        fail("堆叠图分项必须完整且非负")
+                    point_attributes(segment, block)
+                    current_labels.append(segment["label"])
+                    total += segment["value"]
+                if len(set(current_labels)) != len(current_labels):
+                    fail("堆叠系列标签重复")
+                if segment_labels is not None and current_labels != segment_labels:
+                    fail("堆叠图各组系列标签和顺序必须一致")
+                segment_labels = current_labels
+                segment_total += len(point["segments"])
+                finite(total, "堆叠分项合计")
+                known.append(total)
+                continue
+            point_attributes(point, block)
+            if chart_type == "range":
+                if (point["low"] is None) != (point["high"] is None):
+                    fail("缺失区间的上下界必须同时为 null")
+                if point["low"] is not None:
+                    finite(point["low"], "区间下界")
+                    finite(point["high"], "区间上界")
+                    if point["low"] > point["high"]:
+                        fail("区间下界不得大于上界")
+                    finite(point["high"] - point["low"], "区间跨度")
+                    known.append(point["low"])
+                continue
+            numeric(point, "图表数值", allow_null=chart_type != "waterfall")
+            value = point["value"]
+            if value is not None:
+                known.append(value)
+            if chart_type == "proportion" and value is not None and not 0 <= value <= block["scale_max"]:
+                fail("比例数值必须处于 0 与 scale_max 之间")
+            if chart_type == "waterfall":
+                role = point["role"]
+                if role not in ("start", "delta", "total"):
+                    fail("瀑布图 role 需为 start / delta / total")
+                if index == 0:
+                    if role != "start":
+                        fail("瀑布图首项必须为 start")
+                    running = Decimal(str(value))
+                elif role == "start":
+                    fail("瀑布图只有首项可为 start")
+                elif role == "delta":
+                    with localcontext() as arithmetic:
+                        arithmetic.prec = 700
+                        running += Decimal(str(value))
+                    finite(float(running), "瀑布累计值")
+                elif abs(Decimal(str(value)) - running) > Decimal("1e-9"):
+                    fail("瀑布图 total 与起点及已列 delta 的累计值不符；不得省略差额")
+                if index == len(block["points"]) - 1 and role != "total":
+                    fail("瀑布图末项必须为 total")
+        if len(known) < minimum:
+            fail("区间或比例图至少需要一组已知值，其他比较图至少需要两个已知值")
+        extents = [value for point in block["points"] for value in (point["low"], point["high"]) if value is not None] if chart_type == "range" else known
+        finite(max(0, max(extents)) - min(0, min(extents)), "图表量尺跨度")
+        if chart_type == "stacked_bar" and segment_total > 24:
+            fail("堆叠图单图最多 24 个分项；应拆图以便阅读")
+
     obj(content, ["version", "title", "subtitle", "language", "summary", "scope_note", "sections"], [], "阅读稿")
     if content["version"] not in ("1.0", "1.1", "1.2") or content["language"] not in ("zh-CN", "en"):
         fail("阅读稿版本需为 1.2（历史稿兼容 1.0/1.1）；language 需为 zh-CN 或 en")
@@ -110,7 +229,7 @@ def validate_content(content, cfg, data):
             if not isinstance(block, dict):
                 fail("内容块必须为对象")
             kind = block.get("type")
-            if kind in ("people", "image", "matrix") and not current:
+            if kind in ("people", "image", "matrix", "diagram") and not current:
                 fail(f"{kind} 内容需要 version=1.2")
             if kind == "explanation":
                 if not explained:
@@ -235,11 +354,21 @@ def validate_content(content, cfg, data):
                     if item["kind"] == "mixed":
                         fail("单个指标不能为 mixed")
             elif kind == "chart":
-                obj(block, ["type", "chart_type", "title", "unit", "period", "entity_id", "kind", "evidence_ids", "note", "points"], [], kind)
+                extended = block.get("chart_type") in ("column", "range", "waterfall", "stacked_bar", "proportion")
+                required = ["type", "chart_type", "title", "unit", "period", "entity_id", "kind", "evidence_ids", "note", "points"]
+                if block.get("chart_type") == "proportion":
+                    required += ["scale_max"]
+                obj(block, required, [], kind)
                 text(block["title"], "图题")
                 scope(block, "图表")
+                if extended:
+                    if not current:
+                        fail("扩展图表需要 version=1.2")
+                    extended_chart(block)
+                    chart_count += 1
+                    continue
                 if block["chart_type"] not in ("bar", "line", "donut"):
-                    fail("chart_type 仅支持 bar / line / donut")
+                    fail("chart_type 仅支持 bar / column / line / donut / range / waterfall / stacked_bar / proportion")
                 array(block["points"], "数据点", 2)
                 if len(block["points"]) > 24:
                     fail("单图最多 24 个数据点；应拆图以便阅读")
@@ -269,6 +398,49 @@ def validate_content(content, cfg, data):
                 if block["chart_type"] == "donut" and (sum(known) <= 0 or len(known) > 6):
                     fail("构成图需要正总量且不超过六项")
                 chart_count += 1
+            elif kind == "diagram":
+                obj(block, ["type", "title", "purpose", "period", "entity_id", "note", "nodes", "edges"], [], kind)
+                for field in ("title", "period", "entity_id", "note"):
+                    text(block[field], f"关系图.{field}")
+                if block["entity_id"] not in entities:
+                    fail("关系图主体不存在")
+                if block["purpose"] not in ("business_model", "ownership", "marketing", "other"):
+                    fail("关系图 purpose 非法")
+                array(block["nodes"], "关系图节点", 2)
+                array(block["edges"], "关系图连线")
+                if len(block["nodes"]) > 6 or len(block["edges"]) > 10:
+                    fail("关系图最多六个节点、十条连线；应拆图")
+                node_ids = set()
+                for node in block["nodes"]:
+                    obj(node, ["id", "label", "text", "basis", "evidence_ids"], [], "关系图节点")
+                    if not isinstance(node["id"], str) or not re.fullmatch(r"[a-z][a-z0-9-]*", node["id"]) or node["id"] in node_ids:
+                        fail("关系图节点 ID 不合法或重复")
+                    node_ids.add(node["id"])
+                    text(node["label"], "节点标签")
+                    text(node["text"], "节点说明")
+                    basis_refs(node, "关系图节点")
+                edge_keys = set()
+                connected = set()
+                for edge in block["edges"]:
+                    obj(edge, ["source", "target", "label", "flow", "basis", "evidence_ids"], [], "关系图连线")
+                    if not isinstance(edge["source"], str) or not isinstance(edge["target"], str) or edge["source"] not in node_ids or edge["target"] not in node_ids:
+                        fail("关系图连线端点不存在")
+                    if edge["source"] == edge["target"]:
+                        fail("关系图不允许自连接")
+                    if edge["flow"] not in ("product", "money", "information", "relationship"):
+                        fail("关系图 flow 非法")
+                    text(edge["label"], "连线标签")
+                    basis_refs(edge, "关系图连线")
+                    edge_key = (edge["source"], edge["target"], edge["flow"], edge["label"])
+                    if edge_key in edge_keys:
+                        fail("关系图连线重复")
+                    edge_keys.add(edge_key)
+                    connected.update((edge["source"], edge["target"]))
+                if connected != node_ids:
+                    fail("关系图存在孤立节点；无已知关系的角色应移到说明中")
+                diagrams += 1
+                if block["purpose"] == "business_model":
+                    business_flows += 1
             elif kind in ("timeline", "process"):
                 obj(block, ["type", "title", "items"], ["purpose", "ordering"] if kind == "process" else (["purpose"] if current else []), kind)
                 text(block["title"], kind)
@@ -320,7 +492,7 @@ def validate_content(content, cfg, data):
         if missing:
             fail("正文遗漏理解主题：" + "；".join(f"{key}（{READER_TOPICS[key]}）" for key in topics if key in missing))
         if not business_flows and explanations["transaction_flow"]["status"] != "unknown":
-            fail("缺少 purpose=business_model 的业务过程图；合作建议流程不能替代业务解释")
+            fail("缺少 purpose=business_model 的业务过程图或关系图；合作建议流程不能替代业务解释")
         if not business_flows:
             warnings.append("交易过程尚不清楚，已披露限制并免画业务图；不得据此宣称已理解或验证商业模式。")
         if all(item["status"] == "unknown" for item in explanations.values()):
@@ -346,5 +518,5 @@ def validate_content(content, cfg, data):
             "reader_coverage": {"status": "mapped" if current else "legacy_unchecked",
                                 "topics": explanations, "business_flow_count": business_flows,
                                 "company_timeline_count": len(history_sections), "people_block_count": len(people_sections),
-                                "image_count": images, "matrix_count": matrices,
+                                "image_count": images, "matrix_count": matrices, "diagram_count": diagrams,
                                 "meaning": "只检查必答主题的结构映射；须独立阅读正文并复述，不能据此认定解释充分或事实正确。"}}

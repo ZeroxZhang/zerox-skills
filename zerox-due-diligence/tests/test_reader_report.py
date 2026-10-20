@@ -700,6 +700,12 @@ class ReaderReportTests(unittest.TestCase):
         self.assertIn('href="report-audit.md"', output.read_text())
         self.assertIn("模块 01", audit.read_text())
         self.assertNotIn("模块 01", output.read_text())
+        self.assertEqual(result["visual_review"]["summary"]["counts"]["quantitative_charts"], 1)
+        self.assertIn("逐章可视化编辑复核", audit.read_text())
+        self.assertNotIn("逐章可视化编辑复核", output.read_text())
+        checked = check(self.project, output)
+        self.assertEqual(checked["visual_review"], result["visual_review"])
+        self.assertEqual(checked["status"], "structure_passed")
 
     def test_html_content_is_required_without_writing_output(self):
         output = self.project / "reports/report.html"
@@ -793,7 +799,7 @@ class ReaderReportTests(unittest.TestCase):
         text, errors, warnings = inspect_html(output, self.cfg, self.data)
         self.assertEqual(errors, [])
         self.assertIn("合成企业研究报告", text)
-        self.assertTrue(all("未单列人物" in w or "未使用真实企业素材" in w for w in warnings), warnings)
+        self.assertTrue(all("未单列人物" in w or "未使用真实企业素材" in w or "可视化编辑复核｜" in w for w in warnings), warnings)
 
     def test_html_checker_rejects_visible_text_or_svg_tampering(self):
         output = self.project / "reports/report.html"

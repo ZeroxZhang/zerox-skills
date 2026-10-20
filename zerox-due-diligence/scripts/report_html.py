@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 from common import ROOT, CONTRACT, research_gate
 from report_model import BASIS, KINDS, validate_content
 from report_media import validate_media
+from report_charts import FLOWS, chart_rows, svg_diagram, svg_extended_chart
 
 COLORS = ["#007aff", "#5856d6", "#34a853", "#d87500", "#af52de", "#65758b"]
 
@@ -41,6 +42,8 @@ def row_table(columns, rows):
 
 
 def svg_chart(block, chart_id):
+    if block["chart_type"] in ("column", "range", "waterfall", "stacked_bar", "proportion"):
+        return svg_extended_chart(block, chart_id)
     points = block["points"]
     values = [p["value"] for p in points if p["value"] is not None]
     chart_type = block["chart_type"]
@@ -145,6 +148,8 @@ def render(content, cfg, data, audit_name, media=None):
     evidence = {r["evidence_id"]: r for r in data["evidence-ledger"]}
     sources = {r["source_id"]: r for r in data["source-register"]}
     chart_number = 0
+    diagram_number = 0
+    diagram_ids = {section["id"] for section in content["sections"]}
 
     def source_line(ids):
         if not ids:
@@ -153,7 +158,7 @@ def render(content, cfg, data, audit_name, media=None):
         return f'<div class="source-line">来源：{esc(" / ".join(publishers))} {citations(ids)}</div>'
 
     def block_html(block):
-        nonlocal chart_number
+        nonlocal chart_number, diagram_number
         kind = block["type"]
         if kind == "explanation":
             paragraphs = "".join(f'<p class="prose">{rich(p)}</p>' for p in block["text"].split("\n\n"))
@@ -196,9 +201,38 @@ def render(content, cfg, data, audit_name, media=None):
         if kind == "chart":
             chart_number += 1
             cid = f"chart-{chart_number}"
-            rows = [[p["label"], number(p["value"]), block["unit"], p.get("period",block["period"]), KINDS[p.get("kind",block["kind"])], " ".join(f"[{eid}]" for eid in p.get("evidence_ids",block["evidence_ids"]))] for p in block["points"]]
+            rows = []
+            if block["chart_type"] in ("bar", "line", "donut"):
+                rows = [[p["label"], number(p["value"]), block["unit"], p.get("period",block["period"]), KINDS[p.get("kind",block["kind"])], " ".join(f"[{eid}]" for eid in p.get("evidence_ids",block["evidence_ids"]))] for p in block["points"]]
+            columns = ["项目","数值","单位","期间","属性","证据"]
+            extra_note = ""
+            if block["chart_type"] in ("column", "range", "waterfall", "stacked_bar", "proportion"):
+                columns, rows = chart_rows(block)
+                if block["chart_type"] == "stacked_bar":
+                    extra_note = '<p class="chart-note">分项加总仅覆盖已列资料；整体分母及分类是否完整，须以来源口径确认。</p>'
+                elif block["chart_type"] == "waterfall":
+                    extra_note = '<p class="chart-note">终点仅反映图中列出的增减，不能据此认定影响因素完整或因果关系成立。</p>'
             meta = f'{block["unit"]} · {block["period"]} · {entities[block["entity_id"]]} · {KINDS[block["kind"]]}'
-            return f'<figure class="chart" id="{cid}"><figcaption><span class="figure-number">图 {chart_number:02d}</span><h3>{rich(block["title"])}</h3><p class="chart-meta">{esc(meta)}</p></figcaption><div class="chart-plot" tabindex="0" role="region" aria-label="图表，可横向滚动">{svg_chart(block,cid)}</div><p class="chart-note">{rich(block["note"])}</p>{source_line(block["evidence_ids"])}<details class="data-table"><summary>查看图表数据与口径</summary>{row_table(["项目","数值","单位","期间","属性","证据"],rows)}</details></figure>'
+            return f'<figure class="chart" id="{cid}"><figcaption><span class="figure-number">图 {chart_number:02d}</span><h3>{rich(block["title"])}</h3><p class="chart-meta">{esc(meta)}</p></figcaption><div class="chart-plot" tabindex="0" role="region" aria-label="图表，可横向滚动">{svg_chart(block,cid)}</div><p class="chart-note">{rich(block["note"])}</p>{source_line(block["evidence_ids"])}{extra_note}<details class="data-table"><summary>查看图表数据与口径</summary>{row_table(columns,rows)}</details></figure>'
+        if kind == "diagram":
+            diagram_number += 1
+            unique_number = diagram_number
+            while True:
+                did = f"diagram-{unique_number}"
+                proposed_ids = {did, f"{did}-title", f"{did}-desc"}
+                proposed_ids.update(f"{did}-arrow-{flow}" for flow in FLOWS)
+                proposed_ids.update(f"{did}-edge-{index}" for index in range(1, len(block["edges"])+1))
+                proposed_ids.update(f"{did}-edge-note-{index}" for index in range(1, len(block["edges"])+1))
+                if not proposed_ids & diagram_ids:
+                    diagram_ids.update(proposed_ids)
+                    break
+                unique_number += 1
+            nodes = {node["id"]: node for node in block["nodes"]}
+            node_text = "".join(f'<li><strong>{rich(node["label"])}</strong> · {BASIS[node["basis"]]}<p>{rich(node["text"])}</p>{source_line(node["evidence_ids"])}</li>' for node in block["nodes"])
+            rows = [[nodes[edge["source"]]["label"], nodes[edge["target"]]["label"], edge["label"], FLOWS[edge["flow"]][0], BASIS[edge["basis"]], " ".join(f"[{eid}]" for eid in edge["evidence_ids"])] for edge in block["edges"]]
+            relation_list = "".join(f'<li id="{did}-edge-note-{index}"><span class="diagram-edge-number">{index:02d}</span><div><strong>{rich(nodes[edge["source"]]["label"])} → {rich(nodes[edge["target"]]["label"])}</strong><p>{rich(edge["label"])} <small>· {FLOWS[edge["flow"]][0]} · {BASIS[edge["basis"]]}</small> {citations(edge["evidence_ids"])}</p></div></li>' for index,edge in enumerate(block["edges"],1))
+            meta = f'{block["period"]} · {entities[block["entity_id"]]}'
+            return f'<figure class="relationship-diagram" id="{did}"><figcaption><span class="figure-number">关系图 {diagram_number:02d}</span><h3>{rich(block["title"])}</h3><p class="chart-meta">{esc(meta)}</p></figcaption><div class="diagram-plot" tabindex="0" role="region" aria-label="关系图，可横向滚动">{svg_diagram(block,did)}</div><ol class="diagram-edge-list">{relation_list}</ol><p class="chart-note">{rich(block["note"])}</p><p class="chart-note">编号对应关系清单；线条等粗，不表示数量。分析示意和待核实关系以虚线显示。</p><details class="diagram-details"><summary>查看角色说明与逐条关系依据</summary><ul class="diagram-node-list">{node_text}</ul>{row_table(["来源角色", "去向角色", "关系内容", "流向类型", "依据", "证据"], rows)}</details></figure>'
         if kind in ("timeline", "process"):
             items = []
             for item in block["items"]:

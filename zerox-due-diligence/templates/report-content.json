@@ -14,45 +14,12 @@
           "type": "explanation",
           "topic": "identity",
           "title": "公司定位与研究范围",
-          "text": "{{待填写：用直白语言介绍公司做什么、所在行业、主要经营地区及当前阶段；区分品牌、集团、经营主体和签约主体，不能只写工商登记。}}",
+          "text": "{{待填写：用一小段直白语言介绍公司做什么、面向谁、主要经营地区及当前阶段；区分品牌、集团、经营主体和签约主体。让读者先认出公司，发展变化交给紧随的时间线，不在段落逐条重复。}}",
           "status": "partial",
           "evidence_ids": [
             "E-0001"
           ],
           "limitations": "{{待填写：说明身份或业务范围仍未核实的部分；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
-        },
-        {
-          "type": "explanation",
-          "topic": "history_team",
-          "title": "创立背景与发展沿革",
-          "text": "{{待填写：交代创立时间、创始人或核心团队、重要发展节点及对今天业务的影响；没有可核实信息时明确未知，不用“头部”“资深”替代介绍。}}",
-          "status": "partial",
-          "evidence_ids": [
-            "E-0001"
-          ],
-          "limitations": "{{待填写：区分团队历史事实与履历、治理或最新任职待核验项；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
-        },
-        {
-          "type": "explanation",
-          "topic": "offering",
-          "title": "产品、服务与客户需求",
-          "text": "{{待填写：说明主要产品或服务、具体解决的需求、代表性使用场景和有依据的价格或收费方式；解释行业词，不以宣传标签充当产品说明。}}",
-          "status": "partial",
-          "evidence_ids": [
-            "E-0001"
-          ],
-          "limitations": "{{待填写：价格、产品组合或使用场景缺证时说明影响；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
-        },
-        {
-          "type": "explanation",
-          "topic": "customers_markets",
-          "title": "客户、市场与销售渠道",
-          "text": "{{待填写：说明使用者、购买者和付款者是否相同，主要客户或人群、地区、线上线下及直销/经销渠道；客户画像自述不得写成独立证实。}}",
-          "status": "partial",
-          "evidence_ids": [
-            "E-0001"
-          ],
-          "limitations": "{{待填写：客户结构和渠道规模未知时区分定性认识与数值缺口；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
         },
         {
           "type": "timeline",
@@ -85,13 +52,24 @@
           "path": "{{待填写：项目内真实图片的相对路径；没有取得图片则删除本块}}",
           "title": "{{待填写：官网或产品页面所展示的业务}}",
           "alt": "{{待填写：图片中可观察内容的简明替代文字}}",
-          "caption": "{{待填写：图片可观察内容及其与分析的关系；原始内容时点未知时明确说明，图片不证明宣传或财务结论}}",
+          "caption": "{{待填写：指出真实图片中最能帮助理解公司的产品、页面或经营形态；原始内容时点未知时说明，图片不证明宣传或财务结论。没有取得图片则删除本块，不能留空框充数。}}",
           "source_url": "{{待填写：可用原页的安全http/https地址；本地或用户提供图片无原页时改为空字符串，真实出处关联到证据台账}}",
           "captured_at": "{{待填写：本次实际取得或读取素材的日期YYYY-MM-DD，不是原图拍摄日或页面发布日期}}",
           "usage_note": "{{待填写：来源或提供者及使用范围；本地图片通过evidence_ids关联原文件与来源台账。来源SVG可可信渲染或截图为位图并保留出处，不重新生成冒充标识}}",
           "evidence_ids": [
             "E-0001"
           ]
+        },
+        {
+          "type": "explanation",
+          "topic": "history_team",
+          "title": "创立背景与发展沿革",
+          "text": "{{待填写：短段解释时间线中的关键转折为什么改变今天的产品、市场或组织；交代创立背景与核心团队来源，详细人物放下一章。不要把时间线事件列表再抄一遍；没有可核实信息时说明未知。}}",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "limitations": "{{待填写：区分团队历史事实与履历、治理或最新任职待核验项；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
         }
       ]
     },
@@ -119,6 +97,76 @@
       ]
     },
     {
+      "id": "products-customers",
+      "title": "卖什么，谁使用，谁付款",
+      "blocks": [
+        {
+          "type": "explanation",
+          "topic": "offering",
+          "title": "产品、服务与客户需求",
+          "text": "{{待填写：用一小段说明具体卖什么、解决什么需求、客户最终拿到什么；产品、客户与场景的对应关系交给下方矩阵或真实产品图。解释必要术语，不把产品说明写成宣传标签。}}",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "limitations": "{{待填写：价格、产品组合或使用场景缺证时说明影响；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
+        },
+        {
+          "type": "matrix",
+          "purpose": "other",
+          "title": "产品如何对应客户需求",
+          "columns": [
+            "提供的产品或服务",
+            "使用者、购买者与需求"
+          ],
+          "rows": [
+            {
+              "label": "{{待填写：有资料的主力产品或业务线}}",
+              "cells": [
+                {
+                  "text": "{{待填写：客户实际获得什么、如何使用；有依据时修改basis并填真实引用}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                },
+                {
+                  "text": "{{待填写：谁使用、谁买单以及解决的具体需求；不得从产品定位推断实际销售结构}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                }
+              ]
+            },
+            {
+              "label": "{{待填写：有资料的另一产品或业务线；确实只有一项时删除此行}}",
+              "cells": [
+                {
+                  "text": "{{待填写：另一项实际产品或服务及代表场景}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                },
+                {
+                  "text": "{{待填写：对应客户与需求；没有依据时具体标明未知}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                }
+              ]
+            }
+          ],
+          "note": "{{待填写：优先选最能解释业务的产品，不把目录全部搬来。若真实产品图更能说明关系，可替换本矩阵；有可靠价格、销量或结构数字时另用合适数字图，不将定性矩阵当量化展示。}}"
+        },
+        {
+          "type": "explanation",
+          "topic": "customers_markets",
+          "title": "客户、市场与销售渠道",
+          "text": "{{待填写：短段解释谁使用、谁决定购买、谁付款，以及主要地区和销售渠道；结合相邻图说明人群或渠道的差异，补充图无法表达的原因与限制，不逐格复述。客户定位自述不得写成独立证实的实际客户分布。}}",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "limitations": "{{待填写：客户结构和渠道规模未知时区分定性认识与数值缺口；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
+        }
+      ]
+    },
+    {
       "id": "business-model",
       "title": "业务如何运转，收入和成本如何形成",
       "blocks": [
@@ -126,45 +174,12 @@
           "type": "explanation",
           "topic": "transaction_flow",
           "title": "一笔业务怎样发生",
-          "text": "{{待填写：从需求出现到下单或签约、交付、收款及售后，讲清参与方、产品/服务流与资金流；依据已有材料解释业务机制，有订单证据时再使用实际案例；不得虚构订单、价格、客户或角色。}}",
+          "text": "{{待填写：用一小段交代一笔业务的起点、客户拿到的结果与公司收款方式，再用紧随的机制图解释参与方和环节。依据已有材料解释，不虚构具体订单、价格或客户；图承担关系，段落说明关键因果与边界。}}",
           "status": "partial",
           "evidence_ids": [
             "E-0001"
           ],
           "limitations": "{{待填写：未掌握的交易环节及其对判断的影响；若整个交易机制 unknown，可删除下方业务图并在此说明无法绘图的原因；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
-        },
-        {
-          "type": "explanation",
-          "topic": "operating_model",
-          "title": "谁组织供给，谁负责交付",
-          "text": "{{待填写：说明核心自营能力及外包、供应商或平台分工，获客、研发/设计、生产/服务交付、库存/容量、履约与售后怎样衔接；按行业取舍。}}",
-          "status": "partial",
-          "evidence_ids": [
-            "E-0001"
-          ],
-          "limitations": "{{待填写：尚未核实的分工、库存责任、履约安排及其影响；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
-        },
-        {
-          "type": "explanation",
-          "topic": "revenue_costs",
-          "title": "收入、成本与现金逻辑",
-          "text": "{{待填写：说明谁向公司付钱、为何付钱、按什么计费，主要成本由谁承担，以及账期、库存或预收对现金的作用；缺少毛利数字仍应解释已有证据支持的机制。}}",
-          "status": "partial",
-          "evidence_ids": [
-            "E-0001"
-          ],
-          "limitations": "{{待填写：精确收入结构、成本率、毛利或现金周转未知时直接说明，禁止估造单位经济数值；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
-        },
-        {
-          "type": "explanation",
-          "topic": "differentiation",
-          "title": "客户为何选择它，优势有何边界",
-          "text": "{{待填写：说明相对替代方案的差异、客户获得的价值及支撑条件，区分公司宣传、已证实能力和分析推断，给出反证或可替代性。}}",
-          "status": "partial",
-          "evidence_ids": [
-            "E-0001"
-          ],
-          "limitations": "{{待填写：尚未证实的优势及需验证的条件；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
         },
         {
           "type": "process",
@@ -197,6 +212,28 @@
             }
           ],
           "ordering": "conceptual"
+        },
+        {
+          "type": "explanation",
+          "topic": "operating_model",
+          "title": "谁组织供给，谁负责交付",
+          "text": "{{待填写：结合相邻机制图，短段解释公司自营能力、合作方分工及库存、容量或履约责任；补充图中最影响经营的控制点，不把所有节点逐一重写。需要区分产品流、资金流、信息流时可用visual-examples.json中的diagram替换或补充process，前提是关系与方向有据。}}",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "limitations": "{{待填写：尚未核实的分工、库存责任、履约安排及其影响；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
+        },
+        {
+          "type": "explanation",
+          "topic": "revenue_costs",
+          "title": "收入、成本与现金逻辑",
+          "text": "{{待填写：短段解释收费基础、主要成本承担及账期、库存或预收影响现金的机制；有完整同口径金额时在财务章用构成图或瀑布图表达。没有利润数字仍解释有依据的赚钱逻辑，不能根据行业惯例补造目标公司责任和成本。}}",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "limitations": "{{待填写：精确收入结构、成本率、毛利或现金周转未知时直接说明，禁止估造单位经济数值；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
         }
       ]
     },
@@ -208,7 +245,7 @@
           "type": "explanation",
           "topic": "financial_performance",
           "title": "公司有多大，收入来自哪里，盈利如何",
-          "text": "{{待填写：分别交代营收规模、营收构成、毛利率、净利率的期间、主体范围、来源与未知；企业自述、第三方估算和审计实绩分开。只取得GMV、单体报表或其他代理指标时不得冒充集团收入及利润。}}",
+          "text": "{{待填写：先用短段给出规模和盈利的主要判断，再让相邻图呈现营收变化、构成或利润衔接；文字解释变化原因、主体边界与重要限制，不复述每个数值。营收规模、构成、毛利率和净利率均需交代来源和期间，未知逐项说明；GMV、估算与单体报表不能冒充集团实绩。}}",
           "status": "partial",
           "evidence_ids": [
             "E-0001"
@@ -226,7 +263,7 @@
           "evidence_ids": [
             "E-0001"
           ],
-          "note": "{{待填写：这是待编辑模板，不是事实；替换实体、属性和证据ID，说明口径与缺失。至少两项真实可比数值才能生成；无可比数字时删除此图并写明限制，勿把null改成0。}}",
+          "note": "{{待填写：保留本图只展示同口径真实可比数值；替换实体、属性和证据ID，说明期间、范围及缺失。长标签比较可改horizontal_bar，真实连续时间可改line；已有可靠构成、区间或利润桥接时选用配方补图，不让所有数据挤在同一根柱上。至少两项可比数值才能生成本图，无数据则删除，勿把null改成0。}}",
           "points": [
             {
               "label": "{{待填写：可比对象或期间A}}",
@@ -235,6 +272,41 @@
             {
               "label": "{{待填写：可比对象或期间B}}",
               "value": null
+            }
+          ]
+        },
+        {
+          "type": "chart",
+          "chart_type": "waterfall",
+          "title": "{{可选图：同一期间的收入如何形成经营利润}}",
+          "unit": "{{待填写：统一单位及币种}}",
+          "period": "{{待填写：与各桥接项一致的数据期间}}",
+          "entity_id": "ENT-0001",
+          "kind": "actual",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "note": "{{待填写：这是可选利润桥接图，按实际报表科目替换、增删；start为收入，delta为已核实的增减额，total为有证据且可对账的结果。所有金额需同期间同主体，减少利润的项目填负值，终点等于起点加各增减项。只有已知毛利率但没有完整桥接金额时不用此图，可改proportion；缺项不能塞进虚构其他，删图并保留机制解释。}}",
+          "points": [
+            {
+              "label": "{{待填写：收入起点}}",
+              "value": null,
+              "role": "start"
+            },
+            {
+              "label": "{{待填写：成本或费用减项}}",
+              "value": null,
+              "role": "delta"
+            },
+            {
+              "label": "{{待填写：其余已核实增减项；按真实科目增删}}",
+              "value": null,
+              "role": "delta"
+            },
+            {
+              "label": "{{待填写：可对账的经营利润结果}}",
+              "value": null,
+              "role": "total"
             }
           ]
         }
@@ -248,12 +320,54 @@
           "type": "explanation",
           "topic": "marketing",
           "title": "渠道、品牌与获客转化复购",
-          "text": "{{待填写：直接阅读官网相关产品、服务、活动、社群及购买路径，结合其他来源解释渠道组合、内容与投放、品牌合作、转化和复购；区分可观察做法与尚无数据验证的效果。}}",
+          "text": "{{待填写：短段解释最主要的获客和增长路径，矩阵展示渠道角色、实际做法与效果证据。直接阅读官网产品、活动、社群及购买路径并交叉核验；文字说明渠道如何相互作用，不逐格重复。已有同口径投入、转化或留存数字时另用数字图，观察到活动不等于验证增长效果。}}",
           "status": "partial",
           "evidence_ids": [
             "E-0001"
           ],
           "limitations": "{{待填写：未取得的渠道占比、CAC、转化率、复购率或营销投入，不用社媒关注数代替收入效果；如实设置supported/partial/unknown，不能造数填缺口}}"
+        },
+        {
+          "type": "matrix",
+          "purpose": "marketing",
+          "title": "主要渠道的角色、做法与效果证据",
+          "columns": [
+            "目标客群与具体做法",
+            "转化路径与已知效果"
+          ],
+          "rows": [
+            {
+              "label": "{{待填写：已观察的主要渠道A}}",
+              "cells": [
+                {
+                  "text": "{{待填写：真实渠道触达谁、做什么；标明可观察事实或公司自述及引用}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                },
+                {
+                  "text": "{{待填写：从触达到购买或续费的已知路径；效果数据缺失须明确说明，不以粉丝数代替营收}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                }
+              ]
+            },
+            {
+              "label": "{{待填写：已观察的主要渠道B；确实无第二个时删除此行}}",
+              "cells": [
+                {
+                  "text": "{{待填写：另一实际渠道、内容或合作做法及依据}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                },
+                {
+                  "text": "{{待填写：可比较的转化、留存或复购证据；有真实数字时配适合的数字图，不靠文字堆数}}",
+                  "basis": "unknown",
+                  "evidence_ids": []
+                }
+              ]
+            }
+          ],
+          "note": "{{待填写：只保留实际发现且重要的渠道，删除无依据的预设行；逐格更新basis和引用。没有效果数字仍可比较已知做法与责任。若渠道间流转方向有依据，可改用diagram呈现触达、交易及信息关系；不可虚构漏斗比例、归因或因果。}}"
         }
       ]
     },
@@ -265,7 +379,7 @@
           "type": "explanation",
           "topic": "competition",
           "title": "客户会在谁之间做选择",
-          "text": "{{待填写：说明主要竞品或替代方案的选择依据，在客户、产品价格、渠道、履约及有依据的规模维度进行同口径比较；只比较有资料的内容，不用大行业空间代替目标公司的竞争格局。}}",
+          "text": "{{待填写：先简短说明主要竞品或替代方案是谁及选择依据，紧随矩阵按同一地区、时点和客户需求比较；可靠价格、规模或份额用数字图呈现，不藏在长段落中。矩阵只纳入有资料的维度，行业大盘不代替目标竞争格局。}}",
           "status": "partial",
           "evidence_ids": [
             "E-0001"
@@ -298,6 +412,17 @@
             }
           ],
           "note": "{{待填写：竞品选择依据、共同口径和不可比较部分；此矩阵用于定性比较，不替代有可比数值时的定量图表}}"
+        },
+        {
+          "type": "explanation",
+          "topic": "differentiation",
+          "title": "客户为何选择它，优势有何边界",
+          "text": "{{待填写：结合上方比较图，用短段解释客户为什么可能选择目标、优势成立的条件与可替代性；区分公司宣传、已观察特点和分析推断。不给矩阵里的描述再加一层无依据的高低分。}}",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "limitations": "{{待填写：尚未证实的优势及需验证的条件；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
         }
       ]
     },

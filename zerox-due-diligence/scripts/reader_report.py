@@ -7,6 +7,25 @@ from common import cli, dumps, fail, load_json, read_project, safe_write, struct
 from build_audit_report import build as build_audit
 from report_html import render
 from report_media import load_media
+from visual_review import review_visuals
+
+
+def visual_audit(review):
+    """把编辑线索留在底稿，不插入面向读者的正文。"""
+    def cell(value):
+        return str(value).replace("|", "／").replace("\n", " ")
+    lines = ["", "## 逐章可视化编辑复核", "", review["meaning"], "",
+             "| 章节 | 数据图 | 结构图 | 指标 | 图片 / 人物 | 编辑提示 |",
+             "| --- | --- | --- | --- | --- | --- |"]
+    for row in review["rows"]:
+        c = row["counts"]
+        structure = sum(c[k] for k in ("diagram_blocks", "process_blocks", "timeline_blocks", "matrix_blocks"))
+        findings = "；".join(item["message"] for item in row["findings"]) or "未触发启发式提示，仍需人工复核。"
+        lines.append(f'| {cell(row["title"])} | {c["quantitative_charts"]} | {structure} | {c["metric_items"]} | {c["images"]} / {c["people_profiles"]} | {cell(findings)} |')
+    lines.extend(["", "请记录已转图或保留文字的具体理由；机器统计不代表事实与视觉验收通过。"])
+    for finding in review["findings"]:
+        lines.append(f'\n- {finding["message"]}')
+    return "\n".join(lines) + "\n"
 
 
 def build(project, output, sections=None, overwrite=False, content=None):
@@ -36,6 +55,7 @@ def build(project, output, sections=None, overwrite=False, content=None):
         if not path.parent.is_dir():
             fail(f"输出父目录不存在：{path.parent}")
     document, validation = render(content, cfg, data, audit.name, media=load_media(content, project))
+    visual_review = review_visuals(content)
     # 先完整生成两个文件；检查失败不写入最终目录。
     with tempfile.TemporaryDirectory(prefix="zerox-report-") as tmp:
         tmp_audit = Path(tmp) / "audit.md"
@@ -44,12 +64,13 @@ def build(project, output, sections=None, overwrite=False, content=None):
             "highlights": "阅读主报告见同目录 HTML。本文件保存完整研究过程与核验记录。",
             "judgment": content["scope_note"],
         })
-        audit_text = tmp_audit.read_text(encoding="utf-8")
+        audit_text = tmp_audit.read_text(encoding="utf-8") + visual_audit(visual_review)
     safe_write(audit, audit_text, overwrite)
     safe_write(output, document, overwrite)
     return {"output": str(output), "audit": str(audit), "artifact_role": "reader_report",
-            "chart_count": validation["chart_count"], "warnings": validation["warnings"],
+            "chart_count": validation["chart_count"], "warnings": validation["warnings"] + visual_review["warnings"],
             "reader_coverage": validation["reader_coverage"],
+            "visual_review": visual_review,
             "report_status": cfg["report_status"],
             "next": "运行 check_report.py，并复核图表事实、桌面/移动阅读与打印布局；结构通过不证明事实正确。"}
 

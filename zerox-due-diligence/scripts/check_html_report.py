@@ -7,6 +7,7 @@ from pathlib import Path
 from common import InputError
 from report_html import render
 from report_model import validate_content
+from visual_review import review_visuals
 
 
 class ReportParser(HTMLParser):
@@ -66,7 +67,7 @@ class ReportParser(HTMLParser):
         return "".join(self.visible)
 
 
-def inspect_html(path, cfg, data, require_current=False):
+def inspect_html(path, cfg, data, require_current=False, visual_review=None):
     errors, warnings = [], []
     parser = ReportParser()
     document = Path(path).read_text(encoding="utf-8")
@@ -81,6 +82,11 @@ def inspect_html(path, cfg, data, require_current=False):
         if payload["project"] != expected_project:
             errors.append("HTML 主体、基准日、目的或报告状态与项目不一致，请重新生成")
         result = validate_content(payload["content"], cfg, data)
+        editorial_review = review_visuals(payload["content"])
+        if visual_review is not None:
+            visual_review.update(editorial_review)
+        if payload["content"]["version"] == "1.2":
+            warnings.extend(editorial_review["warnings"])
         if payload["content"]["version"] == "1.2" and "media" not in payload:
             raise InputError("1.2 HTML 缺少离线媒体快照")
         if require_current and payload["content"]["version"] != "1.2":

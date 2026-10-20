@@ -679,3 +679,54 @@ footer p:last-child { margin-bottom: 0; }
   .comparison-matrix tr { break-inside: avoid; }
   .comparison-matrix th, .comparison-matrix td { padding: 8px; overflow-wrap: anywhere; }
 }
+
+/* 关系图与数据图使用同一阅读单元；颜色描述流向类别，不表达优劣评分。 */
+.relationship-diagram {
+  margin: 30px 0;
+  padding: 26px 28px 20px;
+  border: 1px solid #dce8f9;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #f7faff, #fff 180px);
+}
+.relationship-diagram h3 { margin: 0 0 10px; font-size: 19px; line-height: 1.55; }
+.diagram-plot { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+.diagram-plot svg { display: block; width: 100%; height: auto; font-family: var(--font); }
+.diagram-node-label { fill: var(--text); font-size: 16px; font-weight: 650; }
+.diagram-edge-label { fill: var(--secondary); font-size: 14px; }
+.diagram-basis { fill: var(--muted); font-size: 12px; }
+.chart-legend { fill: var(--secondary); font-size: 13px; }
+.chart-plot > svg { min-width: var(--plot-min-width, 0px); }
+.diagram-details { margin-top: 18px; border-top: 1px solid var(--line); font-size: 13px; }
+.diagram-details summary { padding: 12px 0; color: var(--link); }
+.diagram-node-list { padding-left: 22px; }
+.diagram-details li { margin: 10px 0; }
+.diagram-edge-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 22px; padding: 0; margin: 20px 0; list-style: none; }
+.diagram-edge-list li { position: relative; padding: 12px 0 12px 36px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.7; }
+.diagram-edge-list p { margin: 5px 0 0; }
+.diagram-edge-list small { color: var(--muted); font-size: 11px; }
+.diagram-edge-list li:target { background: var(--blue-tint); border-radius: 8px; scroll-margin-top: 80px; }
+.diagram-edge-number { position: absolute; left: 0; top: 14px; width: 26px; height: 26px; border: 1px solid #d1dff3; border-radius: 50%; color: var(--link); text-align: center; font: 600 11px/24px var(--font); }
+.chart-plot::before, .diagram-plot::before { display: none; }
+.comparison-matrix thead th { background: #edf4ff; color: #24436c; }
+.comparison-matrix th[scope="row"] { border-left: 3px solid #cfdef5; }
+@media (max-width: 767px) {
+  .relationship-diagram { padding: 20px 15px 16px; border-radius: 16px; }
+  .relationship-diagram h3 { font-size: 16px; }
+  .diagram-plot svg { min-width: 660px; max-width: none; }
+  .chart-plot > svg { min-width: max(600px, var(--plot-min-width, 0px)); }
+  .chart-plot::before, .diagram-plot::before { content: "左右滑动查看完整图示 ↔"; display: block; position: sticky; left: 0; width: fit-content; padding: 0 0 10px; color: var(--link); font-size: 11px; }
+  .diagram-edge-list { grid-template-columns: 1fr; }
+}
+@media print {
+  .relationship-diagram { background: white; padding: 14px; break-inside: auto; }
+  .relationship-diagram figcaption { break-inside: avoid; break-after: avoid; }
+  .diagram-plot { overflow: visible; }
+  .diagram-plot svg { min-width: 0; max-width: 100%; max-height: 175mm; }
+  .diagram-details { font-size: 8pt; }
+  .diagram-details li { break-inside: avoid; }
+  .diagram-edge-list li { break-inside: avoid; font-size: 8pt; }
+  .diagram-edge-number { width: 22px; height: 22px; font-size: 9px; line-height: 20px; }
+  .chart-plot::before, .diagram-plot::before { display: none; }
+  .chart-plot > svg { min-width: 0; }
+  .relationship-diagram { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
