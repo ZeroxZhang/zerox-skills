@@ -9,7 +9,8 @@ from common import CONTRACT, ROOT, cli, csv_text, dumps, fail, iso_date, load_js
 
 
 def initialize(output, target, purpose=None, depth="Standard", as_of=None, timezone="Asia/Shanghai",
-               registration_id="", geography="", listing_status="unknown", exchange="", security_code=""):
+               registration_id="", geography="", listing_status="unknown", exchange="", security_code="",
+               enable_scoring=False):
     output = Path(output)
     if output.exists():
         fail(f"输出路径已存在，请选择新目录：{output}")
@@ -17,6 +18,8 @@ def initialize(output, target, purpose=None, depth="Standard", as_of=None, timez
         fail("目标名称不能为空")
     if purpose is not None and purpose not in CONTRACT["enums"]["purpose"]:
         fail("未知目的")
+    if enable_scoring and purpose not in CONTRACT["scoring"]["purposes"]:
+        fail("只有已明确的决策目的可启用评分；公司研究不评分")
     if depth not in CONTRACT["enums"]["depth"]:
         fail("未知深度")
     try:
@@ -27,14 +30,15 @@ def initialize(output, target, purpose=None, depth="Standard", as_of=None, timez
     iso_date(as_of)
     cfg = load_json(ROOT / "templates/project-config.json")
     cfg.update(target=target, purpose=purpose, purpose_status="confirmed" if purpose else "pending",
-               depth=depth, as_of_date=as_of, timezone=timezone, historical=as_of < today, geography=geography)
+               depth=depth, as_of_date=as_of, timezone=timezone, historical=as_of < today,
+               geography=geography, scoring_enabled=enable_scoring)
     data = {name: [] for name in CONTRACT["tables"]}
     data["entity-map"] = [record("entity-map", {
         "entity_id": cfg["target_id"], "legal_name": target, "registration_id": registration_id,
         "geography": geography, "entity_type": "legal_entity", "identity_status": "pending",
         "listing_status": listing_status, "exchange": exchange, "security_code": security_code,
         "identity_notes": "用户输入，仅为待核实身份；需补登记证据和控制链核查。"})]
-    if purpose:
+    if enable_scoring:
         for n, (dimension, weight) in enumerate(CONTRACT["scoring"]["purposes"][purpose]["weights"].items(), 1):
             data["scorecard"].append(record("scorecard", {
                 "score_id": f"SC-{n:04}", "purpose": purpose, "dimension": dimension, "weight": weight,
@@ -57,7 +61,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, help="不存在的新目录；父目录须存在")
     parser.add_argument("--target", required=True, help="目标法定名或待消歧名称")
-    parser.add_argument("--purpose", choices=CONTRACT["enums"]["purpose"], help="未给出时保留待确认，不评分")
+    parser.add_argument("--purpose", choices=CONTRACT["enums"]["purpose"], help="全面了解公司用 company_research；未给出时保持待确认")
+    parser.add_argument("--enable-scoring", action="store_true",
+                        help="仅决策目的可显式启用；发布前仍需确认项目权重和关键维度")
     parser.add_argument("--depth", choices=CONTRACT["enums"]["depth"], default="Standard")
     parser.add_argument("--as-of", help="YYYY-MM-DD；默认使用所选时区的当前日期")
     parser.add_argument("--timezone", default="Asia/Shanghai")

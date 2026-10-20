@@ -3,7 +3,7 @@ import argparse
 import re
 from pathlib import Path
 
-from common import (InputError, cli, emit, finite, indices, iso_time, load_json, read_project,
+from common import (InputError, cli, completion_errors, emit, finite, indices, iso_time, load_json, read_project,
                     research_errors, research_gate, semantic_errors, structural_errors)
 from scoring import project_score
 from report_model import READER_TOPICS
@@ -29,6 +29,9 @@ MANUAL_REVIEW = [
     "检查预测假设、估算区间、反证、利益冲突和重要遗漏；不能靠结构扫描确认。",
     "复核法律/名单命中身份、当前状态、限制范围以及建议与用户决策权限的关系。",
     "检查访谈、现场、函证、代码审查的执行证明，未实施工作只能列为计划。",
+    "完成审核对照最初约定的核心问题；不得事后缩小范围、降低缺口重大性或把关键未知改成非关键来取得完成状态。",
+    "核验关键解释的竞争性解释、区分证据及改判条件；资料覆盖和来源数量不能代替假设检验。",
+    "抽样说明总体、选样方、覆盖期间和异常/流失样本；便利样本和未响应不能被外推为总体。",
 ]
 
 
@@ -74,12 +77,11 @@ def check(project=None, report=None, mode="draft"):
     if cfg["identity_status"] == "resolved" and idx["entity-map"].get(cfg["target_id"], {}).get("identity_status") != "resolved":
         errors.append("配置已锁定主体与台账身份状态不一致")
     if complete:
+        errors.extend(completion_errors(cfg, data))
         if not report:
             errors.append("完成态检查必须提供实际报告文件")
         if cfg["identity_status"] != "resolved":
             errors.append("主体未锁定不能宣称完成")
-        if gate not in ("complete", "not_applicable"):
-            errors.append("强制研报任务未完成，报告只能标为受限结果")
         if any(v["status"] == "pending" for v in cfg["module_scope"].values()):
             errors.append("完成报告仍有模块适用性待确认")
         if not cfg["last_refresh_at"]:
@@ -140,7 +142,7 @@ def check(project=None, report=None, mode="draft"):
         if len(ids) > 1:
             warnings.append(f"同源组 {group}：{ids}，不得计作多个独立事实来源")
     if gate in ("partial", "incomplete"):
-        warnings.append("研报门槛未满足；允许交付清楚披露限制的阶段结果")
+        warnings.append("研报资料覆盖未满足；须保留缺口与判断限制，约定研究范围是否完成另由 completion_review 核验")
     # 如存在财务结果输入，验证证据 ID；空模板允许留在项目内。
     financial = Path(project) / "financial-input.json"
     if financial.exists():

@@ -5,20 +5,24 @@
 ## 工作区与配置
 
 ```bash
-python3 scripts/init_project.py --output /tmp/dd-example --target "待核验法定名称" --purpose investment --depth Standard
+python3 scripts/init_project.py --output /tmp/dd-example --target "待核验法定名称" --purpose company_research --depth Standard
 ```
 
 初始化还会创建待编辑的 `report-content.json`，用于HTML主报告；它是内容模板，不代表已完成分析。
 
 `--as-of YYYY-MM-DD` 可设置历史截止日；默认按 `--timezone Asia/Shanghai` 的执行当日。平台没有 IANA 时区数据时可显式选 `--timezone UTC` 并注明时区差异。`--listing-status listed --exchange 交易所 --security-code 代码` 只是输入信息，会预建研报需求，身份仍待核实。
 
-目的编码：investment 投资、acquisition 并购、partnership 合作、credit 授信、supplier 供应商、competitor 竞品。未给目的则 null/pending。配置改目的后，按契约重建对应 `scorecard.csv` 全部八维度记录；不得保留旧目的评分。
+目的编码：company_research 公司研究；investment 投资、acquisition 并购、partnership 合作、credit 授信、supplier 供应商、competitor 竞品为专项。明确了解公司是已确认目的；未给目的才保留 null/pending。所有项目评分默认关闭；六类专项确实需要评分时可用 `--enable-scoring` 初始化评分行，再确认项目评分条件。改变目的或权重后同步评分行，不能沿用旧目的分数。
 
 配置 `module_scope` 对01–18分别给 pending/applicable/not_applicable，后者必须写理由。Quick未展开不等于不适用。`events` 每项包含 date/entity_id/description；`industry_keywords`、`languages` 控制计划；`peer_required` 表示关键问题需要可比/上下游补证。
 
 `identity_status=resolved` 要与实体台账一致；`control_chain_checked=true` 和 `control_evidence_ids` 需实证。关系表记录多条边；有效区间为左闭右开，proposed 不等于已交割。`category_exemptions` 仅可用于制度不适用或尚无相应期的官方中期材料，必须说明依据；不能豁免难取得的研报。
 
-`report_status` 为 draft/limited/complete；`declared_complete` 为是否宣称全部执行完成。`last_refresh_at` 为实际最后复查的带时区时间。`published_score` 仅在真正发布综合分时填写，由检查器重算核对。
+`report_status` 为 draft/limited/complete；complete 只表示约定研究范围完成，需 `completion_review` 复核。`research_gate` 独立记录研报资料覆盖，仍有未读或未取得资料时保持 partial/incomplete。`declared_complete` 更严格，表示全部工作完成，有开放缺口或计划动作时不得设为 true。`last_refresh_at` 是实际最后复查的带时区时间。`published_score` 仅记录经检查可发布的实际总分。
+
+`completion_review` 默认 null；结束范围时填写 `scope`（与用户约定的范围）、`key_claim_ids`（实际采用的关键结论）、`gap_assessments` 和带时区的 `reviewed_at`。每个开放缺口对应一项 `{gap_id, impact, disposition}`；`disposition` 为 non_blocking（不妨碍范围）、limits_conclusion（限制非核心结论）或 blocks_completion（阻断核心问题）。关键结论须有已核验的依据；缺口、重大冲突、必要检索未执行不能靠状态改写消失。未知妨碍核心问题时保持 limited，不事后缩小范围绕过。语义充分性仍需分析者复核。
+
+旧配置缺少新增字段时只读补默认（评分关闭、范围审核为空），不自动重写文件，也不自动恢复发布历史综合分。旧项目要重新声明完成或发布评分，应按当前规则复核。
 
 ## 检索计划
 
@@ -26,7 +30,7 @@ python3 scripts/init_project.py --output /tmp/dd-example --target "待核验法�
 python3 scripts/search_plan.py --project /tmp/dd-example --output /tmp/dd-plan.json
 ```
 
-计划覆盖别名、代码、控制链主体、模块、来源、语言及滚动时间窗。所有任务是 not_executed，不会写搜索日志。Agent 实际访问后另填 `search-log.csv`。
+计划先保留全貌扫描，再根据已有关键声明和开放缺口安排验证，同时覆盖别名、代码、控制链、模块、来源、语言及滚动时间窗。用现有 `claim-register` 的 assumptions/counterevidence/unresolved 记录不同解释、区分证据和改变判断的条件。所有计划任务是 not_executed，不会写搜索日志；Agent 实际访问后另填 `search-log.csv`，发现新问题再更新计划。
 
 ## 台账维护
 
@@ -108,7 +112,7 @@ python3 scripts/financial_ratios.py --input /tmp/dd-example/financial-input.json
 python3 scripts/scoring.py --project /tmp/dd-example --output /tmp/dd-score.json
 ```
 
-所有场景维度均留行。缺失分数为空并写 reason；不适用须写依据。非空评分必须有充分证据、锚点及高/中置信度。原始权重来自契约，必要变更用 `scoring_override` 给完整 weights、critical_dimensions 和 reason。
+`company_research` 不评分。专项仅在 `scoring_enabled=true` 时计算；启用后先用 `scoring_override` 给完整 weights、critical_dimensions 和 reason，解释它们与核心问题的对应，即使采用候选权重也需确认。未确认时不发布综合分。已启用的所有维度均留行；缺失分数为空并写 reason，不适用须有依据。非空分数必须有充分证据、项目具体锚点及高/中置信度；契约的共用 scale 和各目的 criteria 供选择量尺，不替代判断。
 
 输出 coverage、partial_score、overall_score 与独立 research_gate。低于门槛、关键维度未覆盖或有重大未解冲突时 overall_score=null；局部分数不包装为总分。
 
@@ -173,7 +177,7 @@ python3 scripts/check_report.py \
 
 组装默认拒绝覆盖，只有 `--overwrite` 才替换输出；注意主报告及对应底稿均属于本次交付。生成不会自动升级配置完成状态；Quick也采用HTML，研究门槛不变。未编辑的模板不能作为完成报告，禁止用“生成成功”替代分析。
 
-检查输出区分 errors、warnings、manual_review。完成态不得有未填字段、主体歧义、模块适用性待定或未满足的研报任务。HTML检查不要求把元信息表、研究完成范围、研报覆盖表或搜索日志放回正文。
+检查输出区分 errors、warnings、manual_review。完成态不得有未填字段、主体歧义、模块适用性待定、未实际执行的必需检索或阻断核心问题的缺口；资料获取不足须保留真实状态并经范围复核。HTML检查不要求把元信息表、研究完成范围、研报覆盖表或搜索日志放回正文。
 
 必须执行人工复核：仅看主报告能否回答“它是谁、卖给谁、怎样经营、怎样赚钱、关键未知是什么”；引用是否支持原句、实体与期间是否匹配、同源与最新性、重要反证、建议权限及已执行工作的真实证明；逐图检查数值、单位、主体范围、实际/预测属性、来源与可比口径，确认流程实际解释目标公司的交易而非通用行业常识。实际预览桌面、移动和打印，确认导航、图例、数据表、引用与折叠附录可读。字段齐全不证明解释充分，真实未知可以有限交付，不能据此宣称完成全部研究。
 

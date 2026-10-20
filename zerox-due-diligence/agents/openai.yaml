@@ -1,4 +1,4 @@
 interface:
-  display_name: "ZeroX 公司尽调"
-  short_description: "围绕公司与交易决策开展可追溯尽调，交付图文并茂的 HTML 阅读报告与独立证据底稿。"
-  default_prompt: "使用 $zerox-due-diligence 对指定公司开展尽调，先确认主体、目的和基准日，核验关键证据与研报，再交付有可追溯图表的 HTML 阅读报告，将研究过程与核验台账放入独立底稿。"
+  display_name: "ZeroX 公司研究与尽调"
+  short_description: "全面理解公司的业务、竞争与经营变化，按商业目的开展专项尽调，形成可追溯判断。"
+  default_prompt: "使用 $zerox-due-diligence 全面研究指定公司的业务、客户、竞争和经营变化，核验关键解释与反证，按需要叠加商业专项，交付图文 HTML 报告与独立研究底稿。"

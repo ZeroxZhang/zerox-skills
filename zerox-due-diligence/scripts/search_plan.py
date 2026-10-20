@@ -93,10 +93,52 @@ def official_site_tasks(cfg, data):
     return tasks
 
 
+def verification_tasks(cfg, data):
+    """将已有关键问题与缺口排在泛化关键词前；缺失的验证设计不代填。"""
+    names = {r["entity_id"]: r["legal_name"] for r in data["entity-map"]}
+    selected = set((cfg.get("completion_review") or {}).get("key_claim_ids", []))
+    claims = [r for r in data["claim-register"]
+              if r["claim_id"] in selected or r["materiality"] in ("critical", "major")]
+    claims.sort(key=lambda r: (r["claim_id"] not in selected,
+                              r["materiality"] != "critical", r["claim_id"]))
+    tasks, linked = [], set()
+    for claim in claims:
+        gaps = [g for g in data["gap-register"]
+                if g["status"] == "open" and claim["claim_id"] in (g["affected_claims"] or [])]
+        linked.update(g["gap_id"] for g in gaps)
+        priority = min(["P0" if claim["materiality"] == "critical" else "P1",
+                        *(g["priority"] for g in gaps)])
+        tasks.append({
+            "task_id": f'verify:{claim["claim_id"]}', "task_type": "claim_verification",
+            "entity_id": claim["entity_id"], "module": claim["module"], "claim_id": claim["claim_id"],
+            "priority": priority,
+            "question": claim["statement"], "known_assumptions": claim["assumptions"],
+            "known_counterevidence": claim["counterevidence"], "open_questions": claim["unresolved"],
+            "gap_ids": [g["gap_id"] for g in gaps],
+            "evidence_needed": [{"needed": g["needed"], "path": g["acquisition_path"]} for g in gaps],
+            "query": f'"{names.get(claim["entity_id"], cfg["target"])}" {claim["statement"]}',
+            "goal": "检索前写清当前解释、竞争性解释、区分证据与改判条件；用可得原件检验，不以正负关键词数量替代验证。",
+            "recording": "设计与结果沿用声明的 assumptions/counterevidence/unresolved 和关联缺口；不新增台账，不把空设计视为已执行。",
+            "to": cfg["as_of_date"], "status": "not_executed",
+        })
+    for gap in sorted(data["gap-register"], key=lambda g: (g["priority"], g["gap_id"])):
+        if gap["status"] != "open" or gap["gap_id"] in linked:
+            continue
+        tasks.append({
+            "task_id": f'gap:{gap["gap_id"]}', "task_type": "gap_resolution", "gap_id": gap["gap_id"],
+            "entity_id": gap["entity_id"], "module": gap["module"], "priority": gap["priority"],
+            "question": gap["needed"], "source": gap["acquisition_path"],
+            "query": f'"{names.get(gap["entity_id"], cfg["target"])}" {gap["needed"]}',
+            "goal": "核实此缺口影响哪些核心问题，按获取路径补证；无法取得则记录具体影响与可成立的判断范围。",
+            "to": cfg["as_of_date"], "status": "not_executed",
+        })
+    return tasks
+
+
 def plan(cfg, data):
     as_of = iso_date(cfg["as_of_date"])
     # 官网基础阅读独立于模块裁剪；栏目不存在不等于已完成其他页面的阅读。
-    tasks = official_site_tasks(cfg, data)
+    tasks = verification_tasks(cfg, data) + official_site_tasks(cfg, data)
     listed, _ = listed_entities(cfg, data)
     for entity in data["entity-map"]:
         aliases = [entity["legal_name"], *(entity["aliases"] or [])]
@@ -108,11 +150,12 @@ def plan(cfg, data):
             for name in dict.fromkeys(aliases):
                 for language in cfg["languages"]:
                     english = " filings due diligence evidence risks counterevidence" if language == "en" else ""
-                    tasks.append({"entity_id": entity["entity_id"], "module": module, "alias": name,
+                    tasks.append({"task_type": "keyword_candidate",
+                                  "entity_id": entity["entity_id"], "module": module, "alias": name,
                                   "query": f'"{name}" {terms}{english}', "source": source,
                                   "geography": entity["geography"] or cfg["geography"], "language": language,
                                   "from": None, "to": cfg["as_of_date"], "status": "not_executed",
-                                  "goal": "正面与反面证据并查；无结果时更换别名与来源"})
+                                  "goal": "候选查询，按关键问题和主体/语言相关性裁剪，无需逐条执行；正反证并查，无结果时换别名与来源"})
     required, _ = requirements(cfg, data)
     names = {r["entity_id"]: r["legal_name"] for r in data["entity-map"]}
     for target, parent, category in required:
@@ -125,15 +168,17 @@ def plan(cfg, data):
                           "from": start, "to": cfg["as_of_date"], "status": "not_executed",
                           "goal": "先近后远；取得最新相关全文并阅读；旧全文不得取代最新发现"})
     for word in cfg["industry_keywords"]:
-        tasks.append({"module": "04", "query": f'{word} 行业深度 供需 价格 竞争 industry outlook',
-                      "source": "统计机构/行业协会/券商研究", "to": cfg["as_of_date"], "status": "not_executed"})
+        tasks.append({"task_type": "keyword_candidate", "module": "04",
+                      "query": f'{word} 行业深度 供需 价格 竞争 industry outlook',
+                      "source": "统计机构/行业协会/券商研究", "to": cfg["as_of_date"], "status": "not_executed",
+                      "goal": "候选查询，按实际细分市场和关键问题选择，不要求逐词执行"})
     for event in project_events(cfg, data):
         tasks.append({"module": "18", "query": f'{names[event["entity_id"]]} {event["description"]} 事件点评',
                       "from": event["date"], "to": cfg["as_of_date"], "status": "not_executed",
                       "source": "官方公告/事件后券商研究", "goal": "未找到事件后报告则登记覆盖滞后"})
     return {"type": "plan_only", "target": cfg["target"], "as_of_date": cfg["as_of_date"],
             "listed_entities": listed, "network": cfg["constraints"]["network"], "tasks": tasks,
-            "stop_rule": "关键问题覆盖、重大冲突处理及边际信息收益共同决定；资源耗尽仅能交付受限结果。",
+            "stop_rule": "按约定核心问题审核证据、重大冲突和剩余缺口；研报检索须真实执行，资料取得不足保持原状态。关键问题仍不可判则受限，不能靠缩小范围宣称完成。",
             "warning": "此输出不是检索记录，未访问任何外部来源。"}
 
 

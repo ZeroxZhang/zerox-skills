@@ -112,5 +112,7 @@
     }
   },
   "last_refresh_at": null,
-  "completed_actions": []
+  "completed_actions": [],
+  "scoring_enabled": false,
+  "completion_review": null
 }

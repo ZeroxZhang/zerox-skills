@@ -20,8 +20,11 @@ DISPLAY = {
     "access_blocked": "访问受限", "unreadable": "不可读", "not_executed": "未执行",
     "found": "已发现", "not_found": "未找到", "failed": "失败",
     "open": "开放", "closed": "已关闭", "covered": "已覆盖", "lagging": "滞后",
-    "high": "高", "medium": "中", "low": "低", "verified": "已核实",
+    "high": "高", "medium": "中", "low": "低", "verified": "已核实", "refuted": "已被反证推翻",
     "insufficient_evidence": "证据不足，暂不提供综合评分", "purpose_pending": "目的待确认，暂不评分",
+    "disabled": "未启用综合评分", "criteria_pending": "项目评分条件待确认",
+    "non_blocking": "不妨碍范围完成", "limits_conclusion": "限制相应结论",
+    "blocks_completion": "阻断核心问题，尚未完成",
     "business": "业务适配", "growth": "增长", "governance": "治理", "financial": "财务",
     "compliance": "合规", "technology": "技术", "operations": "运营", "deal": "交易",
     "not_disclosed": "未披露", "access_restricted": "访问受限",
@@ -59,19 +62,26 @@ def build(project, output, sections=None, overwrite=False):
     score = project_score(cfg, data)
     limits = "离线材料分析；未执行在线补查。" if cfg["constraints"]["network"] == "offline" else "工具能力和访问范围以实际检索记录为准。"
     if gate in ("partial", "incomplete"):
-        limits += " 强制研报任务尚未满足，结论仅限现有证据支持的局部问题。"
+        limits += " 研报资料覆盖仍有缺口；具体结论及研究范围是否完成，以证据和缺口影响复核为准。"
     legal_name = next(r["legal_name"] for r in data["entity-map"] if r["entity_id"] == cfg["target_id"])
-    purpose = CONTRACT["scoring"]["purposes"][cfg["purpose"]]["label"] if cfg["purpose"] else "待确认，暂不评分"
-    coverage_text = f"{score['coverage']:.1%}" if score.get("coverage") is not None else "不适用/目的待确认"
-    partial_text = f"{score['partial_score']:.3f}" if score.get("partial_score") is not None else "证据不足，暂无分数"
+    purpose = CONTRACT["purpose_labels"][cfg["purpose"]] if cfg["purpose"] else "待确认，暂不评分"
+    coverage_text = f"{score['coverage']:.1%}" if score.get("coverage") is not None else cell(score["status"])
+    partial_text = f"{score['partial_score']:.3f}" if score.get("partial_score") is not None else cell(score["status"])
     overall_text = f"{score['overall_score']:.3f}" if score.get("overall_score") is not None else "暂不提供"
+    review = cfg.get("completion_review")
+    completion = f"研报门槛：{gate_name}\n\n{limits}\n\n"
+    if review:
+        completion += (f"约定研究范围：{review['scope']}\n\n"
+                       f"关键结论：{cell(review['key_claim_ids'])}；复核时间：{review['reviewed_at']}\n\n"
+                       + table(review["gap_assessments"], [("gap_id", "剩余缺口"),
+                               ("impact", "对研究与结论的具体影响"), ("disposition", "处理")]) + "\n\n")
     blocks = {
         "metadata": f"主体：{legal_name}（{cfg['target_id']}）；输入名称：{cfg['target']}\n\n"
                     f"目的：{purpose}；深度：{cfg['depth']}；地域：{cfg['geography'] or '待确认'}\n\n"
                     f"基准日：{cfg['as_of_date']}；时区：{cfg['timezone']}；版本：{cfg['version']}；保密范围：{cfg['confidentiality']}\n\n"
                     f"报告状态：{cell(cfg['report_status'])}；最终复查：{cfg['last_refresh_at'] or '未执行'}",
         "summary": sections.get("summary", "【缺口】尚未录入经证据支持的综合摘要。") + "\n\n" + sections.get("highlights", "亮点仅在有证据时填写，不强凑数量。"),
-        "completion": f"研报门槛：{gate_name}\n\n{limits}\n\n" + table(
+        "completion": completion + table(
             [{"module": k, **v} for k, v in cfg["module_scope"].items()], [("module", "模块"), ("status", "适用性"), ("reason", "理由")]),
         "entities": table(data["entity-map"], [("entity_id", "主体 ID"), ("legal_name", "法定名"), ("registration_id", "注册号"), ("listing_status", "上市状态"), ("identity_status", "核验状态")])
                     + "\n\n" + table(data["entity-relations"], [("parent_id", "上层主体"), ("child_id", "下层主体"), ("relation_type", "关系"), ("control_basis", "控制依据"), ("effective_from", "生效"), ("effective_to", "失效"), ("evidence_ids", "证据")]),

@@ -2,7 +2,8 @@
 import argparse
 import math
 
-from common import CONTRACT, cli, emit, fail, finite, read_project, research_gate, structural_errors
+from common import (CONTRACT, cli, emit, fail, finite, indices, read_project, research_gate,
+                    semantic_errors, structural_errors)
 
 
 def calculate(rows, rules, threshold=0.8, conflict=False):
@@ -68,23 +69,61 @@ def calculate(rows, rules, threshold=0.8, conflict=False):
 
 
 def project_score(cfg, data):
+    empty = {"coverage": None, "partial_score": None, "overall_score": None}
     if cfg["purpose"] is None:
         if cfg["published_score"] is not None:
             fail("目的待确认，不得发布场景综合分")
-        return {"status": "purpose_pending", "coverage": None, "partial_score": None, "overall_score": None}
-    rules = CONTRACT["scoring"]["purposes"][cfg["purpose"]]
-    if cfg["scoring_override"]:
-        override = cfg["scoring_override"]
-        if not isinstance(override, dict) or not override.get("reason"):
-            fail("权重/关键维度覆盖必须说明依据")
-        if set(override) != {"reason", "weights", "critical_dimensions"}:
-            fail("覆盖配置需 reason/weights/critical_dimensions")
-        rules = override
+        return {**empty, "status": "purpose_pending"}
+    if cfg["purpose"] == "company_research":
+        if cfg.get("scoring_enabled") or cfg["published_score"] is not None:
+            fail("公司研究不启用或发布场景综合分")
+        return {**empty, "status": "not_applicable", "reason": "公司研究解释经营与证据，不作交易评分"}
+    if not cfg.get("scoring_enabled", False):
+        if cfg["published_score"] is not None:
+            fail("评分未显式启用；旧项目已有分数也不能据此自动启用")
+        return {**empty, "status": "disabled", "reason": "评分默认关闭；按需显式启用并确认项目评分条件"}
+    override = cfg["scoring_override"]
+    if override is None:
+        if cfg["published_score"] is not None:
+            fail("发布综合分前须用 scoring_override 确认本项目权重和关键维度")
+        return {**empty, "status": "criteria_pending",
+                "reason": "请在 scoring_override 写明 reason、完整 weights 和本项目 critical_dimensions"}
+    if (not isinstance(override, dict) or set(override) != {"reason", "weights", "critical_dimensions"}
+            or not isinstance(override["reason"], str) or not override["reason"].strip()):
+        fail("项目评分配置需非空 reason、完整 weights 和 critical_dimensions")
+    if not isinstance(override["weights"], dict) or set(override["weights"]) != set(CONTRACT["enums"]["dimension"]):
+        fail("项目评分配置须包含全部维度权重；不适用维度在评分台账说明")
+    critical = override["critical_dimensions"]
+    if (not isinstance(critical, list) or not critical or not all(isinstance(x, str) for x in critical)
+            or len(critical) != len(set(critical))):
+        fail("项目关键维度必须为非空且不重复的数组")
+    rules = override
     rows = data["scorecard"]
     if any(r["purpose"] != cfg["purpose"] for r in rows):
         fail("评分目的与项目不一致")
+    # 评分台账的“充分”是分析者声明，不能绕过来源、时间与事实属性校验。
+    errors = structural_errors(data, cfg)
+    if not errors:
+        errors.extend(semantic_errors(cfg, data))
+        idx = indices(data)
+        for row in rows:
+            if row["score"] is None:
+                continue
+            for eid in row["evidence_ids"] or []:
+                source = idx["source-register"][idx["evidence-ledger"][eid]["source_id"]]
+                if source["time_scope"] != "as_of":
+                    errors.append(f"{row['score_id']}：事后资料 {eid} 不得直接支持时点评分")
+    if errors:
+        fail("评分证据校验失败：" + "；".join(errors))
     conflicts = any(r["status"] == "open" and r["decision_changing"] for r in data["conflict-register"])
     result = calculate(rows, rules, cfg["scoring_threshold"], conflicts)
+    critical_gaps = [r["gap_id"] for r in data["gap-register"]
+                     if r["status"] == "open" and r["materiality"] == "critical"]
+    if critical_gaps:
+        result.update(status="insufficient_evidence", overall_score=None,
+                      reason="仍有阻断核心判断的关键缺口，暂不提供综合评分")
+    result["critical_gaps"] = critical_gaps
+    result["configuration_reason"] = override["reason"]
     result["research_gate"] = research_gate(cfg, data)
     result["risk_assessment"] = "独立查看 risk-register.csv；商业分数不抵销法定禁止或用户否决条件。"
     return result

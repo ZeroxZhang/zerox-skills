@@ -222,6 +222,10 @@ def read_table(project, table):
 def load_config(project):
     cfg = load_json(Path(project) / "project-config.json")
     baseline = load_json(ROOT / "templates/project-config.json")
+    # 兼容旧项目只补新增的安全默认值；不写盘，也不据已有评分推定启用。
+    if isinstance(cfg, dict):
+        for key in ("scoring_enabled", "completion_review"):
+            cfg.setdefault(key, baseline[key])
     if not isinstance(cfg, dict) or set(cfg) != set(baseline):
         fail("项目配置字段与模板不一致")
     for key in ("target", "target_id", "timezone", "version", "confidentiality"):
@@ -249,9 +253,37 @@ def load_config(project):
         fail("purpose 与 purpose_status 不一致")
     if cfg["depth"] not in CONTRACT["enums"]["depth"]:
         fail("未知深度")
-    for key in ("historical", "control_chain_checked", "peer_required", "declared_complete"):
+    for key in ("historical", "control_chain_checked", "peer_required", "declared_complete", "scoring_enabled"):
         if not isinstance(cfg[key], bool):
             fail(f"{key} 必须为布尔值")
+    if cfg["scoring_enabled"] and cfg["purpose"] not in CONTRACT["scoring"]["purposes"]:
+        fail("只有已明确的决策目的可启用评分；公司研究不评分")
+    review = cfg["completion_review"]
+    if review is not None:
+        if not isinstance(review, dict) or set(review) != {"scope", "key_claim_ids", "gap_assessments", "reviewed_at"}:
+            fail("completion_review 需 scope/key_claim_ids/gap_assessments/reviewed_at")
+        if not isinstance(review["scope"], str) or not review["scope"].strip():
+            fail("完成审核必须说明约定研究范围")
+        keys = review["key_claim_ids"]
+        if (not isinstance(keys, list) or not keys
+                or not all(isinstance(x, str) and re.fullmatch(r"C-[0-9]{4,}", x) for x in keys)
+                or len(keys) != len(set(keys))):
+            fail("key_claim_ids 必须为不重复的关键声明 ID 数组")
+        iso_time(review["reviewed_at"])
+        if not isinstance(review["gap_assessments"], list):
+            fail("gap_assessments 必须为数组")
+        seen = set()
+        for item in review["gap_assessments"]:
+            if not isinstance(item, dict) or set(item) != {"gap_id", "impact", "disposition"}:
+                fail("缺口评估需 gap_id/impact/disposition")
+            gid = item["gap_id"]
+            if not isinstance(gid, str) or not re.fullmatch(r"G-[0-9]{4,}", gid) or gid in seen:
+                fail("缺口评估 ID 非法或重复")
+            seen.add(gid)
+            if not isinstance(item["impact"], str) or not item["impact"].strip():
+                fail("缺口评估必须说明对结论的具体影响")
+            if item["disposition"] not in CONTRACT["enums"]["gap_disposition"]:
+                fail("缺口评估 disposition 非法")
     if cfg["report_status"] not in ("draft", "limited", "complete"):
         fail("报告状态错误")
     if cfg["research_gate"] not in CONTRACT["enums"]["gate"]:
@@ -446,6 +478,71 @@ def research_gate(cfg, data):
     return "incomplete"
 
 
+def completion_errors(cfg, data):
+    """验证约定范围完成的必要记录；不把资料覆盖不足改成已取得。"""
+    errors = []
+    idx = indices(data)
+    review = cfg.get("completion_review")
+    if not review:
+        return ["约定范围完成需要 completion_review；旧项目须补关键结论和缺口影响审核"]
+    if cfg["purpose"] is None:
+        errors.append("目的仍待确认，不能确认约定研究范围完成")
+    _, pending = requirements(cfg, data)
+    if pending:
+        errors.append("主体或控制链仍未核实，不能确认研究范围完成")
+    keys = set(review["key_claim_ids"])
+    for cid in keys:
+        claim = idx["claim-register"].get(cid)
+        if not claim:
+            errors.append(f"完成审核引用不存在的关键声明：{cid}")
+            continue
+        if (claim["verification"] != "verified" or claim["confidence"] not in ("high", "medium")
+                or claim["label"] in ("【缺口】", "【待核实】")):
+            errors.append(f"{cid}：关键结论尚未核实；未知事项应保留缺口，阻断核心问题时保持 limited")
+        support = [r for r in data["claim-evidence"]
+                   if r["claim_id"] == cid and r["relation"] == "supports"
+                   and r["evidence_id"] in idx["evidence-ledger"]]
+        if not support:
+            errors.append(f"{cid}：完成审核的关键结论缺少直接支持证据")
+    for claim in data["claim-register"]:
+        refuted = (claim["verification"] == "refuted"
+                   and claim["confidence"] in ("high", "medium")
+                   and bool((claim["counterevidence"] or "").strip())
+                   and not (claim["unresolved"] or "").strip()
+                   and any(r["claim_id"] == claim["claim_id"] and r["relation"] == "contradicts"
+                           and r["evidence_id"] in idx["evidence-ledger"] for r in data["claim-evidence"]))
+        if claim["materiality"] == "critical" and claim["claim_id"] not in keys and not refuted:
+            errors.append(f"{claim['claim_id']}：关键重大声明不能遗漏于完成审核")
+    for conflict in data["conflict-register"]:
+        if conflict["status"] == "open" and conflict["decision_changing"]:
+            errors.append(f"{conflict['conflict_id']}：存在会改变结论的未解决冲突")
+    assessments = {r["gap_id"]: r for r in review["gap_assessments"]}
+    open_gaps = {r["gap_id"]: r for r in data["gap-register"] if r["status"] == "open"}
+    for gid in set(assessments) - set(open_gaps):
+        errors.append(f"{gid}：完成审核的缺口不存在或已关闭，应更新审核")
+    for gid, gap in open_gaps.items():
+        assessment = assessments.get(gid)
+        if not assessment:
+            errors.append(f"{gid}：开放缺口未评估对约定范围的影响")
+        elif assessment["disposition"] == "blocks_completion" or gap["materiality"] == "critical":
+            errors.append(f"{gid}：缺口阻断约定核心问题，研究应保持 limited")
+    for coverage in data["research-coverage"]:
+        if not coverage["required"]:
+            continue
+        logs = [idx["search-log"].get(qid) for qid in coverage["search_ids"] or []]
+        if (coverage["search_status"] == "not_executed" or not logs
+                or any(not row or row["status"] == "not_executed" for row in logs)):
+            errors.append(f"{coverage['coverage_id']}：必需研报检索没有真实执行记录")
+        if not coverage["latestness_checked_at"]:
+            errors.append(f"{coverage['coverage_id']}：缺少最新性复查记录")
+    if cfg.get("declared_complete"):
+        if open_gaps:
+            errors.append("仍有开放缺口，不得声明全部任务完成")
+        if any(action.get("status") != "completed" for action in cfg["completed_actions"]):
+            errors.append("仍有计划动作，不得声明全部任务完成")
+    return errors
+
+
 def semantic_errors(cfg, data):
     errors = []
     idx = indices(data)
@@ -472,14 +569,22 @@ def semantic_errors(cfg, data):
         links = [r for r in data["claim-evidence"] if r["claim_id"] == claim["claim_id"] and r["relation"] == "supports"]
         if claim["verification"] == "verified" and not links:
             errors.append(f"{claim['claim_id']}：已核实声明没有支持证据")
+        if claim["verification"] == "refuted":
+            contradictions = [r for r in data["claim-evidence"]
+                              if r["claim_id"] == claim["claim_id"] and r["relation"] == "contradicts"]
+            if not contradictions or not (claim["counterevidence"] or "").strip():
+                errors.append(f"{claim['claim_id']}：已推翻声明需反驳证据关联和 counterevidence 驳回依据")
+            if claim["confidence"] not in ("high", "medium") or (claim["unresolved"] or "").strip():
+                errors.append(f"{claim['claim_id']}：驳回判断须有高/中置信且无未解决问题")
+            links += contradictions
         entity = idx["entity-map"].get(claim["entity_id"], {})
-        if claim["verification"] == "verified" and entity.get("identity_status") != "resolved":
+        if claim["verification"] in ("verified", "refuted") and entity.get("identity_status") != "resolved":
             errors.append(f"{claim['claim_id']}：主体未锁定不能形成确定结论")
         for link in links:
             evidence = idx["evidence-ledger"].get(link["evidence_id"], {})
             source = idx["source-register"].get(evidence.get("source_id"), {})
             if source.get("time_scope") == "retrospective":
-                errors.append(f"{claim['claim_id']}：事后资料不得支持时点结论")
+                errors.append(f"{claim['claim_id']}：事后资料不得用于确认或驳回时点结论")
             if claim["attribute"] == "actual" and evidence.get("attribute") in ("forecast", "estimate"):
                 errors.append(f"{claim['claim_id']}：预测/估算证据被用作实际数据")
             if claim["numeric"] and (claim["entity_id"] != evidence.get("entity_id") or claim["scope"] != evidence.get("scope")):

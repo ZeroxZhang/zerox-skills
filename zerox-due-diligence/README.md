@@ -11,9 +11,9 @@
 
 # ZeroX Due Diligence
 
-围绕实际决策开展公司尽调：锁定主体与控制关系，讲清公司、客户、产品和业务运转，再建立从原始资料到判断与行动的可追溯链条。默认交付图文并茂、可离线阅读的 HTML 报告，研究过程与核验记录保存在独立底稿中。
+全面理解公司的业务、客户、竞争与经营变化，并按具体商业目的开展专项尽调。锁定主体与控制关系，从原始资料验证关键解释和反证，形成可追溯判断。默认交付图文并茂、可离线阅读的 HTML 报告，研究过程与核验记录保存在独立底稿中。
 
-A decision-focused company research skill. Resolve the entity and control relationships, explain the company, customers, products, and how the business works, then connect source evidence to conclusions and actions. Deliver a visual, offline HTML report for readers, with research processes and verification records in a separate audit file.
+A company research skill for understanding a business, its customers, competition, and operating changes, with additional due diligence for specific commercial purposes. Resolve entities and control, test important explanations against alternatives and source evidence, and form traceable conclusions. Deliver a visual, offline HTML report with research and verification records in a separate audit file.
 
 ## 索引 / Index
 
@@ -31,17 +31,18 @@ A decision-focused company research skill. Resolve the entity and control relati
 <a id="zh"></a>
 ## 中文
 
-支持**投资、并购、战略/商业合作、客户授信、供应商准入、竞品研究**六类目的，以及 **Quick / Standard / Deep** 三种深度。方法库覆盖十八个模块；单次项目按目的、行业和重要性裁剪。
+支持正式的**公司研究**目的，无需先有交易意图；投资、并购、战略/商业合作、客户授信、供应商准入和竞品研究加载各自专项。**Quick / Standard / Deep** 按覆盖范围、历史跨度、拆分粒度与验证强度区分，资料访问权限单独记录。十八个模块按问题、行业和重要性裁剪。
 
 <a id="zh-capabilities"></a>
 ### 核心能力
 
 - **实体与控制链**：区分集团、子公司、分部、品牌和签约主体，按基准日处理参股、拟收购、出售及多层控制。
 - **官网优先阅读**：目标有官网时，先确认网站归属，再直接阅读公司、产品与价格、团队、沿革、渠道和服务条款等相关页面。官网是重要的一手来源；经营宣传仍按公司自述标注，并结合独立资料核验。
-- **强制上市研报流程**：上市公司及其控制子公司必须检索、合法获取并阅读相关最新官方披露、公司跟踪、公司深度与行业研究，补查重大事件。
-- **三种“最新”分开**：最新发现、最新取得全文、最新已读分别记录；新报告仅有标题时，旧全文不能让研究被标为完成。
+- **关键问题验证**：先建立公司全貌，再比较当前解释与其他可能解释，寻找区分证据及改变判断的条件；客户失败样本、资源配置、行业传导、盈利质量和外部暴露纳入现有模块。
+- **上市研报研究**：上市公司及其控制子公司必须检索，并争取合法获取、阅读相关最新官方披露、公司跟踪、公司深度与行业研究，补查重大事件。
+- **资料覆盖与研究范围分开**：最新发现、最新全文、最新已读分别记录，旧全文不冒充最新资料。经过关键结论与剩余缺口影响复核，可结束约定范围；妨碍回答核心问题的缺口仍使研究受限。
 - **证据与未知分开**：来源、证据、声明和关联独立建表；预测、实际、估算和缺口不混用，同源转载不增加独立证据数量。
-- **财务与评分有门槛**：缺失不自动补零，现金为零仍正确计算；商业评分、风险和证据充分程度独立呈现。
+- **财务与可选评分**：缺失不自动补零，现金为零仍正确计算。公司研究不发布综合分，商业专项默认也不评分；启用时先明确项目权重与不可缺维度，分数、风险和证据充分程度独立呈现。
 - **阅读型 HTML 主报告**：浅色留白、蓝色强调、wiki 目录导航；简要摘要后，按公司全貌 → 业务运转 → 增长、市场、财务风险与决策组织正文。
 - **公司与业务必须讲清**：11 个理解主题覆盖身份、起源团队、产品、客户、交易、经营分工、收入成本、差异化、财务表现、营销与竞争。发展时间线、基于已有资料的独立人物介绍与业务图帮助理解公司，避免用工商表或宣传术语替代解释。
 - **财务、营销与竞争必答**：营收规模、营收构成、毛利率和净利率分别披露主体、期间、来源与缺口；解释营销渠道及获客、转化、复购，按选择依据比较主要竞品。资料不足时逐项说明未知及其影响，不能直接省略这些主题。
@@ -79,9 +80,9 @@ A decision-focused company research skill. Resolve the entity and control relati
 **当前目录就是 Skill 根目录**，入口是 [SKILL.md](./SKILL.md)。可直接让支持文件读取的 Agent 使用该文件；不需要再创建下层技能目录。
 
 ```text
-请使用当前目录的 SKILL.md，对「公司法定全称 / 官网 / 注册号」开展尽调。
-目的：供应商准入；深度：Standard；基准日：执行当日。
-重点：交付连续性、财务状况、预付款风险与集团支持安排。
+请使用当前目录的 SKILL.md，全面研究「公司法定全称 / 官网 / 注册号」。
+目的：公司研究；深度：Standard；基准日：执行当日。
+重点：客户为何购买或流失、行业与竞争变化、组织执行、盈利与现金形成机制。
 交付：可离线阅读的 HTML 主报告及独立研究底稿；讲清公司和业务模式，
 呈现发展时间线，并逐项分析营收与盈利、营销渠道和主要竞争对手。
 ```
@@ -118,7 +119,7 @@ PY
 python3 scripts/init_project.py \
   --output /tmp/dd-example \
   --target "待核验公司法定全称" \
-  --purpose supplier \
+  --purpose company_research \
   --depth Standard
 
 # 只生成检索计划，尚未执行检索。
@@ -138,7 +139,7 @@ python3 scripts/check_report.py \
   --report /tmp/dd-example/reports/report.html
 ```
 
-初始化只创建待核实工作区和待编辑的报告内容模板；即使提供名称或证券代码，也不会自动标记身份已核实。目的未给出时保留待确认，不计算场景综合分。生成后直接打开 `reports/report.html` 阅读；同目录的 `report-audit.md` 保存完整研究底稿。报告编排与图表规则见 [报告设计](./references/report-design.md)，字段、台账更新、财务计算和退出码见 [CLI 使用说明](./scripts/README.md)。
+初始化只创建待核实工作区和待编辑的报告内容模板；提供名称或证券代码不代表身份已核实。明确了解公司时使用 `company_research`；真正未说明目的才保留待确认。评分默认关闭，专项需要时用 `--enable-scoring` 初始化，再确认本项目的 `scoring_override`。研究范围完成须填写 `completion_review` 并通过检查；它不改写研报资料覆盖状态。生成后打开 `reports/report.html`；同目录 `report-audit.md` 保存底稿。报告编排见 [报告设计](./references/report-design.md)，配置与检查见 [CLI 使用说明](./scripts/README.md)。
 
 新建 HTML 使用1.2版内容契约。模板中的11个 `explanation` 主题须各填写一次，可自由安排章节。已知内容给依据，部分已知或未知内容说明具体限制；已有底稿中的基础信息要补回正文，缺证的部分需定向研究，不能虚构补齐。业务流程每步区分证据、公司自述、推断和未知；仅交易机制整体未知且说明原因时可免图。旧1.0/1.1 HTML仅可兼容做草稿检查，重新生成或完成态检查前须迁移。
 
@@ -153,7 +154,7 @@ python3 scripts/check_report.py \
 | --- | --- |
 | [SKILL.md](./SKILL.md) | 触发、主流程、必经门槛与直接索引 |
 | [references/workflow.md](./references/workflow.md) | 阶段输入、动作、产出与失败处理 |
-| [references/purpose-playbooks.md](./references/purpose-playbooks.md) | 六类目的 × 三种深度 |
+| [references/purpose-playbooks.md](./references/purpose-playbooks.md) | 公司研究基础、六类专项与三种深度 |
 | [references/modules/](./references/modules/) | 公司、团队、业务、市场、竞争、阶段、增长、政策、商业、运营、技术、财务、法律、ESG、风险、估值、履约、上市研报 |
 | [references/sources/](./references/sources/) | 中外来源目录、来源策略、研报与访谈方法 |
 | [schemas/data-contract.json](./schemas/data-contract.json) | 字段、类型、枚举、引用、研报类别、权重和评分锚点 |
@@ -175,17 +176,18 @@ python3 scripts/check_report.py \
 <a id="en"></a>
 ## English
 
-Supports six purposes: **investment, acquisition, strategic/commercial partnership, customer credit, supplier qualification, and competitor research**, with **Quick / Standard / Deep** modes. Eighteen research modules are tailored to each project's purpose, industry, and materiality.
+Supports **company research** as a confirmed purpose without requiring a transaction. Investment, acquisition, strategic/commercial partnership, customer credit, supplier qualification, and competitor research add their own specialist questions. **Quick / Standard / Deep** differ in coverage, history, granularity, and verification strength; access permissions are recorded separately. Eighteen modules are tailored to the questions, industry, and materiality.
 
 <a id="en-capabilities"></a>
 ### Capabilities
 
 - **Entity and control mapping:** distinguish groups, subsidiaries, segments, brands, and contracting parties; assess minority stakes, pending acquisitions, disposals, and control chains at the research cutoff.
 - **Official websites first:** when a target has a website, verify ownership and directly read relevant company, product/pricing, team, history, channel, and terms pages. Treat it as an important primary source; label promotional statements as company claims and check them against independent material.
-- **Mandatory listed-company research:** listed targets and controlled subsidiaries require searches, lawful full-text acquisition, and reading of current official disclosures, company updates, in-depth coverage, industry research, and relevant event updates.
-- **Three separate freshness states:** latest discovered, latest full text obtained, and latest read. An older full report cannot conceal an inaccessible newer relevant report.
+- **Question-led verification:** establish a broad company view, compare plausible explanations, and identify evidence that distinguishes them and would change the conclusion. Existing modules cover unsuccessful customer outcomes, resource allocation, industry transmission, earnings quality, and external exposures.
+- **Listed-company research:** listed targets and controlled subsidiaries require searches and efforts to lawfully obtain and read current official disclosures, company updates, in-depth coverage, industry research, and relevant event updates.
+- **Separate source coverage from scope completion:** record latest discovered, full text obtained, and read without presenting older material as current. Complete the agreed scope only after reviewing key conclusions and remaining gap impacts; gaps blocking core questions keep the research limited.
 - **Traceable evidence:** separate source, evidence, claim, and relationship ledgers. Keep actuals, forecasts, estimates, and missing information distinct; syndicated copies do not count as independent factual evidence.
-- **Financial and scoring safeguards:** missing values are not zero; zero available cash remains a valid input. Business fit, risk, and evidence sufficiency are reported separately.
+- **Financial and optional scoring safeguards:** missing values are not zero; zero available cash remains valid. Company research has no overall score, and commercial purposes default to scoring off. Enable scoring only after defining project weights and indispensable dimensions; keep scores, risks, and evidence sufficiency separate.
 - **Reader-focused HTML reports:** a light layout with generous spacing, restrained blue accents, and wiki-style navigation. After a short summary, explain the company and how it works before growth, markets, financial risks, and decisions.
 - **Company and business understanding:** eleven topics cover identity, origins and team, products, customers, transactions, operations, revenue and costs, differentiation, financial performance, marketing, and competition. A company timeline, a separate people section based on available evidence, and business diagrams support the explanation.
 - **Required finance, marketing, and competition coverage:** address revenue scale, revenue mix, gross margin, and net margin individually, with entity scope, periods, sources, and gaps. Explain marketing channels, acquisition, conversion, and retention, and justify competitor selection. Disclose missing evidence and its implications instead of omitting these topics.
@@ -225,9 +227,9 @@ Deliverables include a directly readable `report.html`, the full `report-audit.m
 ```text
 Use SKILL.md in the current directory to investigate:
 Target: legal company name / website / registration number.
-Purpose: supplier qualification. Depth: Standard. Cutoff: today's date.
-Focus: delivery continuity, financial condition, prepayment exposure,
-and actual parent-company support. Write the report in English.
+Purpose: company research. Depth: Standard. Cutoff: today's date.
+Focus: customer purchase and churn, industry and competitive changes,
+organizational execution, and earnings and cash generation. Write in English.
 Deliver an offline HTML report and a separate audit file. Explain the company
 and business model, show its development timeline, and address revenue and
 profitability, marketing channels, and major competitors individually.
@@ -264,7 +266,7 @@ Requires Python 3.10+. Core tools use only the standard library, require no API 
 python3 scripts/init_project.py \
   --output /tmp/dd-example \
   --target "Company legal name to verify" \
-  --purpose supplier \
+  --purpose company_research \
   --depth Standard
 
 python3 scripts/search_plan.py \
@@ -282,7 +284,7 @@ python3 scripts/check_report.py \
   --report /tmp/dd-example/reports/report.html
 ```
 
-Keep research workspaces outside this skill package. Initialization creates pending records; a supplied name or ticker is not verified identity. Search planning does not execute searches. Complete the research, ledgers, and module analyses, then edit `report-content.json` into a reader-focused narrative with verified chart data before building the deliverable. An unspecified purpose stays pending and disables purpose-specific overall scoring.
+Keep research workspaces outside this skill package. Initialization creates unverified records; a name or ticker is not verified identity. Search planning does not execute searches. Use `company_research` when the purpose is understanding the company; only a genuinely unspecified purpose stays pending. Scoring defaults to off; commercial projects can initialize with `--enable-scoring`, then confirm a project-specific `scoring_override`. Scope completion requires a checked `completion_review` and does not change research-source coverage. Complete the research and ledgers, then edit `report-content.json` before building the deliverable.
 
 Open `reports/report.html` directly to read the report. The sibling `report-audit.md` contains the full research record. See the [report design guide](./references/report-design.md) for editorial and chart requirements, and the [CLI guide](./scripts/README.md) for ledger updates, financial inputs, configuration, and exit codes.
 
@@ -299,7 +301,7 @@ This directory is published as an installable skill containing usage instruction
 | --- | --- |
 | [SKILL.md](./SKILL.md) | Entry point, workflow, mandatory gates, and resource index |
 | [references/workflow.md](./references/workflow.md) | Phase inputs, actions, outputs, and failure handling |
-| [references/purpose-playbooks.md](./references/purpose-playbooks.md) | Six purposes × three depths |
+| [references/purpose-playbooks.md](./references/purpose-playbooks.md) | Company research foundation, six specialist purposes, and three depths |
 | [references/modules/](./references/modules/) | Eighteen company, business, industry, financial, legal, operational, and listed-company research modules |
 | [references/sources/](./references/sources/) | China/global source directories, research and interview methods |
 | [schemas/data-contract.json](./schemas/data-contract.json) | Fields, types, enums, references, research categories, weights, and scoring anchors |

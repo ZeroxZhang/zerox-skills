@@ -268,7 +268,7 @@ def render(content, cfg, data, audit_name, media=None):
     if gate not in ("complete", "not_applicable"):
         scope += " 最新相关研报尚未取得或读完，结论限于现有材料。"
     status = {"draft":"草稿", "limited":"公开材料研究 · 结论有条件", "complete":"研究报告"}[cfg["report_status"]]
-    purpose = CONTRACT["scoring"]["purposes"][cfg["purpose"]]["label"] if cfg["purpose"] else "目的待确认"
+    purpose = CONTRACT["purpose_labels"][cfg["purpose"]] if cfg["purpose"] else "目的待确认"
     css = (ROOT / "assets/report.css").read_text(encoding="utf-8")
     js = (ROOT / "assets/report.js").read_text(encoding="utf-8")
     snapshot = {k: cfg[k] for k in ("target_id", "as_of_date", "purpose", "report_status")}
