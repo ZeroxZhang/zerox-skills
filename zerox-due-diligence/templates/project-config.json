@@ -1,0 +1,116 @@
+{
+  "contract_version": "1.0.0",
+  "target": "",
+  "target_id": "ENT-0001",
+  "purpose": null,
+  "purpose_status": "pending",
+  "depth": "Standard",
+  "geography": "",
+  "focus": "",
+  "materials": [],
+  "as_of_date": null,
+  "timezone": "Asia/Shanghai",
+  "historical": false,
+  "constraints": {
+    "network": "unknown",
+    "budget": "",
+    "deadline": "",
+    "permissions": "公开信息及用户授权资料"
+  },
+  "identity_status": "pending",
+  "listing_trigger": "pending",
+  "control_chain_checked": false,
+  "control_evidence_ids": [],
+  "industry_keywords": [],
+  "languages": [
+    "zh",
+    "en"
+  ],
+  "events": [],
+  "peer_required": false,
+  "category_exemptions": [],
+  "scoring_threshold": 0.8,
+  "scoring_override": null,
+  "report_status": "draft",
+  "research_gate": "incomplete",
+  "declared_complete": false,
+  "published_score": null,
+  "version": "0.1",
+  "confidentiality": "仅授权受众",
+  "module_scope": {
+    "01": {
+      "status": "pending",
+      "reason": ""
+    },
+    "02": {
+      "status": "pending",
+      "reason": ""
+    },
+    "03": {
+      "status": "pending",
+      "reason": ""
+    },
+    "04": {
+      "status": "pending",
+      "reason": ""
+    },
+    "05": {
+      "status": "pending",
+      "reason": ""
+    },
+    "06": {
+      "status": "pending",
+      "reason": ""
+    },
+    "07": {
+      "status": "pending",
+      "reason": ""
+    },
+    "08": {
+      "status": "pending",
+      "reason": ""
+    },
+    "09": {
+      "status": "pending",
+      "reason": ""
+    },
+    "10": {
+      "status": "pending",
+      "reason": ""
+    },
+    "11": {
+      "status": "pending",
+      "reason": ""
+    },
+    "12": {
+      "status": "pending",
+      "reason": ""
+    },
+    "13": {
+      "status": "pending",
+      "reason": ""
+    },
+    "14": {
+      "status": "pending",
+      "reason": ""
+    },
+    "15": {
+      "status": "pending",
+      "reason": ""
+    },
+    "16": {
+      "status": "pending",
+      "reason": ""
+    },
+    "17": {
+      "status": "pending",
+      "reason": ""
+    },
+    "18": {
+      "status": "pending",
+      "reason": ""
+    }
+  },
+  "last_refresh_at": null,
+  "completed_actions": []
+}

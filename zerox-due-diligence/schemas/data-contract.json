@@ -1,0 +1,1779 @@
+{
+  "version": "1.0.0",
+  "description": "统一数据契约；字段验证、枚举、引用、评分与研报类别的唯一机器规则来源。",
+  "encoding": {
+    "csv": "UTF-8，逗号分隔，标准CSV引号；表头顺序固定；空单元格为null，0不是null。",
+    "list": "JSON数组字符串；ids、dates同样编码，禁止逗号或分号拼接。",
+    "object": "JSON对象字符串。",
+    "bool": "仅true/false小写；JSON布尔值仅用于JSON配置。",
+    "date": "YYYY-MM-DD；datetime为带时区ISO 8601。",
+    "number": "有限十进制数；禁止bool、NaN和Infinity。",
+    "unknown_fields": "拒绝未知列和未知字段，防止拼写错误被忽略。"
+  },
+  "enums": {
+    "purpose": [
+      "investment",
+      "acquisition",
+      "partnership",
+      "credit",
+      "supplier",
+      "competitor"
+    ],
+    "depth": [
+      "Quick",
+      "Standard",
+      "Deep"
+    ],
+    "label": [
+      "【事实】",
+      "【数据】",
+      "【推断】",
+      "【判断】",
+      "【第三方观点】",
+      "【待核实】",
+      "【缺口】"
+    ],
+    "confidence": [
+      "high",
+      "medium",
+      "low",
+      "unknown"
+    ],
+    "access": [
+      "full_text",
+      "partial_text",
+      "abstract_only",
+      "metadata_only",
+      "access_blocked",
+      "unreadable"
+    ],
+    "reading": [
+      "unread",
+      "partial",
+      "analyzed"
+    ],
+    "gate": [
+      "complete",
+      "partial",
+      "incomplete",
+      "not_applicable"
+    ],
+    "attribute": [
+      "actual",
+      "forecast",
+      "estimate",
+      "opinion",
+      "not_applicable"
+    ],
+    "category": [
+      "official_annual",
+      "official_interim",
+      "official_event",
+      "company_update",
+      "company_deep",
+      "industry",
+      "event_update",
+      "peer"
+    ],
+    "gap_reason": [
+      "not_disclosed",
+      "not_found",
+      "access_restricted",
+      "unreadable",
+      "not_executed",
+      "not_applicable"
+    ],
+    "materiality": [
+      "critical",
+      "major",
+      "minor"
+    ],
+    "scope": [
+      "consolidated",
+      "standalone",
+      "segment",
+      "brand",
+      "not_applicable"
+    ],
+    "listing": [
+      "listed",
+      "unlisted",
+      "otc",
+      "bond_only",
+      "proposed",
+      "delisted",
+      "unknown"
+    ],
+    "relation": [
+      "control",
+      "joint_control",
+      "significant_influence",
+      "minority",
+      "brand_of",
+      "branch_of",
+      "other"
+    ],
+    "search_status": [
+      "not_executed",
+      "found",
+      "not_found",
+      "access_blocked",
+      "failed"
+    ],
+    "dimension": [
+      "business",
+      "growth",
+      "governance",
+      "financial",
+      "compliance",
+      "technology",
+      "operations",
+      "deal"
+    ]
+  },
+  "tables": {
+    "entity-map": {
+      "primary_key": "entity_id",
+      "fields": {
+        "entity_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "ENT-[0-9]{4,}"
+        },
+        "legal_name": {
+          "type": "string",
+          "required": true
+        },
+        "registration_id": {
+          "type": "string",
+          "required": false
+        },
+        "aliases": {
+          "type": "list",
+          "required": false
+        },
+        "geography": {
+          "type": "string",
+          "required": false
+        },
+        "entity_type": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "legal_entity",
+            "group",
+            "segment",
+            "brand",
+            "branch"
+          ]
+        },
+        "identity_status": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "pending",
+            "resolved",
+            "ambiguous"
+          ]
+        },
+        "listing_status": {
+          "type": "enum",
+          "required": true,
+          "enum": "listing"
+        },
+        "exchange": {
+          "type": "string",
+          "required": false
+        },
+        "security_code": {
+          "type": "string",
+          "required": false
+        },
+        "security_class": {
+          "type": "string",
+          "required": false
+        },
+        "listing_start": {
+          "type": "date",
+          "required": false
+        },
+        "listing_end": {
+          "type": "date",
+          "required": false
+        },
+        "evidence_ids": {
+          "type": "ids",
+          "required": false,
+          "ref": "evidence-ledger"
+        },
+        "identity_notes": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "identity_status": "resolved"
+          },
+          "required": [
+            "registration_id",
+            "evidence_ids"
+          ]
+        },
+        {
+          "if": {
+            "listing_status": "listed"
+          },
+          "required": [
+            "exchange",
+            "security_code"
+          ]
+        }
+      ]
+    },
+    "entity-relations": {
+      "primary_key": "relation_id",
+      "fields": {
+        "relation_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "REL-[0-9]{4,}"
+        },
+        "parent_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "child_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "relation_type": {
+          "type": "enum",
+          "required": true,
+          "enum": "relation"
+        },
+        "ownership_percent": {
+          "type": "number",
+          "required": false,
+          "minimum": 0,
+          "maximum": 100
+        },
+        "control_basis": {
+          "type": "string",
+          "required": true
+        },
+        "effective_from": {
+          "type": "date",
+          "required": true
+        },
+        "effective_to": {
+          "type": "date",
+          "required": false
+        },
+        "state": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "current",
+            "historical",
+            "proposed"
+          ]
+        },
+        "verification": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "pending",
+            "verified"
+          ]
+        },
+        "evidence_ids": {
+          "type": "ids",
+          "required": false,
+          "ref": "evidence-ledger"
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "verification": "verified"
+          },
+          "required": [
+            "evidence_ids"
+          ]
+        }
+      ]
+    },
+    "search-log": {
+      "primary_key": "search_id",
+      "fields": {
+        "search_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "Q-[0-9]{4,}"
+        },
+        "searched_at": {
+          "type": "datetime",
+          "required": true
+        },
+        "channel": {
+          "type": "string",
+          "required": true
+        },
+        "query": {
+          "type": "string",
+          "required": true
+        },
+        "entity_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "period_start": {
+          "type": "date",
+          "required": false
+        },
+        "period_end": {
+          "type": "date",
+          "required": false
+        },
+        "purpose": {
+          "type": "string",
+          "required": true
+        },
+        "status": {
+          "type": "enum",
+          "required": true,
+          "enum": "search_status"
+        },
+        "source_ids": {
+          "type": "ids",
+          "required": false,
+          "ref": "source-register"
+        },
+        "limitations": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": []
+    },
+    "source-register": {
+      "primary_key": "source_id",
+      "fields": {
+        "source_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "S-[0-9]{4,}"
+        },
+        "title": {
+          "type": "string",
+          "required": true
+        },
+        "source_type": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "official",
+            "broker",
+            "rating",
+            "database",
+            "company",
+            "media",
+            "interview",
+            "other"
+          ]
+        },
+        "publisher": {
+          "type": "string",
+          "required": true
+        },
+        "author": {
+          "type": "string",
+          "required": false
+        },
+        "published_date": {
+          "type": "date",
+          "required": true
+        },
+        "revised_date": {
+          "type": "date",
+          "required": false
+        },
+        "accessed_date": {
+          "type": "date",
+          "required": true
+        },
+        "locator": {
+          "type": "string",
+          "required": true
+        },
+        "grade": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "S",
+            "A",
+            "B",
+            "C",
+            "D"
+          ]
+        },
+        "grade_reason": {
+          "type": "string",
+          "required": false
+        },
+        "origin_group": {
+          "type": "string",
+          "required": true
+        },
+        "upstream_source_id": {
+          "type": "id",
+          "required": false,
+          "ref": "source-register"
+        },
+        "access_status": {
+          "type": "enum",
+          "required": true,
+          "enum": "access"
+        },
+        "authenticity": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "checked",
+            "pending",
+            "uncertain"
+          ]
+        },
+        "authorization": {
+          "type": "string",
+          "required": true
+        },
+        "time_scope": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "as_of",
+            "retrospective"
+          ]
+        },
+        "checksum": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": []
+    },
+    "evidence-ledger": {
+      "primary_key": "evidence_id",
+      "fields": {
+        "evidence_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "E-[0-9]{4,}"
+        },
+        "source_id": {
+          "type": "id",
+          "required": true,
+          "ref": "source-register"
+        },
+        "entity_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "module": {
+          "type": "module",
+          "required": true
+        },
+        "locator": {
+          "type": "string",
+          "required": true
+        },
+        "excerpt": {
+          "type": "string",
+          "required": true
+        },
+        "period_start": {
+          "type": "date",
+          "required": false
+        },
+        "period_end": {
+          "type": "date",
+          "required": false
+        },
+        "geography": {
+          "type": "string",
+          "required": false
+        },
+        "currency": {
+          "type": "string",
+          "required": false
+        },
+        "unit": {
+          "type": "string",
+          "required": false
+        },
+        "accounting_basis": {
+          "type": "string",
+          "required": false
+        },
+        "scope": {
+          "type": "enum",
+          "required": true,
+          "enum": "scope"
+        },
+        "attribute": {
+          "type": "enum",
+          "required": true,
+          "enum": "attribute"
+        },
+        "numeric": {
+          "type": "bool",
+          "required": true
+        },
+        "value": {
+          "type": "number",
+          "required": false
+        },
+        "limitations": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "numeric": "true"
+          },
+          "required": [
+            "period_start",
+            "period_end",
+            "geography",
+            "currency",
+            "unit",
+            "accounting_basis",
+            "value"
+          ]
+        }
+      ]
+    },
+    "claim-register": {
+      "primary_key": "claim_id",
+      "fields": {
+        "claim_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "C-[0-9]{4,}"
+        },
+        "statement": {
+          "type": "string",
+          "required": true
+        },
+        "label": {
+          "type": "enum",
+          "required": true,
+          "enum": "label"
+        },
+        "entity_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "module": {
+          "type": "module",
+          "required": true
+        },
+        "materiality": {
+          "type": "enum",
+          "required": true,
+          "enum": "materiality"
+        },
+        "verification": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "pending",
+            "verified",
+            "disputed",
+            "unsupported"
+          ]
+        },
+        "confidence": {
+          "type": "enum",
+          "required": true,
+          "enum": "confidence"
+        },
+        "attribute": {
+          "type": "enum",
+          "required": true,
+          "enum": "attribute"
+        },
+        "numeric": {
+          "type": "bool",
+          "required": true
+        },
+        "scope": {
+          "type": "enum",
+          "required": true,
+          "enum": "scope"
+        },
+        "assumptions": {
+          "type": "string",
+          "required": false
+        },
+        "counterevidence": {
+          "type": "string",
+          "required": false
+        },
+        "unresolved": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "label": "【推断】"
+          },
+          "required": [
+            "assumptions"
+          ]
+        },
+        {
+          "if": {
+            "label": "【判断】"
+          },
+          "required": [
+            "assumptions"
+          ]
+        }
+      ]
+    },
+    "claim-evidence": {
+      "primary_key": "link_id",
+      "fields": {
+        "link_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "CE-[0-9]{4,}"
+        },
+        "claim_id": {
+          "type": "id",
+          "required": true,
+          "ref": "claim-register"
+        },
+        "evidence_id": {
+          "type": "id",
+          "required": true,
+          "ref": "evidence-ledger"
+        },
+        "relation": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "supports",
+            "contradicts",
+            "context"
+          ]
+        },
+        "applicable_scope": {
+          "type": "string",
+          "required": true
+        },
+        "bridge": {
+          "type": "string",
+          "required": false
+        },
+        "limitations": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": []
+    },
+    "research-register": {
+      "primary_key": "research_id",
+      "fields": {
+        "research_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "R-[0-9]{4,}"
+        },
+        "source_id": {
+          "type": "id",
+          "required": true,
+          "ref": "source-register"
+        },
+        "publisher": {
+          "type": "string",
+          "required": true
+        },
+        "author": {
+          "type": "string",
+          "required": false
+        },
+        "title": {
+          "type": "string",
+          "required": true
+        },
+        "categories": {
+          "type": "list",
+          "required": true,
+          "item_enum": "category"
+        },
+        "category_relevance": {
+          "type": "object",
+          "required": true
+        },
+        "target_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "coverage_entity_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "security_code": {
+          "type": "string",
+          "required": false
+        },
+        "report_date": {
+          "type": "date",
+          "required": true
+        },
+        "version": {
+          "type": "string",
+          "required": true
+        },
+        "supersedes_id": {
+          "type": "id",
+          "required": false,
+          "ref": "research-register"
+        },
+        "data_cutoff": {
+          "type": "date",
+          "required": false
+        },
+        "forecast_periods": {
+          "type": "list",
+          "required": false
+        },
+        "valuation_date": {
+          "type": "date",
+          "required": false
+        },
+        "access_status": {
+          "type": "enum",
+          "required": true,
+          "enum": "access"
+        },
+        "reading_status": {
+          "type": "enum",
+          "required": true,
+          "enum": "reading"
+        },
+        "relevant_sections": {
+          "type": "string",
+          "required": false
+        },
+        "interests": {
+          "type": "string",
+          "required": false
+        },
+        "key_views": {
+          "type": "string",
+          "required": false
+        },
+        "assumptions": {
+          "type": "string",
+          "required": false
+        },
+        "forecast_changes": {
+          "type": "string",
+          "required": false
+        },
+        "valuation": {
+          "type": "string",
+          "required": false
+        },
+        "risks": {
+          "type": "string",
+          "required": false
+        },
+        "decision_impact": {
+          "type": "string",
+          "required": false
+        },
+        "event_dates": {
+          "type": "dates",
+          "required": false
+        },
+        "relevance": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "direct",
+            "limited",
+            "excluded"
+          ]
+        },
+        "exclusion_reason": {
+          "type": "string",
+          "required": false
+        },
+        "limitations": {
+          "type": "string",
+          "required": false
+        },
+        "latest_discovered_for": {
+          "type": "ids",
+          "required": false,
+          "ref": "research-coverage"
+        },
+        "latest_fulltext_for": {
+          "type": "ids",
+          "required": false,
+          "ref": "research-coverage"
+        },
+        "latest_read_for": {
+          "type": "ids",
+          "required": false,
+          "ref": "research-coverage"
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "reading_status": "analyzed"
+          },
+          "required": [
+            "relevant_sections",
+            "interests",
+            "key_views",
+            "assumptions",
+            "risks",
+            "decision_impact"
+          ]
+        },
+        {
+          "if": {
+            "relevance": "excluded"
+          },
+          "required": [
+            "exclusion_reason"
+          ]
+        }
+      ]
+    },
+    "research-coverage": {
+      "primary_key": "coverage_id",
+      "fields": {
+        "coverage_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "RC-[0-9]{4,}"
+        },
+        "target_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "research_entity_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "category": {
+          "type": "enum",
+          "required": true,
+          "enum": "category"
+        },
+        "required": {
+          "type": "bool",
+          "required": true
+        },
+        "reason": {
+          "type": "string",
+          "required": true
+        },
+        "search_status": {
+          "type": "enum",
+          "required": true,
+          "enum": "search_status"
+        },
+        "search_ids": {
+          "type": "ids",
+          "required": false,
+          "ref": "search-log"
+        },
+        "latest_discovered_id": {
+          "type": "id",
+          "required": false,
+          "ref": "research-register"
+        },
+        "latest_fulltext_id": {
+          "type": "id",
+          "required": false,
+          "ref": "research-register"
+        },
+        "latest_read_id": {
+          "type": "id",
+          "required": false,
+          "ref": "research-register"
+        },
+        "latestness_checked_at": {
+          "type": "datetime",
+          "required": false
+        },
+        "event_dates": {
+          "type": "dates",
+          "required": false
+        },
+        "event_coverage": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "pending",
+            "covered",
+            "lagging",
+            "not_applicable"
+          ]
+        },
+        "gate_status": {
+          "type": "enum",
+          "required": true,
+          "enum": "gate"
+        },
+        "gap_id": {
+          "type": "id",
+          "required": false,
+          "ref": "gap-register"
+        },
+        "limitations": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": []
+    },
+    "conflict-register": {
+      "primary_key": "conflict_id",
+      "fields": {
+        "conflict_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "F-[0-9]{4,}"
+        },
+        "claim_ids": {
+          "type": "ids",
+          "required": true,
+          "ref": "claim-register"
+        },
+        "evidence_ids": {
+          "type": "ids",
+          "required": true,
+          "ref": "evidence-ledger"
+        },
+        "left_value_scope": {
+          "type": "string",
+          "required": true
+        },
+        "right_value_scope": {
+          "type": "string",
+          "required": true
+        },
+        "analysis": {
+          "type": "string",
+          "required": true
+        },
+        "status": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "open",
+            "resolved"
+          ]
+        },
+        "accepted_reason": {
+          "type": "string",
+          "required": false
+        },
+        "decision_changing": {
+          "type": "bool",
+          "required": true
+        },
+        "decision_impact": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "status": "resolved"
+          },
+          "required": [
+            "accepted_reason"
+          ]
+        }
+      ]
+    },
+    "gap-register": {
+      "primary_key": "gap_id",
+      "fields": {
+        "gap_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "G-[0-9]{4,}"
+        },
+        "needed": {
+          "type": "string",
+          "required": true
+        },
+        "module": {
+          "type": "module",
+          "required": true
+        },
+        "entity_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "reason": {
+          "type": "enum",
+          "required": true,
+          "enum": "gap_reason"
+        },
+        "materiality": {
+          "type": "enum",
+          "required": true,
+          "enum": "materiality"
+        },
+        "affected_claims": {
+          "type": "ids",
+          "required": false,
+          "ref": "claim-register"
+        },
+        "acquisition_path": {
+          "type": "string",
+          "required": true
+        },
+        "priority": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "P0",
+            "P1",
+            "P2"
+          ]
+        },
+        "owner_role": {
+          "type": "string",
+          "required": true
+        },
+        "status": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "open",
+            "closed"
+          ]
+        },
+        "resolution": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "status": "closed"
+          },
+          "required": [
+            "resolution"
+          ]
+        }
+      ]
+    },
+    "risk-register": {
+      "primary_key": "risk_id",
+      "fields": {
+        "risk_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "K-[0-9]{4,}"
+        },
+        "description": {
+          "type": "string",
+          "required": true
+        },
+        "entity_id": {
+          "type": "id",
+          "required": true,
+          "ref": "entity-map"
+        },
+        "status": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "confirmed",
+            "lead",
+            "exposure",
+            "information_gap"
+          ]
+        },
+        "severity": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "escalate",
+            "major",
+            "ordinary"
+          ]
+        },
+        "evidence_ids": {
+          "type": "ids",
+          "required": false,
+          "ref": "evidence-ledger"
+        },
+        "impact": {
+          "type": "string",
+          "required": true
+        },
+        "likelihood": {
+          "type": "string",
+          "required": true
+        },
+        "time_horizon": {
+          "type": "string",
+          "required": true
+        },
+        "alternative_explanations": {
+          "type": "string",
+          "required": true
+        },
+        "mitigation": {
+          "type": "string",
+          "required": true
+        },
+        "residual_risk": {
+          "type": "string",
+          "required": true
+        },
+        "closure_condition": {
+          "type": "string",
+          "required": true
+        },
+        "owner_role": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "status": "confirmed"
+          },
+          "required": [
+            "evidence_ids"
+          ]
+        }
+      ]
+    },
+    "scorecard": {
+      "primary_key": "score_id",
+      "fields": {
+        "score_id": {
+          "type": "id",
+          "required": true,
+          "pattern": "SC-[0-9]{4,}"
+        },
+        "purpose": {
+          "type": "enum",
+          "required": true,
+          "enum": "purpose"
+        },
+        "dimension": {
+          "type": "enum",
+          "required": true,
+          "enum": "dimension"
+        },
+        "weight": {
+          "type": "number",
+          "required": true,
+          "minimum": 0
+        },
+        "applicability": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "applicable",
+            "not_applicable"
+          ]
+        },
+        "score": {
+          "type": "number",
+          "required": false,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "anchor": {
+          "type": "string",
+          "required": false
+        },
+        "evidence_ids": {
+          "type": "ids",
+          "required": false,
+          "ref": "evidence-ledger"
+        },
+        "confidence": {
+          "type": "enum",
+          "required": true,
+          "enum": "confidence"
+        },
+        "coverage_status": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "sufficient",
+            "missing"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "conditions": [
+        {
+          "if": {
+            "applicability": "not_applicable"
+          },
+          "required": [
+            "reason"
+          ]
+        },
+        {
+          "if": {
+            "coverage_status": "sufficient"
+          },
+          "required": [
+            "score",
+            "anchor",
+            "evidence_ids"
+          ]
+        }
+      ]
+    }
+  },
+  "research": {
+    "base_categories": [
+      "official_annual",
+      "official_interim",
+      "company_update",
+      "company_deep",
+      "industry"
+    ],
+    "event_categories": [
+      "official_event",
+      "event_update"
+    ],
+    "peer_category": "peer",
+    "category_names": {
+      "official_annual": "年度官方披露",
+      "official_interim": "最新中期/季度官方披露",
+      "official_event": "重大事件公告及更正",
+      "company_update": "公司跟踪/业绩点评",
+      "company_deep": "公司深度/首次覆盖/业务专题",
+      "industry": "行业/细分行业研究",
+      "event_update": "事件后补充研究",
+      "peer": "可比/上下游研究"
+    },
+    "control_relations": [
+      "control",
+      "brand_of",
+      "branch_of"
+    ],
+    "status_names": {
+      "complete": "完成",
+      "partial": "部分完成",
+      "incomplete": "未完成",
+      "not_applicable": "不适用"
+    }
+  },
+  "scoring": {
+    "minimum_coverage": 0.8,
+    "threshold_note": "可配置的内部管理门槛，不是统计置信度或行业标准。",
+    "purposes": {
+      "investment": {
+        "label": "投资",
+        "weights": {
+          "business": 20,
+          "growth": 20,
+          "governance": 10,
+          "financial": 20,
+          "compliance": 10,
+          "technology": 10,
+          "operations": 5,
+          "deal": 5
+        },
+        "critical_dimensions": [
+          "business",
+          "financial",
+          "compliance"
+        ],
+        "anchors": {
+          "business": {
+            "1": "已核实付费需求与单位经济存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "付费需求与单位经济仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "付费需求与单位经济满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "付费需求与单位经济持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "付费需求与单位经济在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "growth": {
+            "1": "已核实可达市场和留存增长存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "可达市场和留存增长仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "可达市场和留存增长满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "可达市场和留存增长持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "可达市场和留存增长在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "governance": {
+            "1": "已核实关键人及投资人权利存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "关键人及投资人权利仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "关键人及投资人权利满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "关键人及投资人权利持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "关键人及投资人权利在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "financial": {
+            "1": "已核实盈利质量与现金续航存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "盈利质量与现金续航仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "盈利质量与现金续航满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "盈利质量与现金续航持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "盈利质量与现金续航在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "compliance": {
+            "1": "已核实准入与交易可行性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "准入与交易可行性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "准入与交易可行性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "准入与交易可行性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "准入与交易可行性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "technology": {
+            "1": "已核实技术权利及替代成本存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "技术权利及替代成本仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "技术权利及替代成本满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "技术权利及替代成本持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "技术权利及替代成本在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "operations": {
+            "1": "已核实交付扩张能力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "交付扩张能力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "交付扩张能力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "交付扩张能力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "交付扩张能力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "deal": {
+            "1": "已核实估值和下行保护存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "估值和下行保护仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "估值和下行保护满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "估值和下行保护持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "估值和下行保护在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          }
+        }
+      },
+      "acquisition": {
+        "label": "并购",
+        "weights": {
+          "business": 15,
+          "growth": 10,
+          "governance": 10,
+          "financial": 25,
+          "compliance": 10,
+          "technology": 5,
+          "operations": 10,
+          "deal": 15
+        },
+        "critical_dimensions": [
+          "financial",
+          "compliance",
+          "deal"
+        ],
+        "anchors": {
+          "business": {
+            "1": "已核实独立业务与协同前提存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "独立业务与协同前提仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "独立业务与协同前提满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "独立业务与协同前提持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "独立业务与协同前提在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "growth": {
+            "1": "已核实存量增长可持续性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "存量增长可持续性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "存量增长可持续性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "存量增长可持续性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "存量增长可持续性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "governance": {
+            "1": "已核实控制权与关键人留任存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "控制权与关键人留任仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "控制权与关键人留任满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "控制权与关键人留任持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "控制权与关键人留任在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "financial": {
+            "1": "已核实净债务和营运资本存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "净债务和营运资本仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "净债务和营运资本满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "净债务和营运资本持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "净债务和营运资本在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "compliance": {
+            "1": "已核实权属及交割条件存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "权属及交割条件仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "权属及交割条件满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "权属及交割条件持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "权属及交割条件在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "technology": {
+            "1": "已核实技术移交与许可存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "技术移交与许可仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "技术移交与许可满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "技术移交与许可持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "技术移交与许可在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "operations": {
+            "1": "已核实分离和整合能力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "分离和整合能力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "分离和整合能力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "分离和整合能力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "分离和整合能力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "deal": {
+            "1": "已核实价格调整与或有对价存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "价格调整与或有对价仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "价格调整与或有对价满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "价格调整与或有对价持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "价格调整与或有对价在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          }
+        }
+      },
+      "partnership": {
+        "label": "战略/商业合作",
+        "weights": {
+          "business": 20,
+          "growth": 5,
+          "governance": 10,
+          "financial": 15,
+          "compliance": 15,
+          "technology": 15,
+          "operations": 20,
+          "deal": 0
+        },
+        "critical_dimensions": [
+          "business",
+          "operations",
+          "compliance"
+        ],
+        "anchors": {
+          "business": {
+            "1": "已核实双方资源与目标匹配存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "双方资源与目标匹配仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "双方资源与目标匹配满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "双方资源与目标匹配持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "双方资源与目标匹配在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "growth": {
+            "1": "已核实合作扩展机会存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "合作扩展机会仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "合作扩展机会满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "合作扩展机会持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "合作扩展机会在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "governance": {
+            "1": "已核实决策与冲突机制存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "决策与冲突机制仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "决策与冲突机制满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "决策与冲突机制持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "决策与冲突机制在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "financial": {
+            "1": "已核实合作期资金承受能力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "合作期资金承受能力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "合作期资金承受能力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "合作期资金承受能力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "合作期资金承受能力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "compliance": {
+            "1": "已核实合同和数据使用权限存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "合同和数据使用权限仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "合同和数据使用权限满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "合同和数据使用权限持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "合同和数据使用权限在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "technology": {
+            "1": "已核实接口能力及IP边界存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "接口能力及IP边界仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "接口能力及IP边界满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "接口能力及IP边界持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "接口能力及IP边界在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "operations": {
+            "1": "已核实交付与服务能力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "交付与服务能力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "交付与服务能力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "交付与服务能力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "交付与服务能力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "deal": {
+            "1": "已核实退出与责任分担存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "退出与责任分担仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "退出与责任分担满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "退出与责任分担持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "退出与责任分担在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          }
+        }
+      },
+      "credit": {
+        "label": "客户授信",
+        "weights": {
+          "business": 10,
+          "growth": 0,
+          "governance": 10,
+          "financial": 40,
+          "compliance": 20,
+          "technology": 0,
+          "operations": 15,
+          "deal": 5
+        },
+        "critical_dimensions": [
+          "financial",
+          "compliance"
+        ],
+        "anchors": {
+          "business": {
+            "1": "已核实付款主体业务稳定性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "付款主体业务稳定性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "付款主体业务稳定性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "付款主体业务稳定性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "付款主体业务稳定性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "growth": {
+            "1": "已核实可持续订单增长存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "可持续订单增长仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "可持续订单增长满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "可持续订单增长持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "可持续订单增长在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "governance": {
+            "1": "已核实授权和信用管理存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "授权和信用管理仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "授权和信用管理满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "授权和信用管理持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "授权和信用管理在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "financial": {
+            "1": "已核实可用现金与到期偿债存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "可用现金与到期偿债仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "可用现金与到期偿债满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "可用现金与到期偿债持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "可用现金与到期偿债在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "compliance": {
+            "1": "已核实增信可执行性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "增信可执行性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "增信可执行性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "增信可执行性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "增信可执行性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "technology": {
+            "1": "已核实交易系统可核验性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "交易系统可核验性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "交易系统可核验性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "交易系统可核验性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "交易系统可核验性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "operations": {
+            "1": "已核实验收和历史回款存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "验收和历史回款仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "验收和历史回款满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "验收和历史回款持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "验收和历史回款在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "deal": {
+            "1": "已核实账期与追偿安排存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "账期与追偿安排仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "账期与追偿安排满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "账期与追偿安排持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "账期与追偿安排在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          }
+        }
+      },
+      "supplier": {
+        "label": "供应商准入",
+        "weights": {
+          "business": 10,
+          "growth": 0,
+          "governance": 10,
+          "financial": 20,
+          "compliance": 15,
+          "technology": 10,
+          "operations": 35,
+          "deal": 0
+        },
+        "critical_dimensions": [
+          "operations",
+          "financial",
+          "compliance"
+        ],
+        "anchors": {
+          "business": {
+            "1": "已核实采购适配及替代性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "采购适配及替代性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "采购适配及替代性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "采购适配及替代性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "采购适配及替代性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "growth": {
+            "1": "已核实扩产需求可兑现性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "扩产需求可兑现性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "扩产需求可兑现性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "扩产需求可兑现性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "扩产需求可兑现性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "governance": {
+            "1": "已核实质量和供应管理存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "质量和供应管理仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "质量和供应管理满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "质量和供应管理持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "质量和供应管理在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "financial": {
+            "1": "已核实持续经营及预付承受能力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "持续经营及预付承受能力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "持续经营及预付承受能力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "持续经营及预付承受能力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "持续经营及预付承受能力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "compliance": {
+            "1": "已核实许可与采购合规存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "许可与采购合规仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "许可与采购合规满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "许可与采购合规持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "许可与采购合规在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "technology": {
+            "1": "已核实技术质量及依赖存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "技术质量及依赖仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "技术质量及依赖满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "技术质量及依赖持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "技术质量及依赖在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "operations": {
+            "1": "已核实产能质量交付连续性存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "产能质量交付连续性仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "产能质量交付连续性满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "产能质量交付连续性持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "产能质量交付连续性在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "deal": {
+            "1": "已核实合同和付款保护存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "合同和付款保护仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "合同和付款保护满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "合同和付款保护持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "合同和付款保护在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          }
+        }
+      },
+      "competitor": {
+        "label": "竞品研究",
+        "weights": {
+          "business": 25,
+          "growth": 20,
+          "governance": 5,
+          "financial": 15,
+          "compliance": 5,
+          "technology": 20,
+          "operations": 10,
+          "deal": 0
+        },
+        "critical_dimensions": [
+          "business",
+          "technology"
+        ],
+        "anchors": {
+          "business": {
+            "1": "已核实产品客户和定价竞争力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "产品客户和定价竞争力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "产品客户和定价竞争力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "产品客户和定价竞争力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "产品客户和定价竞争力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "growth": {
+            "1": "已核实增长来源与约束存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "增长来源与约束仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "增长来源与约束满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "增长来源与约束持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "增长来源与约束在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "governance": {
+            "1": "已核实组织执行能力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "组织执行能力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "组织执行能力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "组织执行能力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "组织执行能力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "financial": {
+            "1": "已核实经营与投入持续能力存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "经营与投入持续能力仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "经营与投入持续能力满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "经营与投入持续能力持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "经营与投入持续能力在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "compliance": {
+            "1": "已核实准入条件与监管暴露存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "准入条件与监管暴露仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "准入条件与监管暴露满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "准入条件与监管暴露持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "准入条件与监管暴露在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "technology": {
+            "1": "已核实可验证产品效果与壁垒存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "可验证产品效果与壁垒仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "可验证产品效果与壁垒满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "可验证产品效果与壁垒持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "可验证产品效果与壁垒在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "operations": {
+            "1": "已核实供给交付和渠道覆盖存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "供给交付和渠道覆盖仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "供给交付和渠道覆盖满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "供给交付和渠道覆盖持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "供给交付和渠道覆盖在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          },
+          "deal": {
+            "1": "已核实商业应对资源配置存在根本缺陷，当前条件不能满足本次目的。",
+            "2": "商业应对资源配置仅部分满足要求，已观察到重大短板，整改尚无验证结果。",
+            "3": "商业应对资源配置满足已定义的基本条件，至少一个完整业务周期可核对，仍有明确限制。",
+            "4": "商业应对资源配置持续满足条件，跨期或独立材料验证改善，压力情景下仍可执行。",
+            "5": "商业应对资源配置在统一口径下优于明确可比基准，优势及抗压表现有独立证据且关键反证已处理。"
+          }
+        }
+      }
+    }
+  },
+  "semantic_rules": [
+    "来源访问完整度不代表声明真实性",
+    "集团定量数据用于子公司必须有可核验桥接，且标为推断",
+    "报告获取与阅读状态分别记录",
+    "来源同源组只用于识别独立性，不能自动产生置信度",
+    "历史研究隔离事后资料",
+    "覆盖表中not_found不创建虚构报告"
+  ]
+}

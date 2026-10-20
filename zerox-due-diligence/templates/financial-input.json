@@ -1,0 +1,37 @@
+{
+  "synthetic": false,
+  "entity_id": "",
+  "scope": "standalone",
+  "period_start": null,
+  "period_end": null,
+  "days": null,
+  "currency": "",
+  "unit": "",
+  "accounting_basis": "",
+  "attribute": "actual",
+  "audited": false,
+  "source_ids": [],
+  "values": {},
+  "input_evidence": {},
+  "prior": null,
+  "options": {
+    "allow_end_balance": false,
+    "allow_revenue_proxy": false,
+    "allow_cost_proxy": false,
+    "quick_deductions": [
+      "inventory",
+      "prepayments"
+    ],
+    "near_zero_profit": 0.01,
+    "capex_sign": "positive_outflow"
+  },
+  "cash_burn_basis": {
+    "basis": "",
+    "cash_excludes_restricted": false,
+    "includes_capex": false,
+    "includes_debt_service": false,
+    "includes_committed_spend": false,
+    "limitations": ""
+  },
+  "thresholds": []
+}

@@ -1,0 +1,7 @@
+# 研究项目含用户资料，应存放在技能包之外。
+/workspaces/
+/outputs/
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/

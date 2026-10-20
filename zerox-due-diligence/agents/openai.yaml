@@ -1,0 +1,4 @@
+interface:
+  display_name: "ZeroX 公司尽调"
+  short_description: "围绕公司与交易决策开展可追溯尽调，核验上市关联、研报覆盖、证据缺口和风险。"
+  default_prompt: "使用 $zerox-due-diligence 对指定公司开展尽调，先确认主体、目的和基准日，再交付证据、研报覆盖、风险与下一步。"
