@@ -6,9 +6,21 @@ from pathlib import Path
 from common import (InputError, cli, emit, finite, indices, iso_time, load_json, read_project,
                     research_errors, research_gate, semantic_errors, structural_errors)
 from scoring import project_score
+from report_model import READER_TOPICS
 
 
 MANUAL_REVIEW = [
+    "核对目标官网身份、相关内页和实际读取记录；无法访问/无官网保留原因，不能只引用媒体或只读首页代替。",
+    "有公开人物资料时独立介绍创始人/合伙人；公司介绍以有据时间线说明发展与转折，不把融资公告、计划或前任写成已完成事实/现任。",
+    "逐项解释营收规模、营收结构、毛利率和净利率；核对合并范围、期间、GMV与收入区别，未知也保留在正文。",
+    "营销需说明渠道、内容/投放、转化与复购及效果边界；主要竞品需说明选择依据并同口径比较，不能虚构矩阵分数。",
+    "企业图片需核对实际对象、日期、来源、使用范围和文字可读性；Logo/截图/门店图不代表独立核验或合作背书。",
+    "只读主报告、不看底稿，逐项复述公司身份、发展团队、产品、客户市场、交易过程、自营外部角色、收入成本及差异化，并定位支持段落。",
+    "将无法复述的原因区分为正文遗漏、解释含糊、资料仅为单方/二手描述和真正未知；前两类修正文，后两类写明范围与决策影响。",
+    "业务过程图须讲公司如何经营，各环节资料支持/公司口径/分析示意/待核实有区分；合作建议流程不能替代经营解释。",
+    "确认正文围绕决策阅读，检索日志、覆盖表、模块适用和完整核验表均已移到独立底稿。",
+    "逐图核对原始数值、主体、单位、期间、估算/预测和图形比例；数据表与图一致，缺失未补零。",
+    "实际预览桌面、移动和打印；目录与引用可用，标签不裁切，关键限制没有被折叠隐藏。",
     "逐句检查证据是否真正支持陈述，权威原件是否仅覆盖登记、自述或审计范围。",
     "复核实体、合并/单体/分部、币种、单位、期间与实际/预测；桥接说明是否合理。",
     "核对转载和共同原件是否已按同源组归并；独立观点不等于独立事实证据。",
@@ -39,6 +51,13 @@ def check(project=None, report=None, mode="draft"):
         errors.extend(research_errors(cfg, data))
     idx = indices(data)
     gate = research_gate(cfg, data)
+    complete = mode == "completed" or cfg["report_status"] == "complete" or cfg["declared_complete"]
+    html_report = bool(report and (Path(report).suffix.lower() == ".html" or text.lstrip().lower().startswith("<!doctype html")))
+    if html_report:
+        from check_html_report import inspect_html
+        text, html_errors, html_warnings = inspect_html(report, cfg, data, require_current=complete)
+        errors.extend(html_errors)
+        warnings.extend(html_warnings)
     try:
         score = project_score(cfg, data)
         if cfg["published_score"] is not None:
@@ -51,7 +70,6 @@ def check(project=None, report=None, mode="draft"):
         score = {"status": "invalid"}
     if cfg["identity_status"] == "resolved" and idx["entity-map"].get(cfg["target_id"], {}).get("identity_status") != "resolved":
         errors.append("配置已锁定主体与台账身份状态不一致")
-    complete = mode == "completed" or cfg["report_status"] == "complete" or cfg["declared_complete"]
     if complete:
         if not report:
             errors.append("完成态检查必须提供实际报告文件")
@@ -69,6 +87,12 @@ def check(project=None, report=None, mode="draft"):
             errors.append("正式完成报告残留未定制字段或缺少执行摘要")
         if "未提供模块分析" in text:
             errors.append("正式完成报告仍缺适用模块分析")
+        if html_report:
+            for module, scope in cfg["module_scope"].items():
+                if scope["status"] == "applicable":
+                    files = list((Path(project) / "modules").glob(f"{module}-*.md"))
+                    if len(files) != 1 or not files[0].read_text(encoding="utf-8").strip():
+                        errors.append(f"正式完成报告缺少唯一非空的模块 {module} 分析底稿")
     for action in cfg["completed_actions"]:
         if not isinstance(action, dict) or not action.get("action") or action.get("status") not in ("completed", "planned"):
             errors.append("completed_actions 格式错误；需 action/status/evidence_ids/output_locator")
@@ -88,14 +112,17 @@ def check(project=None, report=None, mode="draft"):
         for token in re.findall(r"\[(E-[^\]\s]+)\]", text):
             if not re.fullmatch(r"E-\d{4,}", token):
                 errors.append(f"报告证据 ID 格式错误：{token}")
-        for section in ("元信息", "执行摘要", "研究完成范围", "研报覆盖", "信息缺口", "下一步", "证据附录"):
-            if not re.search(rf"^#{{1,6}}\s+.*{section}", text, re.MULTILINE):
-                errors.append(f"报告缺少结构章节：{section}")
+        if not html_report:
+            for section in ("元信息", "执行摘要", "研究完成范围", "研报覆盖", "信息缺口", "下一步", "证据附录"):
+                if not re.search(rf"^#{{1,6}}\s+.*{section}", text, re.MULTILINE):
+                    errors.append(f"底稿缺少结构章节：{section}")
         if gate not in ("complete", "not_applicable") and re.search(r"(?m)^(?:研报(?:研究|门槛|任务)?|研究任务)[：: ]+(?:全部完成|已完成|完成)\s*$", text):
             errors.append("正文宣称研报或全部研究完成，但实际门槛未满足")
         if re.search(r"(?m)^综合评分[：: ]+\d", text) and score.get("overall_score") is None:
             errors.append("正文发布综合评分但证据门槛未满足")
         for n, line in enumerate(text.splitlines(), 1):
+            if html_report:
+                break
             stripped = line.strip()
             if not stripped or stripped.startswith(("#", "|", "```", "-", ">")):
                 continue
@@ -132,6 +159,9 @@ def check(project=None, report=None, mode="draft"):
             errors.append(f"财务输入：{exc}")
     return {"status": "invalid" if errors else "structure_passed", "errors": errors, "warnings": warnings,
             "research_gate": gate, "score": score, "manual_review": MANUAL_REVIEW,
+            "reading_review": {"status": "requires_independent_reading",
+                               "questions": READER_TOPICS,
+                               "record": "单独记录各问题的复述、正文定位与未解决问题；机器运行不会自动将理解验收标为通过。"},
             "meaning": "此结果仅为结构和显式状态校验；不证明财务真实、报告充分或决策正确。"}
 
 

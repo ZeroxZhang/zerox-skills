@@ -1,0 +1,1049 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZeroX 尽调 HTML 阅读稿内容契约",
+  "description": "1.2 是新 HTML 报告内容契约。运行时额外验证 11 个解释主题各一次、业务图及未知例外、公司时间线与 identity 同章、people 与 identity 分章，以及证据/主体引用、图片边界与大小等。无公司时间线仅在 history_team 为 partial/unknown 且有具体限制时允许，仍需人工核查确实不足两个有依据事件；缺 people 给警告。历史 1.0/1.1 HTML 仅兼容草稿检查，不可新建或通过完成态。结构有效不证明事实正确或解释充分。",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": "1.2"
+    },
+    "title": {
+      "$ref": "#/$defs/text"
+    },
+    "subtitle": {
+      "$ref": "#/$defs/text"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "zh-CN",
+        "en"
+      ]
+    },
+    "summary": {
+      "$ref": "#/$defs/text"
+    },
+    "scope_note": {
+      "$ref": "#/$defs/text"
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    }
+  },
+  "required": [
+    "version",
+    "title",
+    "subtitle",
+    "language",
+    "summary",
+    "scope_note",
+    "sections"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![\\s\\S]*(?:\\{\\{|\\}\\}))(?=[\\s\\S]*\\S)[\\s\\S]+$",
+      "description": "非空且非纯空白文字；最终阅读稿不得保留 {{...}} 模板占位符。文字内可用 [E-0001] 引用，存在性由项目检查器验证。"
+    },
+    "entityId": {
+      "type": "string",
+      "pattern": "^(?:ENT-[0-9]{4,}|industry)$",
+      "description": "项目 entity-map.csv 中的实体 ID；行业数据使用 industry。"
+    },
+    "evidenceIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^E-[0-9]{4,}$"
+      },
+      "description": "项目 evidence-ledger.csv 中真实存在的证据 ID；JSON Schema 不验证跨表存在性或事实支持关系。"
+    },
+    "dataKind": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "estimate",
+        "forecast",
+        "company_claim"
+      ],
+      "description": "actual 历史数据；estimate 估算；forecast 预测；company_claim 企业自述。"
+    },
+    "chartKind": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "estimate",
+        "forecast",
+        "company_claim",
+        "mixed"
+      ],
+      "description": "mixed 表示图内含不同数据属性，此时每个点必须显式给出独立 kind。"
+    },
+    "textBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "text"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "bulletsBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "bullets"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "calloutBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "callout"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "tableBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "table"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/text"
+            }
+          }
+        },
+        "note": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "columns",
+        "rows",
+        "note"
+      ],
+      "additionalProperties": false,
+      "description": "所有单元格为非空字符串；每行长度必须与 columns 一致，行列等长由运行时校验。"
+    },
+    "metric": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "#/$defs/text"
+        },
+        "period": {
+          "$ref": "#/$defs/text"
+        },
+        "entity_id": {
+          "$ref": "#/$defs/entityId"
+        },
+        "kind": {
+          "$ref": "#/$defs/dataKind"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "note": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "required": [
+        "label",
+        "value",
+        "unit",
+        "period",
+        "entity_id",
+        "kind",
+        "evidence_ids",
+        "note"
+      ],
+      "additionalProperties": false
+    },
+    "metricsBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "metrics"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "chartPoint": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "kind": {
+          "$ref": "#/$defs/dataKind"
+        },
+        "period": {
+          "$ref": "#/$defs/text"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "additionalProperties": false,
+      "description": "缺失数值用 null，不能补零。未填写 kind、period、evidence_ids 时继承图级字段；同图标签必须唯一。"
+    },
+    "processItem": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/optionalEvidenceIds"
+        },
+        "basis": {
+          "type": "string",
+          "enum": [
+            "evidence",
+            "company_claim",
+            "inference",
+            "unknown"
+          ],
+          "description": "环节依据：证据直接支持、公司自述、基于证据的推断或未知。推断须在正文说明推理边界，未知须说明缺口，不能写成确定事实。"
+        }
+      },
+      "required": [
+        "title",
+        "text",
+        "evidence_ids"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis": {
+                "const": "unknown"
+              }
+            },
+            "required": [
+              "basis"
+            ]
+          },
+          "then": {},
+          "else": {
+            "properties": {
+              "evidence_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "timelineItem": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "date": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "planned"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "text",
+        "evidence_ids",
+        "date",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "processBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "process"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/processItem"
+          }
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "business_model",
+            "recommendation",
+            "other"
+          ],
+          "description": "business_model 解释目标公司真实业务运转；recommendation 是研究者建议，两者不能互代。"
+        },
+        "ordering": {
+          "type": "string",
+          "enum": [
+            "sequence",
+            "conceptual"
+          ],
+          "default": "sequence",
+          "description": "sequence 按已核实的业务先后顺序展示；conceptual 仅展示环节关联，不显示顺序编号或方向箭头。省略时为 sequence 以兼容历史内容。此字段控制图示表达，不验证交易先后关系是否真实。"
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "items"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "business_model"
+              }
+            },
+            "required": [
+              "purpose"
+            ]
+          },
+          "then": {
+            "properties": {
+              "items": {
+                "minItems": 2,
+                "items": {
+                  "required": [
+                    "basis"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "description": "业务运转图至少两个环节，每个环节标明依据；顺序已确认时使用 sequence，未确认先后关系时使用 conceptual 关联图。其他流程可省略 purpose 和 basis；只有明确 basis=unknown 的环节可以没有引用。"
+    },
+    "timelineBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "timeline"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/timelineItem"
+          }
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "company_history",
+            "other"
+          ],
+          "description": "company_history 用于公司发展沿革，必须与 identity 解释同章；其他时间线不替代公司历史。"
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "items"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "company_history"
+              }
+            },
+            "required": [
+              "purpose"
+            ]
+          },
+          "then": {
+            "properties": {
+              "items": {
+                "minItems": 2
+              }
+            }
+          }
+        }
+      ],
+      "description": "公司时间线至少两个有证据和日期的事件，保留实际日期精度，计划与已发生分开。不能为了凑数量编造日期、将注册时间直接当品牌创立时间，或拿行业事件替代公司沿革。"
+    },
+    "chartBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "chart"
+        },
+        "chart_type": {
+          "type": "string",
+          "enum": [
+            "bar",
+            "line",
+            "donut"
+          ]
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "unit": {
+          "$ref": "#/$defs/text"
+        },
+        "period": {
+          "$ref": "#/$defs/text"
+        },
+        "entity_id": {
+          "$ref": "#/$defs/entityId"
+        },
+        "kind": {
+          "$ref": "#/$defs/chartKind"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        },
+        "note": {
+          "$ref": "#/$defs/text"
+        },
+        "points": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 24,
+          "items": {
+            "$ref": "#/$defs/chartPoint"
+          },
+          "contains": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "value"
+            ]
+          },
+          "minContains": 2
+        }
+      },
+      "required": [
+        "type",
+        "chart_type",
+        "title",
+        "unit",
+        "period",
+        "entity_id",
+        "kind",
+        "evidence_ids",
+        "note",
+        "points"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "mixed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "points": {
+                "items": {
+                  "required": [
+                    "kind"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "chart_type": {
+                "const": "donut"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "points": {
+                "maxItems": 6,
+                "items": {
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  }
+                },
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    }
+                  },
+                  "required": [
+                    "value"
+                  ]
+                },
+                "minContains": 1
+              }
+            }
+          }
+        }
+      ],
+      "description": "至少两个已知数值；bar/line 允许缺失点。donut 不允许负值或缺失，最多六项且总量须为正。同图标签唯一、预测证据不能作历史数据等约束由运行时校验。"
+    },
+    "block": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textBlock"
+        },
+        {
+          "$ref": "#/$defs/explanationBlock"
+        },
+        {
+          "$ref": "#/$defs/bulletsBlock"
+        },
+        {
+          "$ref": "#/$defs/calloutBlock"
+        },
+        {
+          "$ref": "#/$defs/tableBlock"
+        },
+        {
+          "$ref": "#/$defs/metricsBlock"
+        },
+        {
+          "$ref": "#/$defs/chartBlock"
+        },
+        {
+          "$ref": "#/$defs/timelineBlock"
+        },
+        {
+          "$ref": "#/$defs/processBlock"
+        },
+        {
+          "$ref": "#/$defs/peopleBlock"
+        },
+        {
+          "$ref": "#/$defs/imageBlock"
+        },
+        {
+          "$ref": "#/$defs/matrixBlock"
+        }
+      ]
+    },
+    "section": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(?!(?:chart-|ref-|topic-))[a-z][a-z0-9-]*$",
+          "not": {
+            "enum": [
+              "main",
+              "overview",
+              "sources",
+              "evidence",
+              "report-data",
+              "toc-toggle"
+            ]
+          },
+          "description": "章节 ID 必须在全文唯一，不得使用渲染器保留 ID 或 chart-/ref-/topic- 前缀。"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        },
+        "blocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/block"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "blocks"
+      ],
+      "additionalProperties": false,
+      "description": "章节标题和数量按读者问题调整；11 个 explanation 主题必须各出现一次，可在适当章节中自由编排。先让读者理解公司和业务，再展开增长、风险与决策。过程性标题由运行时拒绝，完整过程记录进入独立底稿。 公司时间线与 identity 同章；people 独立于 identity 所在章节。跨章节位置由运行时检查。"
+    },
+    "optionalText": {
+      "type": "string",
+      "pattern": "^(?![\\s\\S]*(?:\\{\\{|\\}\\}))[\\s\\S]*$",
+      "description": "允许空字符串，但不允许未替换的模板占位符。"
+    },
+    "optionalEvidenceIds": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "pattern": "^E-[0-9]{4,}$"
+      },
+      "description": "仅在允许未知的内容块中可为空；非空 ID 仍必须在当前项目证据台账中真实存在。"
+    },
+    "explanationBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "explanation"
+        },
+        "topic": {
+          "type": "string",
+          "enum": [
+            "identity",
+            "history_team",
+            "offering",
+            "customers_markets",
+            "transaction_flow",
+            "operating_model",
+            "revenue_costs",
+            "differentiation",
+            "financial_performance",
+            "marketing",
+            "competition"
+          ]
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "supported",
+            "partial",
+            "unknown"
+          ]
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/optionalEvidenceIds"
+        },
+        "limitations": {
+          "$ref": "#/$defs/optionalText"
+        }
+      },
+      "required": [
+        "type",
+        "topic",
+        "title",
+        "text",
+        "status",
+        "evidence_ids",
+        "limitations"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "supported",
+                  "partial"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "partial",
+                  "unknown"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "limitations": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      ],
+      "description": "普通小标题和连贯正文。identity 公司身份与范围；history_team 起源、沿革与核心团队；offering 产品及解决的需求；customers_markets 客户、市场与渠道；transaction_flow 一笔业务如何发生；operating_model 组织供给与交付分工；revenue_costs 收入、成本及现金逻辑；differentiation 差异化及局限。正文解释已有证据，limitations 说明尚未知部分及影响；status 仅用于检查，不是事实认证。 financial_performance 分别解释营收规模、营收构成、毛利率和净利率的范围、来源及缺口；marketing 解释渠道、内容投放/品牌、获客转化复购与未知数据；competition 解释主要竞品、选择依据、同口径比较及替代。"
+    },
+    "personProfile": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/text"
+        },
+        "role": {
+          "$ref": "#/$defs/text"
+        },
+        "period": {
+          "$ref": "#/$defs/text"
+        },
+        "background": {
+          "$ref": "#/$defs/text"
+        },
+        "contribution": {
+          "$ref": "#/$defs/text"
+        },
+        "limitations": {
+          "$ref": "#/$defs/optionalText"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      },
+      "required": [
+        "name",
+        "role",
+        "period",
+        "background",
+        "contribution",
+        "limitations",
+        "evidence_ids"
+      ],
+      "additionalProperties": false,
+      "description": "姓名、角色、适用期间、相关背景、对业务的具体贡献分别说明。未核实履历或贡献需如实限定；每人引用真实证据，不把职位自动写成贡献。"
+    },
+    "peopleBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "people"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "profiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/personProfile"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "profiles"
+      ],
+      "additionalProperties": false,
+      "description": "创始人、核心合伙人或团队介绍，置于与 identity 不同的独立章节。无足够资料可删除而保留未知说明，检查给警告，不能编造人名、履历或贡献。"
+    },
+    "imageBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "image"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "logo",
+            "website",
+            "product",
+            "store",
+            "people",
+            "other"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "项目根目录内真实 PNG/JPEG/WebP 文件的相对路径；禁止绝对路径、URL、父目录越界及越界符号链接。文件签名、存在性和解析后范围由运行时验证。",
+          "pattern": "^(?![\\s\\S]*(?:\\{\\{|\\}\\}))(?=[\\s\\S]*\\S)[\\s\\S]+$"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "alt": {
+          "$ref": "#/$defs/text"
+        },
+        "caption": {
+          "$ref": "#/$defs/text"
+        },
+        "source_url": {
+          "type": "string",
+          "anyOf": [
+            {
+              "const": ""
+            },
+            {
+              "pattern": "^https?://",
+              "format": "uri"
+            }
+          ],
+          "description": "有原页时填写安全 HTTP(S) 地址；本地或用户提供材料允许空字符串，须由 evidence_ids 关联原文件及来源台账，usage_note 说明提供者与使用范围。非空 URL 的安全性由运行时复核；不能填写本地路径、file URL 或运行时图像下载地址代替出处。"
+        },
+        "captured_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "format": "date",
+          "description": "本次实际取得或读取素材的日期，格式 YYYY-MM-DD；不是原图拍摄日或页面发布日期。原始内容时点未知时在 caption 中说明。"
+        },
+        "usage_note": {
+          "$ref": "#/$defs/text"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/evidenceIds"
+        }
+      },
+      "required": [
+        "type",
+        "role",
+        "path",
+        "title",
+        "alt",
+        "caption",
+        "source_url",
+        "captured_at",
+        "usage_note",
+        "evidence_ids"
+      ],
+      "additionalProperties": false,
+      "description": "内嵌为离线图片；仅 PNG/JPEG/WebP，每图不超过 5 MiB，全部图片合计不超过 15 MiB。运行时不得使用 SVG、远程图片或伪造截图。来源 SVG 可经可信渲染或浏览器截图转为位图，保留原始来源，不能重新生成冒充真实标识。大小和文件内容由运行时校验；图片证明页面或对象的可观察外观，不等于核实页面宣传、人物身份或业务实绩。"
+    },
+    "matrixCell": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "basis": {
+          "type": "string",
+          "enum": [
+            "evidence",
+            "company_claim",
+            "inference",
+            "unknown"
+          ]
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/optionalEvidenceIds"
+        }
+      },
+      "required": [
+        "text",
+        "basis",
+        "evidence_ids"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "basis": {
+                "const": "unknown"
+              }
+            }
+          },
+          "then": {},
+          "else": {
+            "properties": {
+              "evidence_ids": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "matrixRow": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/text"
+        },
+        "cells": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/matrixCell"
+          }
+        }
+      },
+      "required": [
+        "label",
+        "cells"
+      ],
+      "additionalProperties": false,
+      "description": "cells 数量必须等于列数，运行时检查；同一行保持统一比较维度与口径。"
+    },
+    "matrixBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "matrix"
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/matrixRow"
+          }
+        },
+        "note": {
+          "$ref": "#/$defs/text"
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "competition",
+            "marketing",
+            "financial",
+            "other"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "title",
+        "columns",
+        "rows",
+        "note"
+      ],
+      "additionalProperties": false,
+      "description": "逐单元格保留依据属性与引用的比较矩阵。unknown 可无引用，其他属性须有引用；推断需在文字中限定。定性矩阵不计为定量图表，也不能替代可用的同口径数值图。"
+    }
+  }
+}

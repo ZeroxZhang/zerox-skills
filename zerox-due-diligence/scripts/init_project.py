@@ -45,7 +45,7 @@ def initialize(output, target, purpose=None, depth="Standard", as_of=None, timez
     for name, rows in data.items():
         safe_write(output / f"{name}.csv", csv_text(name, rows))
     safe_write(output / "project-config.json", dumps(cfg))
-    for name in ("financial-input.json", "request-list.md", "interview-outline.md"):
+    for name in ("financial-input.json", "report-content.json", "request-list.md", "interview-outline.md"):
         shutil.copyfile(ROOT / "templates" / name, output / name)
     for folder in ("materials", "modules", "reports"):
         (output / folder).mkdir()

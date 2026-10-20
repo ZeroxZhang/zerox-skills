@@ -9,7 +9,7 @@
 
 ## 中文
 
-个人精品技能集合，也是商业专业报告套件的维护仓库。目前有 **10 个可独立调用的 Skill**：原报告套件的 3 个能力技能，以及 2026-10-14 迁入的 7 个独立技能。所有技能统一使用 `zerox-*` 名称，在本仓库继续维护。
+个人精品技能集合，也是商业专业报告套件的维护仓库。目前有 **11 个可独立调用的 Skill**：原报告套件的 3 个能力技能、2026-10-14 迁入的 7 个独立技能，以及公司尽调技能。所有技能统一使用 `zerox-*` 名称，在本仓库继续维护。
 
 原报告套件围绕 **调研取证 → 建模分析 → 论证成线 → 表达成文 → 视觉呈现 → 交付质检** 逐步建设。迁入技能保留各自的工作流，不自动参与报告编排。统一路由 `/zerox` 和其余场景流水线尚在规划，当前请直接调用下表中的技能。
 
@@ -18,6 +18,7 @@
 | 技能 | 适合做什么 | 分组 |
 |---|---|---|
 | [`zerox-deep-research`](zerox-deep-research/) | 系统研究复杂开放问题；交付决策报告、可复用数据、原始材料与过程记录，关键结论可追溯到来源 | 报告能力 |
+| [`zerox-due-diligence`](zerox-due-diligence/) | 公司尽调与业务研究；优先阅读官网，解释公司沿革、团队与业务，必答财务、营销和竞争，交付图文并茂的离线 HTML 报告与独立证据底稿 | 独立技能 |
 | [`zerox-storyline`](zerox-storyline/) | 将文档、访谈、数据和旧 PPT 重构为 SCQA 主线、完整内容稿、PPT 故事板与逐页内容，保留信息卡片与覆盖审计 | 报告能力 |
 | [`zerox-thinkcell-charts`](zerox-thinkcell-charts/) | 表格/JSON 到可编辑 PPTX、PNG 和离线可改字 HTML；55 种单图、dashboard/facet 拼版、72 个示例、8 套主题，含经营对账页配方 | 报告能力 |
 | [`zerox-onepager`](zerox-onepager/) | 文本、Markdown、PDF 到单页信息图与海报，保留内容蓝图、IR 和可续改项目 | 独立技能 |
@@ -56,6 +57,7 @@ cd zerox-skills
 ```text
 用 zerox-deep-research 调研国内出海 SaaS 的获客成本结构，把原始资料都存下来。
 用 zerox-deep-research 比较向量数据库，为一个 10 人团队的 RAG 项目提出选型建议。
+用 zerox-due-diligence 对这家公司开展供应商准入尽调，优先阅读官网，讲清业务模式、财务状况和主要竞争对手，交付离线 HTML 报告与独立底稿。
 用 zerox-storyline 把这堆材料整理成给董事会的上海市场进入方案，做成 15 页汇报内容。
 用 zerox-paper-to-course 把这篇论文做成交互式教程。
 用 zerox-onepager 把这份产品说明做成单页海报。
@@ -132,7 +134,7 @@ python3 zerox-storyline/scripts/check_content.py <内容包> --titles
 
 ## English
 
-A curated collection of personal skills and the maintenance repository for a professional business-reporting suite. It currently contains **10 independently callable skills**: 3 capabilities from the original reporting suite and 7 independent skills migrated on 2026-10-14. All use `zerox-*` names and are maintained here.
+A curated collection of personal skills and the maintenance repository for a professional business-reporting suite. It currently contains **11 independently callable skills**: 3 capabilities from the original reporting suite, 7 independent skills migrated on 2026-10-14, and a company due-diligence skill. All use `zerox-*` names and are maintained here.
 
 The reporting suite is being developed around **research and evidence → analysis and modeling → argument structure → writing → visual presentation → delivery QA**. Migrated skills retain their own workflows and do not automatically join report orchestration. The `/zerox` router and remaining scenario pipelines are still planned; call the skills listed below directly.
 
@@ -141,6 +143,7 @@ The reporting suite is being developed around **research and evidence → analys
 | Skill | What it does | Group |
 |---|---|---|
 | [`zerox-deep-research`](zerox-deep-research/) | Investigates complex, open-ended questions; delivers a decision report, reusable data, original materials and process records, with conclusions traceable to sources | Reporting capability |
+| [`zerox-due-diligence`](zerox-due-diligence/) | Researches companies, prioritizes official websites, explains history, teams, and business models, and requires finance, marketing, and competitor coverage; delivers visual offline HTML reports and separate evidence files | Independent skill |
 | [`zerox-storyline`](zerox-storyline/) | Reconstructs documents, interviews, data and old slides into an SCQA narrative, manuscript, storyboard and slide-by-slide content, with information cards and coverage audits | Reporting capability |
 | [`zerox-thinkcell-charts`](zerox-thinkcell-charts/) | Turns tables/JSON into editable PPTX, PNG and offline text-editable HTML; 55 single-chart types, dashboard/facet layouts, 72 examples, 8 themes and operating-reconciliation recipes | Reporting capability |
 | [`zerox-onepager`](zerox-onepager/) | Turns text, Markdown and PDFs into one-page infographics and posters, preserving the content blueprint, IR and editable project | Independent skill |
@@ -179,6 +182,7 @@ Each skill occupies a direct child directory. `SKILL.md` is its entry point; `re
 ```text
 Use zerox-deep-research to investigate customer acquisition costs for Chinese SaaS businesses expanding abroad, and retain the original sources.
 Use zerox-deep-research to compare vector databases and recommend an option for a 10-person team's RAG project.
+Use zerox-due-diligence to assess this company for supplier qualification. Read its official website first, explain its business model, financial position, and main competitors, and deliver an offline HTML report with a separate audit file.
 Use zerox-storyline to turn these materials into a 15-slide Shanghai market-entry proposal for the board.
 Use zerox-paper-to-course to make an interactive tutorial from this paper.
 Use zerox-onepager to turn this product description into a one-page poster.
