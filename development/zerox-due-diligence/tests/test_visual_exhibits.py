@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from xml.etree import ElementTree
 
-ROOT = Path(os.environ.get("ZEROX_DD_ROOT", Path(__file__).resolve().parents[3] / "zerox-due-diligence"))
+ROOT = Path(os.environ.get("zerox_dd_root", Path(__file__).resolve().parents[3] / "zerox-due-diligence"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from common import InputError

@@ -12,7 +12,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-ROOT = Path(os.environ.get("ZEROX_DD_ROOT", Path(__file__).resolve().parents[3] / "zerox-due-diligence"))
+ROOT = Path(os.environ.get("zerox_dd_root", Path(__file__).resolve().parents[3] / "zerox-due-diligence"))
 
 
 class PackageTests(unittest.TestCase):

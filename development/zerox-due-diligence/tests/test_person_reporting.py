@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 import unittest
 
-ROOT = Path(os.environ.get("ZEROX_DD_ROOT", Path(__file__).resolve().parents[3] / "zerox-due-diligence"))
+ROOT = Path(os.environ.get("zerox_dd_root", Path(__file__).resolve().parents[3] / "zerox-due-diligence"))
 sys.path.insert(0, str(ROOT / "scripts"))
 from common import InputError, csv_text, load_json
 from check_report import check

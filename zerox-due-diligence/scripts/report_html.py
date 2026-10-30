@@ -280,11 +280,11 @@ def render(content, cfg, data, audit_name, media=None):
 <html lang="{content["language"]}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light"><title>{esc(content["title"])}</title><style>{css}</style></head>
 <body><a class="skip-link" href="#main">跳转正文</a>
-<header class="topbar"><a class="brand" href="#overview"><span class="brand-mark">Z</span> ZEROX <span class="brand-detail">/ RESEARCH</span></a><div class="top-actions"><span>{esc(cfg["as_of_date"])}</span><button type="button" id="toc-toggle" aria-expanded="false" aria-controls="toc">目录</button><button type="button" class="print-button">打印 / PDF</button></div></header>
+<header class="topbar"><a class="brand" href="#overview"><span class="brand-mark">Z</span> Zerox <span class="brand-detail">/ RESEARCH</span></a><div class="top-actions"><span>{esc(cfg["as_of_date"])}</span><button type="button" id="toc-toggle" aria-expanded="false" aria-controls="toc">目录</button><button type="button" class="print-button">打印 / PDF</button></div></header>
 <div class="layout"><aside class="sidebar" id="toc"><div class="sidebar-label">CONTENTS <span>报告目录</span></div><nav aria-label="报告目录">{"".join(nav)}<a href="#sources">来源与底稿</a></nav><div class="sidebar-foot">{esc(purpose)}<br>{esc(cfg["confidentiality"])}</div></aside>
-<main id="main"><header class="hero" id="overview"><p class="eyebrow">ZEROX DUE DILIGENCE / {esc(purpose)}</p><h1>{rich(content["title"])}</h1><p class="subtitle">{rich(content["subtitle"])}</p><div class="meta"><span>{esc(cfg["as_of_date"])}</span><span>{esc(status)}</span></div><p class="lead">{rich(content["summary"])}</p><p class="scope-note">{scope}</p></header>
+<main id="main"><header class="hero" id="overview"><p class="eyebrow">Zerox DUE DILIGENCE / {esc(purpose)}</p><h1>{rich(content["title"])}</h1><p class="subtitle">{rich(content["subtitle"])}</p><div class="meta"><span>{esc(cfg["as_of_date"])}</span><span>{esc(status)}</span></div><p class="lead">{rich(content["summary"])}</p><p class="scope-note">{scope}</p></header>
 {"".join(sections)}
 <section class="references report-section" id="sources"><div class="section-number">REFERENCE</div><h2>来源与底稿</h2><p class="prose">正文引用可展开到具体出处。研究过程、完整核验台账和补充资料请求保存在独立底稿。</p><a class="audit-link" href="{esc(audit_name)}">打开完整核验底稿 ↗</a><details id="evidence"><summary>参考来源 · {len(refs)} 条证据</summary><ol class="sources">{"".join(refs)}</ol></details></section>
-<footer>ZEROX RESEARCH <span>{esc(content["title"])} · {esc(cfg["as_of_date"])}</span></footer></main></div>
+<footer>Zerox RESEARCH <span>{esc(content["title"])} · {esc(cfg["as_of_date"])}</span></footer></main></div>
 <script type="application/json" id="report-data">{payload}</script><script>{js}</script></body></html>'''
     return document, result
