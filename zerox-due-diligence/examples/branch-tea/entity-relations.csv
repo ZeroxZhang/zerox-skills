@@ -1,0 +1,5 @@
+relation_id,parent_id,child_id,relation_type,ownership_percent,control_basis,effective_from,effective_to,state,verification,evidence_ids
+REL-0001,ENT-0003,ENT-0001,trademark_holder,,合成场景的角色或全资控制设定；没有真实权属核查。,2023-01-01,,current,verified,"[""E-0001""]"
+REL-0002,ENT-0002,ENT-0001,operator,,合成场景的角色或全资控制设定；没有真实权属核查。,2023-01-01,,current,verified,"[""E-0002""]"
+REL-0003,ENT-0004,ENT-0002,control,100.0,合成场景的角色或全资控制设定；没有真实权属核查。,2023-01-01,,current,verified,"[""E-0004""]"
+REL-0004,ENT-0004,ENT-0003,control,100.0,合成场景的角色或全资控制设定；没有真实权属核查。,2023-01-01,,current,verified,"[""E-0004""]"

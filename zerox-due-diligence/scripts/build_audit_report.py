@@ -3,16 +3,17 @@ import argparse
 import re
 from pathlib import Path
 
-from common import CONTRACT, ROOT, cli, fail, load_json, read_project, research_gate, safe_write, structural_errors, semantic_errors
+from common import CONTRACT, ROOT, InputError, cli, fail, load_json, read_project, research_gate, safe_write, structural_errors, semantic_errors
 from scoring import project_score
 
 
 DISPLAY = {
-    "pending": "待确认", "applicable": "适用", "not_applicable": "不适用",
+    "pending": "待确认", "applicable": "适用", "not_applicable": "不适用", "deferred": "适用但本次未展开",
     "complete": "完成", "partial": "部分完成", "incomplete": "未完成",
     "draft": "草稿", "limited": "受限结果", "resolved": "已消歧/已解决",
     "ambiguous": "主体歧义", "listed": "已上市", "unlisted": "非上市", "unknown": "未知",
-    "control": "控制", "joint_control": "共同控制", "minority": "参股",
+    "legal_entity": "法律主体", "group": "集团", "brand": "品牌", "branch": "分支",
+    "answered": "已回答", "answered_with_limits": "有限制地回答", "unanswerable": "无法回答",
     "actual": "实际", "forecast": "第三方预测", "estimate": "本项目估算",
     "consolidated": "合并", "standalone": "单体", "segment": "分部",
     "unread": "未读", "analyzed": "已读并分析", "full_text": "可读全文",
@@ -30,6 +31,7 @@ DISPLAY = {
     "not_disclosed": "未披露", "access_restricted": "访问受限",
 }
 DISPLAY.update(CONTRACT["research"]["category_names"])
+DISPLAY.update(CONTRACT["research"]["relation_names"])
 
 
 def cell(value):
@@ -46,6 +48,29 @@ def table(rows, columns):
     if not rows:
         return "未登记记录；不能据此推定没有风险或已完成研究。"
     return header + "\n".join("| " + " | ".join(cell(row.get(key)) for key, _ in columns) + " |" for row in rows)
+
+
+def estimate_audit(result):
+    """保留输入、口径和计算过程，使独立底稿能够复算；基准值不是正文点估计。"""
+    parts = [f"#### {cell(result['estimate_id'])} · {cell(result['metric'])}",
+             table([result], [("entity_id", "主体"), ("scope", "范围"), ("period", "期间"),
+                              ("unit", "结果单位"), ("claim_id", "关联声明"), ("purpose", "问题与用途"), ("status_name", "状态")])]
+    for method in result["methods"]:
+        parts.append(f"##### {cell(method['method_id'])} · {cell(method['name'])}")
+        parts.append(table([method], [("formula", "原始公式"), ("unit_factor", "乘以换算因子"),
+                                     ("low", "结果下限"), ("base", "计算基准值"), ("high", "结果上限"),
+                                     ("origin_groups", "同源组"), ("independent_of", "独立于哪些方法")]))
+        parts.append(table([{"input": name, **item} for name, item in method["inputs"].items()],
+                           [("input", "输入"), ("low", "下限"), ("base", "基准"), ("high", "上限"),
+                            ("unit", "输入单位"), ("basis", "证据或假设"), ("evidence_ids", "证据"), ("rationale", "取值依据")]))
+        parts.append("方法局限：" + cell(method["limitations"]))
+    if result["independent_groups"]:
+        parts.append("独立验证组：\n\n" + table(result["independent_groups"], [("method_ids", "方法组合"), ("overlap", "组内重叠区间")]))
+    if result["conflicting_methods"]:
+        parts.append("区间冲突的方法：" + cell([" / ".join(pair) for pair in result["conflicting_methods"]]))
+    parts.append("复核事项：\n\n" + table([{"warning": item} for item in result["warnings"]], [("warning", "待复核或限制")]))
+    parts.append(result["meaning"])
+    return "\n\n".join(parts)
 
 
 def build(project, output, sections=None, overwrite=False):
@@ -70,6 +95,12 @@ def build(project, output, sections=None, overwrite=False):
     overall_text = f"{score['overall_score']:.3f}" if score.get("overall_score") is not None else "暂不提供"
     review = cfg.get("completion_review")
     completion = f"研报门槛：{gate_name}\n\n{limits}\n\n"
+    questions = [{**q, "sub_questions": q["sub_questions"] or None, "claim_ids": q["claim_ids"] or None,
+                  "answer": q["answer"] or None} for q in cfg["key_questions"]]
+    completion += "### 关键问题\n\n" + (table(questions, [
+        ("kq_id", "编号"), ("question", "关键问题"), ("why_it_matters", "为何重要"), ("sub_questions", "子问题"),
+        ("status", "状态"), ("answer", "回答或无法回答的原因"), ("claim_ids", "支撑声明")])
+        if questions else "未登记关键问题；研究开始时应在 key_questions 写下决定判断的问题。") + "\n\n"
     if review:
         completion += (f"约定研究范围：{review['scope']}\n\n"
                        f"关键结论：{cell(review['key_claim_ids'])}；复核时间：{review['reviewed_at']}\n\n"
@@ -83,8 +114,8 @@ def build(project, output, sections=None, overwrite=False):
         "summary": sections.get("summary", "【缺口】尚未录入经证据支持的综合摘要。") + "\n\n" + sections.get("highlights", "亮点仅在有证据时填写，不强凑数量。"),
         "completion": completion + table(
             [{"module": k, **v} for k, v in cfg["module_scope"].items()], [("module", "模块"), ("status", "适用性"), ("reason", "理由")]),
-        "entities": table(data["entity-map"], [("entity_id", "主体 ID"), ("legal_name", "法定名"), ("registration_id", "注册号"), ("listing_status", "上市状态"), ("identity_status", "核验状态")])
-                    + "\n\n" + table(data["entity-relations"], [("parent_id", "上层主体"), ("child_id", "下层主体"), ("relation_type", "关系"), ("control_basis", "控制依据"), ("effective_from", "生效"), ("effective_to", "失效"), ("evidence_ids", "证据")]),
+        "entities": table(data["entity-map"], [("entity_id", "主体 ID"), ("legal_name", "法定名/品牌名"), ("entity_type", "类型"), ("registration_id", "注册号"), ("listing_status", "上市状态"), ("identity_status", "核验状态")])
+                    + "\n\n" + table(data["entity-relations"], [("parent_id", "上层主体"), ("child_id", "下层主体"), ("relation_type", "关系"), ("control_basis", "控制依据"), ("effective_from", "生效"), ("effective_to", "失效"), ("verification", "核验"), ("evidence_ids", "证据")]),
         "coverage": table(data["research-coverage"], [("target_id", "目标"), ("research_entity_id", "研究主体"), ("category", "类别"),
                     ("latest_discovered_id", "最新发现"), ("latest_fulltext_id", "最新全文"), ("latest_read_id", "最新已读"),
                     ("event_coverage", "事件覆盖"), ("gate_status", "状态"), ("gap_id", "缺口")]),
@@ -92,7 +123,7 @@ def build(project, output, sections=None, overwrite=False):
                   f"已覆盖维度局部分数：{partial_text}；可发布综合分：{overall_text}\n\n"
                   "业务评价、风险矩阵和证据充分程度分别解释。")
                  + "\n\n" + table(data["scorecard"], [("dimension", "维度"), ("weight", "权重"), ("applicability", "适用性"), ("score", "评分"), ("anchor", "锚点"), ("reason", "缺失/不适用原因")]),
-        "research_comparison": sections.get("research_comparison", "【缺口】尚未录入研报观点、预测口径、关键假设、分歧、反证及采信理由比较。"),
+        "research_comparison": sections.get("research_comparison", "本次已核实不触发上市主体强制研报流程；其他已采用的行业或竞品研究见来源与模块底稿。" if gate == "not_applicable" else "【缺口】尚未录入研报观点、预测口径、关键假设、分歧、反证及采信理由比较。"),
         "claims": table(data["claim-register"], [("claim_id", "声明"), ("statement", "陈述"), ("label", "标签"), ("entity_id", "主体"), ("verification", "核验"), ("confidence", "置信度"), ("unresolved", "未解决问题")])
                   + "\n\n" + table(data["claim-evidence"], [("claim_id", "声明"), ("evidence_id", "证据"), ("relation", "关系"), ("bridge", "口径桥接"), ("limitations", "限制")]),
         "data_bridge": sections.get("data_bridge", "未提供定量桥接或情景底稿；不能从集团总量推导子公司收入。"),
@@ -118,12 +149,27 @@ def build(project, output, sections=None, overwrite=False):
             fail(f"模块 {number} 存在多个候选版本，请明确保留本次版本")
         if scope["status"] == "not_applicable":
             body = f"不适用：{scope['reason']}"
+        elif scope["status"] == "deferred":
+            body = f"适用但本次未展开：{scope['reason']}" + (f"\n\n{files[0].read_text(encoding='utf-8')}" if files else "")
         elif files:
             body = files[0].read_text(encoding="utf-8")
         else:
             body = "【缺口】未提供模块分析；该模块尚未执行或未交付。"
         modules.append(f"### 模块 {number}\n\n{body}")
     blocks["modules"] = "\n\n".join(modules)
+    estimates = sorted((Path(project) / "estimates").glob("*.json")) if (Path(project) / "estimates").is_dir() else []
+    if estimates:
+        from triangulate import triangulate
+        details = []
+        for path in estimates:
+            try:
+                result = triangulate(load_json(path), cfg, data)
+                details.append(estimate_audit(result))
+            except InputError as exc:
+                details.append(table([{"estimate": path.name, "error": str(exc)}], [("estimate", "估算"), ("error", "无法计算")]))
+        blocks["data_bridge"] = (sections.get("data_bridge", "") + "\n\n### 估算与三角验证\n\n"
+                                 + "\n\n".join(details)
+                                 + "\n\n估算均为本项目推断，不是披露数据。计算基准值仅用于复算，正文呈现区间。").strip()
     template = (ROOT / "templates" / ("report-quick.md" if cfg["depth"] == "Quick" else "report-full.md")).read_text(encoding="utf-8")
     rendered = re.sub(r"\{\{([a-z_]+)\}\}", lambda m: blocks.get(m[1], m[0]), template)
     if "{{" in rendered:

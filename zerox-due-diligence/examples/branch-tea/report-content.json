@@ -1,0 +1,625 @@
+{
+  "version": "1.2",
+  "title": "枝间茶铺：从品牌追到经营公司｜虚构示范",
+  "subtitle": "示范品牌追溯、受约束估算与保留关键未知的完整阅读报告",
+  "language": "zh-CN",
+  "summary": "枝间茶铺是一组完全虚构的茶饮业务设定：品牌管理公司持有商标，零售公司通过直营店和网上商店销售。示例判断是：经营主体与商业机制可以解释，收入只能给情景区间，扩张是否赚钱仍无法判断。本文所有公司、人物、编号和数值均为合成材料，不构成真实调查或投资建议。",
+  "scope_note": "合成场景截至2026-10-29，重点为枝间零售有限公司单体业务，品牌与集团数字不混用。研究状态limited：财报、实际收入、利润、现金与无补贴复购资料未取得。没有进行真实联网检索、访谈、现场或审计。",
+  "sections": [
+    {
+      "id": "company",
+      "title": "先分清品牌、商标与做生意的公司",
+      "blocks": [
+        {
+          "type": "explanation",
+          "topic": "identity",
+          "title": "品牌入口，经营公司承担责任",
+          "text": "消费者看到的是枝间茶铺；开票、收款、库存和退款责任属于枝间零售。商标由另一家品牌管理公司持有，两家均由星澄生活控股控制。因此收入估算指向零售公司，不能当作品牌估值或集团收入。",
+          "status": "supported",
+          "evidence_ids": [
+            "E-0001",
+            "E-0002",
+            "E-0003",
+            "E-0004"
+          ],
+          "limitations": ""
+        },
+        {
+          "type": "diagram",
+          "title": "品牌、经营公司与控制方各自承担什么",
+          "purpose": "ownership",
+          "period": "2026-10-29（合成场景）",
+          "entity_id": "ENT-0001",
+          "note": "所有名称与关系均为虚构设定；关系箭头表示权属或控制，不表示资金流。商标持有不自动等于承担零售债务。",
+          "nodes": [
+            {
+              "id": "group",
+              "label": "星澄生活控股",
+              "text": "未上市的控制方",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0004"
+              ]
+            },
+            {
+              "id": "holder",
+              "label": "枝间品牌管理",
+              "text": "持有商标，不直接零售",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0003"
+              ]
+            },
+            {
+              "id": "operator",
+              "label": "枝间零售",
+              "text": "经营、开票、收款、退款",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0002"
+              ]
+            },
+            {
+              "id": "brand",
+              "label": "枝间茶铺",
+              "text": "面向消费者的品牌名",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0001"
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "source": "group",
+              "target": "holder",
+              "label": "全资控制",
+              "flow": "relationship",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0004"
+              ]
+            },
+            {
+              "source": "group",
+              "target": "operator",
+              "label": "全资控制",
+              "flow": "relationship",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0004"
+              ]
+            },
+            {
+              "source": "holder",
+              "target": "brand",
+              "label": "持有商标",
+              "flow": "relationship",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0001"
+              ]
+            },
+            {
+              "source": "operator",
+              "target": "brand",
+              "label": "经营与收款",
+              "flow": "relationship",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0002"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "timeline",
+          "purpose": "company_history",
+          "title": "从礼盒生意转向日常饮茶",
+          "items": [
+            {
+              "date": "2019-06-01",
+              "title": "礼盒起步",
+              "text": "虚构团队最初经营节庆茶叶礼盒。",
+              "status": "completed",
+              "evidence_ids": [
+                "E-0007"
+              ]
+            },
+            {
+              "date": "2023-03-01",
+              "title": "进入直营茶饮",
+              "text": "历史页面设定转向日常消费，增加门店和家用袋泡茶。",
+              "status": "completed",
+              "evidence_ids": [
+                "E-0007"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "explanation",
+          "topic": "history_team",
+          "title": "变化在使用场景，也在经营负担",
+          "text": "从礼盒到日常饮茶，购买理由由送礼转向方便与口味；直营门店同时增加了租金、人工和库存承担。网页定位变化能说明战略方向，不能证明转型已经成功。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0007",
+            "E-0008"
+          ],
+          "limitations": "历史页面与团队叙述在本例均为公司自述设定，经营效果需要财务与客户行为验证。"
+        }
+      ]
+    },
+    {
+      "id": "team",
+      "title": "团队分工清楚，扩店承诺仍需对照结果",
+      "blocks": [
+        {
+          "type": "people",
+          "title": "虚构创始团队",
+          "profiles": [
+            {
+              "name": "林岚（虚构）",
+              "role": "共同创始人，产品与品牌",
+              "period": "截至合成场景2026-10-29",
+              "background": "合成公司资料记载其负责茶叶产品规划；没有独立履历。",
+              "contribution": "确定礼盒到日常饮茶的产品方向；实际贡献无法从自述单独确认。",
+              "limitations": "不得与同名真实人物关联。",
+              "evidence_ids": [
+                "E-0007"
+              ]
+            },
+            {
+              "name": "周澄（虚构）",
+              "role": "共同创始人，零售运营",
+              "period": "截至合成场景2026-10-29",
+              "background": "合成资料记载其负责开店与运营。",
+              "contribution": "组织直营店经营；开店目标和经营回报需分别评价。",
+              "limitations": "没有取得决策记录和绩效归因资料。",
+              "evidence_ids": [
+                "E-0007"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "callout",
+          "title": "计划落差是追问线索，不是诚信定论",
+          "text": "公司计划2025年末达到20家店，门店观察只支持12家。需核对延期开业、主动收缩与关店等解释；不能把计划数当实绩，也不能把未达标直接判为失信。[E-0011][E-0005]"
+        }
+      ]
+    },
+    {
+      "id": "offering",
+      "title": "卖的是即饮方便与家用茶，不是同一种消费场景",
+      "blocks": [
+        {
+          "type": "explanation",
+          "topic": "offering",
+          "title": "客户拿到什么",
+          "text": "直营店交付现做茶饮，网上商店交付家用袋泡茶。前者强调即时购买和口味体验，后者强调回家冲泡与储存，两类产品的单件价格不能直接比较。",
+          "status": "supported",
+          "evidence_ids": [
+            "E-0008"
+          ],
+          "limitations": ""
+        },
+        {
+          "type": "matrix",
+          "title": "两条产品线的使用场景",
+          "columns": [
+            "产品与常规价格",
+            "典型使用与付费者"
+          ],
+          "rows": [
+            {
+              "label": "门店鲜制",
+              "cells": [
+                {
+                  "text": "18–28元/杯，同城门店标价",
+                  "basis": "evidence",
+                  "evidence_ids": [
+                    "E-0008"
+                  ]
+                },
+                {
+                  "text": "个人选择、付款并即饮",
+                  "basis": "evidence",
+                  "evidence_ids": [
+                    "E-0008"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "家用袋泡",
+              "cells": [
+                {
+                  "text": "49–69元/盒，网上商店标价",
+                  "basis": "evidence",
+                  "evidence_ids": [
+                    "E-0008"
+                  ]
+                },
+                {
+                  "text": "个人购买，带回家冲泡",
+                  "basis": "evidence",
+                  "evidence_ids": [
+                    "E-0008"
+                  ]
+                }
+              ]
+            }
+          ],
+          "note": "合成2025年末目录；不是实际成交价或收入结构。",
+          "purpose": "other"
+        },
+        {
+          "type": "explanation",
+          "topic": "customers_markets",
+          "title": "定位不等于实际客户分布",
+          "text": "公司定位于同城通勤消费者，观察到门店和网上商店两个入口。尚无客户年龄、购买频次、地区销售占比或企业采购数据，不能把宣传定位写成真实客户结构。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0008"
+          ],
+          "limitations": "没有客户分群，不能推算市场份额或复购。"
+        }
+      ]
+    },
+    {
+      "id": "economics",
+      "title": "直营带来经营控制，也带来固定成本",
+      "blocks": [
+        {
+          "type": "diagram",
+          "title": "消费者付钱给零售公司，公司组织生产与售后",
+          "purpose": "business_model",
+          "period": "2025年（合成场景）",
+          "entity_id": "ENT-0002",
+          "note": "鲜制茶饮由自营店制作；袋泡茶外部加工后由零售公司销售。仅画有设定依据的流向，未画未取得的内部授权费。",
+          "nodes": [
+            {
+              "id": "customers",
+              "label": "消费者",
+              "text": "选择、付款与消费",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0008"
+              ]
+            },
+            {
+              "id": "retailer",
+              "label": "枝间零售",
+              "text": "采购、库存、自营门店与售后",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0008"
+              ]
+            },
+            {
+              "id": "factory",
+              "label": "外部工厂",
+              "text": "按配方加工袋泡茶，不拥有品牌",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0008"
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "source": "customers",
+              "target": "retailer",
+              "label": "预付货款",
+              "flow": "money",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0008"
+              ]
+            },
+            {
+              "source": "retailer",
+              "target": "customers",
+              "label": "交付商品与售后",
+              "flow": "product",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0008"
+              ]
+            },
+            {
+              "source": "factory",
+              "target": "retailer",
+              "label": "加工成品",
+              "flow": "product",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0008"
+              ]
+            },
+            {
+              "source": "retailer",
+              "target": "factory",
+              "label": "采购付款",
+              "flow": "money",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0008"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "explanation",
+          "topic": "transaction_flow",
+          "title": "一杯茶怎样完成交易",
+          "text": "顾客在直营店先付款，店员按配方制作并交付，零售公司承担质量投诉和退款。网上商店由同一经营公司收款并售后；具体平台结算周期未取得。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0008"
+          ],
+          "limitations": "缺少平台账期与结算合同，不能推算现金周转。"
+        },
+        {
+          "type": "explanation",
+          "topic": "operating_model",
+          "title": "自营零售与外部加工分工",
+          "text": "零售公司决定配方、采购、库存和价格，门店员工制作鲜茶；袋泡茶交外部工厂加工。工厂承担加工角色不代表持有商标或控制品牌。",
+          "status": "supported",
+          "evidence_ids": [
+            "E-0008"
+          ],
+          "limitations": ""
+        },
+        {
+          "type": "explanation",
+          "topic": "revenue_costs",
+          "title": "增长能否留下利润，要看每家店的经济性",
+          "text": "公司赚取零售销售收入，茶叶包材、加工采购、租金、工资和平台佣金消耗收入。直营店增加后，收入可能上升，固定成本与开店投入也会上升；缺报表时不能由销量或门店数反推出净利润。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0008"
+          ],
+          "limitations": "毛利、净利、维持投入与扩张投入均未披露。"
+        }
+      ]
+    },
+    {
+      "id": "financial",
+      "title": "收入只给可复算区间，利润和现金继续保留未知",
+      "blocks": [
+        {
+          "type": "chart",
+          "chart_type": "range",
+          "title": "枝间零售2025年单体营收估算区间：多方法交叉印证",
+          "unit": "万元",
+          "period": "2025-01-01/2025-12-31",
+          "entity_id": "ENT-0002",
+          "kind": "estimate",
+          "evidence_ids": [
+            "E-0005",
+            "E-0006"
+          ],
+          "note": "本项目估算，不是披露数据。M1 = (stores * revenue_per_store + online_revenue) × 1；M2 = (employees * revenue_per_employee) × 1。区间由输入上下限组合得出，不是统计置信区间；主要假设见底稿 EST-01。",
+          "points": [
+            {
+              "label": "M1 门店及线上渠道法",
+              "low": 1640.0,
+              "high": 2220.0,
+              "evidence_ids": [
+                "E-0005"
+              ]
+            },
+            {
+              "label": "M2 人员规模法",
+              "low": 1800.0,
+              "high": 2200.0,
+              "evidence_ids": [
+                "E-0006"
+              ]
+            },
+            {
+              "label": "独立验证组重叠区间的保守包络",
+              "low": 1800.0,
+              "high": 2200.0,
+              "evidence_ids": [
+                "E-0005",
+                "E-0006"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "explanation",
+          "topic": "financial_performance",
+          "title": "可知量级与不可知盈利",
+          "text": "门店及线上渠道法得到1640–2220万元，人员规模法得到1800–2200万元，两条路径的重叠为1800–2200万元。数值取决于显式情景假设，是经营公司2025年单体收入的示范估算，不是审计披露。营收的门店/线上结构没有实数，毛利率、净利率和经营现金均未知。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0005",
+            "E-0006"
+          ],
+          "limitations": "输入含教学假设；方法区间重叠不是统计置信区间，也不证明事实准确。不得用估算收入计算利润率。"
+        },
+        {
+          "type": "callout",
+          "title": "改变判断的资料",
+          "text": "若取得流水，先对齐主体、退货、总额净额与期间，再用实际数替换估算。若单店产出或人效落在情景区间外，应重算而不是保住原结论；若利润和现金仍缺失，扩张回报问题继续无法回答。[E-0005][E-0006]"
+        }
+      ]
+    },
+    {
+      "id": "brand",
+      "title": "口碑可以解释购买理由，不能代替复购证据",
+      "blocks": [
+        {
+          "type": "explanation",
+          "topic": "marketing",
+          "title": "从内容和试饮走到购买",
+          "text": "模拟观察包含同城短视频、门店试饮和会员积分。评论里既有茶味与包装认可，也有高峰等待和口味波动。能描述品牌触点及意见主题，尚不能证明渠道转化、营销回报或无补贴复购。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0009"
+          ],
+          "limitations": "80条便利评论缺少沉默和流失客户；没有搜索指数时间序列、归因销售和获客成本。"
+        },
+        {
+          "type": "matrix",
+          "title": "口碑主题与可验证的下一步",
+          "columns": [
+            "观察",
+            "可以说明什么 / 还缺什么"
+          ],
+          "rows": [
+            {
+              "label": "产品与包装",
+              "cells": [
+                {
+                  "text": "茶味与包装出现正面意见",
+                  "basis": "evidence",
+                  "evidence_ids": [
+                    "E-0009"
+                  ]
+                },
+                {
+                  "text": "支持存在购买理由；不能推算满意率",
+                  "basis": "inference",
+                  "evidence_ids": [
+                    "E-0009"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "高峰体验",
+              "cells": [
+                {
+                  "text": "等待和口味波动出现负面意见",
+                  "basis": "evidence",
+                  "evidence_ids": [
+                    "E-0009"
+                  ]
+                },
+                {
+                  "text": "应核对出杯时长与标准化，尚无全量频率",
+                  "basis": "inference",
+                  "evidence_ids": [
+                    "E-0009"
+                  ]
+                }
+              ]
+            }
+          ],
+          "note": "合成便利样本，无总体代表性，不做伪造NPS。",
+          "purpose": "marketing"
+        },
+        {
+          "type": "chart",
+          "chart_type": "proportion",
+          "title": "活动期收据中低于挂牌价的样本占比",
+          "unit": "%",
+          "period": "2025年第四季度（合成样本）",
+          "entity_id": "ENT-0001",
+          "kind": "actual",
+          "evidence_ids": [
+            "E-0012"
+          ],
+          "note": "合成24张同SKU收据中18张低于挂牌价，18÷24=75%；只描述该活动期便利样本，不能外推整体折扣率或定价权。",
+          "scale_max": 100,
+          "points": [
+            {
+              "label": "低于挂牌价的收据",
+              "value": 75
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "competition",
+      "title": "价格处于中间，尚无证据证明形成壁垒",
+      "blocks": [
+        {
+          "type": "chart",
+          "chart_type": "range",
+          "title": "同城鲜制茶饮常规标价区间",
+          "unit": "元/杯",
+          "period": "2025年末（合成样本）",
+          "entity_id": "industry",
+          "kind": "actual",
+          "evidence_ids": [
+            "E-0010"
+          ],
+          "note": "三品牌均虚构；比较同城现制茶饮常规标价，排除活动实付价与袋泡茶，不是市场份额或均价。",
+          "points": [
+            {
+              "label": "晨沏（虚构）",
+              "low": 12,
+              "high": 20
+            },
+            {
+              "label": "枝间（虚构）",
+              "low": 18,
+              "high": 28
+            },
+            {
+              "label": "山页（虚构）",
+              "low": 26,
+              "high": 38
+            }
+          ]
+        },
+        {
+          "type": "explanation",
+          "topic": "competition",
+          "title": "为什么把这两家放进比较",
+          "text": "晨沏和山页都满足同城即饮需求，分别侧重快捷与坐店体验，能帮助判断枝间的替代边界。价格区间重叠意味着客户有替代选择，但没有成交与流失样本，无法判断谁在抢谁的份额。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0010"
+          ],
+          "limitations": "没有份额、转化、迁移或利润数据，不对竞争者打分排名。"
+        },
+        {
+          "type": "explanation",
+          "topic": "differentiation",
+          "title": "原叶茶与试饮是特点，优势仍待行为验证",
+          "text": "枝间的可观察特点是原叶茶表达和门店试饮；正面口碑提供产品吸引力线索。只有非促销期仍能保持购买、复购和利润，才更支持持续优势，目前证据尚不足。",
+          "status": "partial",
+          "evidence_ids": [
+            "E-0008",
+            "E-0009",
+            "E-0010"
+          ],
+          "limitations": "不能把品牌话术与便利样本直接升级为护城河。"
+        }
+      ]
+    },
+    {
+      "id": "decision",
+      "title": "四个问题的回答：能解释业务，还不能判断扩张回报",
+      "blocks": [
+        {
+          "type": "callout",
+          "title": "与公司自述相比，本报告更关注每家店是否留下现金",
+          "text": "公司将扩店描述为品牌势能；本例只能确认门店规模、主体分工和可观察品牌做法。扩店计划未完全兑现，收入估算也没有利润信息，因此尚不接受“规模增加即经营质量提高”的推论。若取得可比同店利润、现金回收和非促销复购，判断可以改变。[E-0011][E-0005][E-0006][E-0009]"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "KQ-01：品牌管理公司持有商标，零售公司经营收款，星澄生活控制两者；品牌与法人责任应分开。[E-0001][E-0002][E-0004]",
+            "KQ-02：情景估算重叠为1800–2200万元，属于2025年零售公司单体，不能代表品牌或集团业绩。[E-0005][E-0006]",
+            "KQ-03：口碑与营销触点存在，但无补贴复购未证实；现有判断仅说明证据边界。[E-0009][E-0012]",
+            "KQ-04：利润与现金不可判，核心缺口仍阻断范围完成。先补财报、收入确认、同店利润和投入，再讨论扩张回报。"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "本例保留limited状态，并不把未知改成零或用评分掩盖。下一步是向真实项目的经营主体取得授权材料、核对假设和反证；本示例不实际联络任何人、不开展监控或交易。"
+        }
+      ]
+    }
+  ]
+}

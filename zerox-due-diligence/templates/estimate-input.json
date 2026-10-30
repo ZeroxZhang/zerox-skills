@@ -1,0 +1,70 @@
+{
+  "estimate_id": "EST-01",
+  "metric": "{{待填写：要估算的指标，如年营收}}",
+  "entity_id": "ENT-0001",
+  "scope": "brand",
+  "period": "{{待填写：估算期间，如2025年}}",
+  "unit": "{{待填写：结果单位，如亿元}}",
+  "purpose": "{{待填写：这个估算回答哪个关键问题，结果会怎样改变判断}}",
+  "claim_id": null,
+  "methods": [
+    {
+      "method_id": "M1",
+      "name": "{{待填写：方法名，如门店法}}",
+      "formula": "stores * revenue_per_store",
+      "unit_factor": 0.0001,
+      "inputs": {
+        "stores": {
+          "low": null,
+          "base": null,
+          "high": null,
+          "unit": "家",
+          "basis": "evidence",
+          "evidence_ids": [
+            "E-0001"
+          ],
+          "rationale": "{{待填写：区间来自哪份证据、为何取这个上下限}}"
+        },
+        "revenue_per_store": {
+          "low": null,
+          "base": null,
+          "high": null,
+          "unit": "万元/年",
+          "basis": "assumption",
+          "evidence_ids": [],
+          "rationale": "{{待填写：假设依据，如可比上市公司单店收入区间}}"
+        }
+      },
+      "limitations": "{{待填写：这种方法会高估或低估的原因}}"
+    },
+    {
+      "method_id": "M2",
+      "name": "{{待填写：另一种独立方法，如人效法}}",
+      "formula": "employees * revenue_per_employee",
+      "unit_factor": 0.0001,
+      "inputs": {
+        "employees": {
+          "low": null,
+          "base": null,
+          "high": null,
+          "unit": "人",
+          "basis": "evidence",
+          "evidence_ids": [
+            "E-0002"
+          ],
+          "rationale": "{{待填写：与M1不同来源的证据}}"
+        },
+        "revenue_per_employee": {
+          "low": null,
+          "base": null,
+          "high": null,
+          "unit": "万元/人/年",
+          "basis": "assumption",
+          "evidence_ids": [],
+          "rationale": "{{待填写：假设依据}}"
+        }
+      },
+      "limitations": "{{待填写：这种方法会高估或低估的原因}}"
+    }
+  ]
+}

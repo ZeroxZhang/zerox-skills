@@ -103,6 +103,7 @@
 - `scope`：consolidated 合并、standalone 单体、segment 分部、brand 品牌、not_applicable 非定量；定量不得无范围。非货币数量 `currency` 可写 N/A，单位不能省略。
 - `attribute`：actual 实际、forecast 第三方预测、estimate 本项目估算、opinion 观点、not_applicable 非数据。forecast/estimate 禁止转为实际【数据】。公式所得实际比率应关联输入证据。
 - `time_scope=retrospective` 是明确隔离的事后补充，不可关联为历史时点结论的支持证据。修订日期晚于基准日亦不得冒充当时可得。
+- 原始发布日期未知时 `published_date=null`，在 `grade_reason` 说明日期缺失及其时点限制，不用访问日补齐。发布与修订日期均未知且在基准日之后才取得的材料必须为 retrospective；截止日前已取得只证明当时可得，不证明发布日期或最新性。研报目录仍须有与来源相符的真实报告日期，无日期资料不能参与“最新研报”判定。
 - `identity_status`：pending 待确认、resolved 已消歧、ambiguous 多候选；疑似同名分别建实体，不能混并。
 - 来源 `origin_group` 表示共同原件，`upstream_source_id` 保留已发现的二手引用链。获取状态和等级不决定置信度。
 - 缺口原因映射：not_disclosed 未披露、not_found 未找到、access_restricted 访问受限、unreadable 不可读、not_executed 未执行、not_applicable 口径不适用。

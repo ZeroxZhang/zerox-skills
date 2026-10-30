@@ -1,0 +1,79 @@
+{
+  "estimate_id": "EST-01",
+  "metric": "枝间零售2025年单体营收",
+  "entity_id": "ENT-0002",
+  "scope": "standalone",
+  "period": "2025-01-01/2025-12-31",
+  "unit": "万元",
+  "purpose": "回答KQ-02，检验经营规模量级；无法替代利润和现金的证据。",
+  "claim_id": "C-0002",
+  "methods": [
+    {
+      "method_id": "M1",
+      "name": "门店及线上渠道法",
+      "formula": "stores * revenue_per_store + online_revenue",
+      "unit_factor": 1,
+      "inputs": {
+        "stores": {
+          "low": 12,
+          "base": 12,
+          "high": 12,
+          "unit": "家",
+          "basis": "evidence",
+          "evidence_ids": [
+            "E-0005"
+          ],
+          "rationale": "合成独立门店观察确定十二家全年营业直营店，不含加盟店。"
+        },
+        "revenue_per_store": {
+          "low": 120,
+          "base": 140,
+          "high": 160,
+          "unit": "万元/家/年",
+          "basis": "assumption",
+          "evidence_ids": [],
+          "rationale": "教学情景假设；没有真实单店流水。区间变化直接影响结果，真实研究须另找适用样本。"
+        },
+        "online_revenue": {
+          "low": 200,
+          "base": 250,
+          "high": 300,
+          "unit": "万元/年",
+          "basis": "assumption",
+          "evidence_ids": [],
+          "rationale": "教学情景假设，指该法人线上净收入，不是平台GMV；没有真实披露。"
+        }
+      },
+      "limitations": "门店营业时长、季节性、退款与线上口径均需原件核验，不能把情景输入写成披露事实。"
+    },
+    {
+      "method_id": "M2",
+      "name": "人员规模法",
+      "formula": "employees * revenue_per_employee",
+      "unit_factor": 1,
+      "inputs": {
+        "employees": {
+          "low": 100,
+          "base": 100,
+          "high": 100,
+          "unit": "人",
+          "basis": "evidence",
+          "evidence_ids": [
+            "E-0006"
+          ],
+          "rationale": "合成独立用工资料，含总部与门店，不含外部工厂。"
+        },
+        "revenue_per_employee": {
+          "low": 18,
+          "base": 20,
+          "high": 22,
+          "unit": "万元/人/年",
+          "basis": "assumption",
+          "evidence_ids": [],
+          "rationale": "教学情景假设，独立于门店法结果设定；真实研究须匹配业态与兼职口径。"
+        }
+      },
+      "limitations": "人员结构、兼职和外包差异可能改变人效；来源不共用不能证明经济驱动统计独立。"
+    }
+  ]
+}

@@ -6,23 +6,27 @@
 
 ```bash
 python3 scripts/init_project.py --output /tmp/dd-example --target "待核验法定名称" --purpose company_research --depth Standard
+# 用户给的是品牌名时：
+python3 scripts/init_project.py --output /tmp/dd-brand --target "品牌名" --target-type brand --purpose company_research
 ```
 
-初始化还会创建待编辑的 `report-content.json`，用于HTML主报告；它是内容模板，不代表已完成分析。
+初始化还会创建待编辑的 `report-content.json`（HTML 主报告内容模板，不代表已完成分析）和空的 `estimates/` 目录。`--target-type brand` 把目标登记为品牌：在以已核实的 `operator` 或 `brand_of` 关系查明经营主体之前，控制链与上市关系保持待核实，完成态检查也会拒绝；做法见[从品牌到公司](../references/brand-to-company.md)。
 
 `--as-of YYYY-MM-DD` 可设置历史截止日；默认按 `--timezone Asia/Shanghai` 的执行当日。平台没有 IANA 时区数据时可显式选 `--timezone UTC` 并注明时区差异。`--listing-status listed --exchange 交易所 --security-code 代码` 只是输入信息，会预建研报需求，身份仍待核实。
 
 目的编码：company_research 公司研究；investment 投资、acquisition 并购、partnership 合作、credit 授信、supplier 供应商、competitor 竞品为专项。明确了解公司是已确认目的；未给目的才保留 null/pending。所有项目评分默认关闭；六类专项确实需要评分时可用 `--enable-scoring` 初始化评分行，再确认项目评分条件。改变目的或权重后同步评分行，不能沿用旧目的分数。
 
-配置 `module_scope` 对01–18分别给 pending/applicable/not_applicable，后者必须写理由。Quick未展开不等于不适用。`events` 每项包含 date/entity_id/description；`industry_keywords`、`languages` 控制计划；`peer_required` 表示关键问题需要可比/上下游补证。
+`key_questions` 记录研究开始时约定的关键问题，每项为 `{kq_id, question, why_it_matters, sub_questions, claim_ids, status, answer}`；`kq_id` 形如 KQ-01，`status` 为 open/answered/answered_with_limits/unanswerable。已回答须写 `answer` 并关联声明，判定无法回答须写原因。仍有 open 或 unanswerable 时不能完成约定范围。写法见[工作流](../references/workflow.md)。
 
-`identity_status=resolved` 要与实体台账一致；`control_chain_checked=true` 和 `control_evidence_ids` 需实证。关系表记录多条边；有效区间为左闭右开，proposed 不等于已交割。`category_exemptions` 仅可用于制度不适用或尚无相应期的官方中期材料，必须说明依据；不能豁免难取得的研报。
+配置 `module_scope` 对01–18分别给 pending/applicable/deferred/not_applicable：deferred 表示适用但本次未展开，not_applicable 表示确实不适用，两者都必须写理由。模块01、02、03、05、09、12、15不能 deferred 或 not_applicable；上市关系触发后模块18同样不能。`events` 每项包含 date/entity_id/description；`industry_keywords`、`languages` 控制计划；`peer_required` 表示关键问题需要可比/上下游补证。
+
+`identity_status=resolved` 要与实体台账一致；`control_chain_checked=true` 和 `control_evidence_ids` 需实证。关系表记录多条边；待核实边允许 effective_from 为空，verified 则须真实生效日期与证据。有效区间为左闭右开，proposed 不等于已交割。品牌角色关系 `trademark_holder/operator/brand_of/licensee/manufacturer/distributor` 的下层（child）须为品牌或业务单元；主体角色、自然人权利人和子品牌例外统一见[从品牌到公司](../references/brand-to-company.md)。前三种参与相关主体的控制链检索；商标归属与经营控制分开解释，授权、生产和经销不构成控制。`category_exemptions` 仅可用于制度不适用或尚无相应期的官方中期材料，必须说明依据；不能豁免难取得的研报。
+
+旧配置缺少新增字段时只读补默认（评分关闭、范围审核为空、关键问题为空），不自动重写文件。数据契约 1.0.0 的工作区可以继续使用。旧项目要重新声明完成或发布评分，应按当前规则复核。
 
 `report_status` 为 draft/limited/complete；complete 只表示约定研究范围完成，需 `completion_review` 复核。`research_gate` 独立记录研报资料覆盖，仍有未读或未取得资料时保持 partial/incomplete。`declared_complete` 更严格，表示全部工作完成，有开放缺口或计划动作时不得设为 true。`last_refresh_at` 是实际最后复查的带时区时间。`published_score` 仅记录经检查可发布的实际总分。
 
 `completion_review` 默认 null；结束范围时填写 `scope`（与用户约定的范围）、`key_claim_ids`（实际采用的关键结论）、`gap_assessments` 和带时区的 `reviewed_at`。每个开放缺口对应一项 `{gap_id, impact, disposition}`；`disposition` 为 non_blocking（不妨碍范围）、limits_conclusion（限制非核心结论）或 blocks_completion（阻断核心问题）。关键结论须有已核验的依据；缺口、重大冲突、必要检索未执行不能靠状态改写消失。未知妨碍核心问题时保持 limited，不事后缩小范围绕过。语义充分性仍需分析者复核。
-
-旧配置缺少新增字段时只读补默认（评分关闭、范围审核为空），不自动重写文件，也不自动恢复发布历史综合分。旧项目要重新声明完成或发布评分，应按当前规则复核。
 
 ## 检索计划
 
@@ -30,9 +34,27 @@ python3 scripts/init_project.py --output /tmp/dd-example --target "待核验法�
 python3 scripts/search_plan.py --project /tmp/dd-example --output /tmp/dd-plan.json
 ```
 
-计划先保留全貌扫描，再根据已有关键声明和开放缺口安排验证，同时覆盖别名、代码、控制链、模块、来源、语言及滚动时间窗。用现有 `claim-register` 的 assumptions/counterevidence/unresolved 记录不同解释、区分证据和改变判断的条件。所有计划任务是 not_executed，不会写搜索日志；Agent 实际访问后另填 `search-log.csv`，发现新问题再更新计划。
+计划按优先级排列：未回答的关键问题、关键声明与开放缺口的核验、官网基础阅读（含网页存档）、品牌追溯（`brand_trace`，仅品牌目标）与品牌层信号（`brand_signal`）、管理层言行追踪（`guidance_tracking`，上市主体另含业绩说明会与互动平台），最后是按模块、别名和语言展开的候选关键词、研报滚动时间窗与事件后检索。`deferred` 与 `not_applicable` 模块不生成候选关键词。所有任务都是 not_executed，不会写搜索日志；Agent 实际访问后另填 `search-log.csv`，发现新问题再更新计划。
+
+## 估算与三角验证
+
+```bash
+cp templates/estimate-input.json /tmp/dd-example/estimates/EST-01-营收.json
+# 填写各方法的公式与输入区间后：
+python3 scripts/triangulate.py --input /tmp/dd-example/estimates/EST-01-营收.json --project /tmp/dd-example
+```
+
+每种方法写公式（只允许输入名、数字、括号和 `+ - * /`）、可选的 `unit_factor`（结果单位换算），以及每个输入的 low/base/high、单位、`basis`（evidence 或 assumption）、证据 ID 与理由。脚本按区间运算得出各方法的上下限，判断方法是否独立（不共用证据，也不共用来源同源组），输出：
+
+- `status`：triangulated（已核对来源，至少两种独立方法且所有有证据方法无区间冲突）、divergent（存在有证据方法的区间冲突，不能取平均）或 insufficient（独立的有证据方法不足两种，或未提供项目核对来源）；
+- `overlap`、`envelope`、全部独立组合、冲突方法、各方法区间与完整输入依据；
+- `presentation`：证据与独立性足够时提供可放入 `report-content.json` 的 `range` 区间图（`kind=estimate`）；insufficient 时为空。
+
+退出码 0 表示得到可用的估算结果，1 表示 insufficient，2 表示输入错误。`--project` 用于核对证据存在、同源组和关联声明。声明须为【推断】、estimate、numeric，且主体/范围一致、输入证据均通过带 `bridge` 的声明关联保留；期间、单位与原文含义仍需人工核对。未提供项目只试算，不宣称交叉印证。`check_report.py` 会检查 `estimates/` 下的全部文件，`build_report.py` 把估算表写入底稿。方法与边界见[估算与三角验证](../references/estimation-triangulation.md)。
 
 ## 台账维护
+
+无原始发布日期的来源可把 `published_date` 留空，在 `grade_reason` 说明未知及其时点限制；历史时点隔离与研报日期要求见[证据标准](../references/evidence-standard.md)。访问日不得替代发布日期。
 
 十三张CSV表头与规则在 [data-contract.json](../schemas/data-contract.json)。多值为 JSON 数组，CSV 负责引号转义；推荐 JSON 批量写入，避免手工引号错误。
 
@@ -118,41 +140,12 @@ python3 scripts/scoring.py --project /tmp/dd-example --output /tmp/dd-score.json
 
 ## HTML 主报告与独立底稿
 
-模块分析仍放在工作区 `modules/01-名称.md` 至 `18-名称.md`；同一编号只保留一个本次版本。模块是研究底稿，主报告需要独立编辑：读取[报告设计](../references/report-design.md)，从模块和已核验台账中提炼读者问题、结论与可追溯图表，填入工作区 `report-content.json`。
+模块分析放在工作区 `modules/01-名称.md` 至 `18-名称.md`；同一编号只保留一个本次版本。主报告需要独立编辑：按[报告设计](../references/report-design.md)从模块和已核验台账中提炼读者问题、结论与图表，填入工作区 `report-content.json`（`version: "1.2"`）。
 
-字段和支持的图表类型见[内容契约](../schemas/report-content.schema.json)，示例结构见[内容模板](../templates/report-content.json)。证据ID必须存在于当前项目台账。正文避免呈现搜索日志、模块适用性、覆盖计数和完整请求问卷，但必须保留影响决策的重要限制。
+内容规则只在两处定义，本文件不再重复：
 
-新建HTML必须使用 `version: "1.2"`。默认先写公司画像和业务机制，再扩展增长、竞争、财务、风险与决策。以下11个 `explanation` 主题在全文各出现一次，可按内容分入自定章节，不强制章节名称或数量：
-
-| topic | 正文必须解释 |
-| --- | --- |
-| identity | 公司做什么、行业与阶段，品牌/集团/经营主体的范围 |
-| history_team | 创立背景、重要沿革、创始人或核心团队 |
-| offering | 产品或服务、解决的需求与使用场景 |
-| customers_markets | 使用者/购买者/付款者、主要市场与渠道 |
-| transaction_flow | 需求、下单或签约、交付、收款及售后怎样衔接 |
-| operating_model | 自营与外包分工，供给、履约和运营如何组织 |
-| revenue_costs | 谁付费、如何计费、主要成本与现金逻辑 |
-| differentiation | 相对替代方案的客户价值、支撑条件与边界 |
-| financial_performance | 营收规模、构成、毛利率及净利率分别说明主体、期间、来源和缺口 |
-| marketing | 渠道、内容投放/品牌、获客转化复购与尚未取得的数据 |
-| competition | 主要竞品选择依据、同口径比较和替代，不以行业规模代替竞争分析 |
-
-每块填写 `type`、`topic`、`title`、`text`、`status`、`evidence_ids`、`limitations`。`supported/partial` 至少有一条真实引用；`partial/unknown` 必须在 `limitations` 说明具体未知及其影响，`unknown` 可以没有引用。`supported` 的限制可为空字符串。渲染为自然的小标题和正文，覆盖状态只在检查输出中呈现。已有基础材料未进入正文属于编辑遗漏，应补回；真实缺证属于研究缺口，应补查并如实说明，不能为了通过检查编造答案。
-
-至少一块 `process` 或 `diagram` 应标为 `purpose: "business_model"`。`process` 包含两个以上业务环节，各项 `basis` 为 `evidence/company_claim/inference/unknown`，对应证据直接支持、公司自述、分析推断、未知；`diagram` 以参与方与连线呈现业务关系，字段见下文。只有 `unknown` 可以使用空引用；其他环节须有依据。公司自述和推断在正文中说明属性与边界，未知环节说明缺口；推荐合作步骤不能充当业务运转图。仅 `transaction_flow` 整体为 `unknown` 且明确写出限制时，允许省略业务图。其他流程可用 `purpose: "recommendation"` 或 `"other"`，也可不填写此字段；`basis` 可选，但未标未知的环节仍须引用。
-
-`process.ordering` 可选 `sequence` 或 `conceptual`，省略时默认 `sequence` 以兼容历史内容。只有先后顺序已有依据时使用 `sequence`；若只知道环节及参与方，而订单、生产、交付和回款的先后尚未核实，应使用 `conceptual` 关联图，不显示顺序编号与箭头。新模板显式使用 `conceptual`，编辑时按证据选择，不能靠画箭头把未知时序变成事实。该字段控制呈现，不会自动验证时序真实性。
-
-`timeline.purpose` 可填 `company_history/other`。公司发展时间线至少两个有引用、日期和事件说明的节点，且与 `identity` 同章；保留原始日期精度，计划与已发生分开。无此时间线时，只有 `history_team` 为 `partial/unknown` 且限制非空才允许生成，并给警告要求人工确认确实没有两个可用事件；不能随意标未知绕过。
-
-`people` 块包含 `title` 和至少一个 `profiles` 条目，每人填写 `name/role/period/background/contribution/limitations/evidence_ids`。除 `limitations` 可为空，其余文字非空、引用非空。该块必须在与 `identity` 不同的独立章节；没有足够人物资料可以不放，检查会警告。角色与贡献、既往履历与现任状态分别介绍，不编造合伙人身份。
-
-`image` 块填写 `role`（`logo/website/product/store/people/other`）、项目相对 `path`、`title/alt/caption`、`source_url`、`captured_at`（YYYY-MM-DD）、`usage_note` 与非空 `evidence_ids`。有原页时 `source_url` 填安全HTTP/HTTPS地址；本地或用户提供材料可为空字符串，通过 `evidence_ids` 关联原文件与来源台账，并在 `usage_note` 说明提供者和使用范围。`captured_at` 是本次实际取得或读取素材的日期，不是原图拍摄日或页面发布日期；原始时点未知在图注说明。
-
-图片仅接受真实 PNG/JPEG/WebP，每张≤5 MiB、合计≤15 MiB；构建内嵌离线，不接受运行时SVG、绝对或越界路径、越界符号链接及运行时远程图片。来源SVG可用可信渲染或浏览器截图另存位图，保留原始来源，不得重新生成冒充真实标识。图片来源和使用说明不等于对页面宣传或人物身份的核验。模板没有预置图片，未实际取得图片则删除相应块。
-
-`matrix` 块填写 `title`、至少两列 `columns`、至少一行 `rows`、`note`；可选 `purpose` 为 `competition/marketing/financial/other`。每行有 `label` 和与列数相同的 `cells`；每格有 `text/basis/evidence_ids`，`basis` 为 `evidence/company_claim/inference/unknown`，仅 `unknown` 允许空引用。比较维度、地区、时点及统计范围应一致；口径不同就解释差别，不强排排名。定性矩阵不计为定量图，仍需对可靠数字选择适当图表。
+- 字段、图表类型和每种内容块的约束见[内容契约](../schemas/report-content.schema.json)，可改写的结构见[内容模板](../templates/report-content.json)与[视觉配方](../references/visual-examples.json)。
+- 11 个理解主题、业务图、公司时间线、人物分章、图片、比较矩阵、品牌关系图与估算区间图的编排要求见[报告设计](../references/report-design.md)。
 
 ```bash
 python3 scripts/build_report.py \
@@ -173,21 +166,17 @@ python3 scripts/check_report.py \
   --mode completed
 ```
 
-默认HTML支持离线阅读，内联报告样式与图表；同目录自动生成 `report-audit.md`，保留完整模块、研究状态、台账及后续请求。主报告的引用可定位到折叠证据附录。单文件HTML适合直接打开和分享，但其中仍可能包含项目材料，分享范围由用户授权决定。
+构建生成离线 HTML（内联样式与图表）和同目录 `report-audit.md`；后者保留完整模块、关键问题、研究状态、估算底稿、台账及后续请求。默认拒绝覆盖，`--overwrite` 才替换两份输出。生成不会自动升级配置完成状态；未编辑的模板不能生成主报告。单文件 HTML 中仍可能包含项目材料，分享范围由用户授权决定。
 
-组装默认拒绝覆盖，只有 `--overwrite` 才替换输出；注意主报告及对应底稿均属于本次交付。生成不会自动升级配置完成状态；Quick也采用HTML，研究门槛不变。未编辑的模板不能作为完成报告，禁止用“生成成功”替代分析。
-
-检查输出区分 errors、warnings、manual_review。完成态不得有未填字段、主体歧义、模块适用性待定、未实际执行的必需检索或阻断核心问题的缺口；资料获取不足须保留真实状态并经范围复核。HTML检查不要求把元信息表、研究完成范围、研报覆盖表或搜索日志放回正文。
-
-必须执行人工复核：仅看主报告能否回答“它是谁、卖给谁、怎样经营、怎样赚钱、关键未知是什么”；引用是否支持原句、实体与期间是否匹配、同源与最新性、重要反证、建议权限及已执行工作的真实证明；逐图检查数值、单位、主体范围、实际/预测属性、来源与可比口径，确认流程实际解释目标公司的交易而非通用行业常识。实际预览桌面、移动和打印，确认导航、图例、数据表、引用与折叠附录可读。字段齐全不证明解释充分，真实未知可以有限交付，不能据此宣称完成全部研究。
+检查输出区分 `errors`、`warnings`、`manual_review`，并附 `visual_review`、`brand_resolution`（品牌目标）与 `key_questions` 状态。检查同时校验工作区 `estimates/` 下的全部估算文件。完成态的额外要求见[质量门槛](../references/quality-gates.md)。
 
 ### 旧 HTML 内容迁移
 
-`check_report.py --mode draft` 可读取历史1.0/1.1 HTML，并提示它未通过新版理解与内容要求；`--mode completed` 拒绝旧版。`build_report.py` 只接受1.2内容新建HTML。迁移时按新版模板补齐11个解释主题、业务图、公司时间线（或契约允许的真实未知说明），按证据补充独立人物介绍、图片及比较矩阵，保留原有证据及适用分析，再把 `version` 改为 `"1.2"`；只改版本号不算迁移。不新增CLI参数。
+`check_report.py --mode draft` 可读取历史 1.0/1.1 HTML，并提示它未通过新版要求；`--mode completed` 拒绝旧版。`build_report.py` 只接受 1.2 内容。迁移时按新版模板补齐 11 个解释主题、业务图、公司时间线（或契约允许的真实未知说明），按证据补充人物、图片及比较矩阵，保留原有证据及适用分析，再把 `version` 改为 `"1.2"`；只改版本号不算迁移。
 
 ### 兼容旧 Markdown 底稿
 
-原有 `--sections` + `.md` 用法保留，适合单独导出完整底稿。`--sections` 的 JSON 字段为 summary、highlights、recommendation、research_comparison、data_bridge、judgment、next_steps，各值为已有分析的Markdown。此路径不会把18模块自动改写成面向阅读的主报告。
+原有 `--sections` + `.md` 用法保留，适合单独导出完整底稿。`--sections` 的 JSON 字段为 summary、highlights、recommendation、research_comparison、data_bridge、judgment、next_steps，各值为已有分析的 Markdown。此路径不会把 18 模块改写成阅读型主报告。
 
 ```bash
 python3 scripts/build_report.py --project /tmp/dd-example --sections /tmp/sections.json --output /tmp/dd-audit.md
@@ -195,15 +184,9 @@ python3 scripts/check_report.py --project /tmp/dd-example --report /tmp/dd-audit
 python3 scripts/check_report.py --mode template --report templates/report-full.md
 ```
 
-完整与Quick Markdown模板保留给底稿兼容。无 `--sections` 时也可生成底稿骨架；未填写内容会保留缺口，不得宣称研究已完成。
+## 可视化编辑检查
 
-## 可视化编排与编辑检查
-
-1.2 内容支持 `bar / column / line / donut / proportion / range / waterfall / stacked_bar` 八种数据图，以及独立 `diagram` 关系图。字段见[内容契约](../schemas/report-content.schema.json)，可改写结构见[视觉配方](../references/visual-examples.json)。已有1.2报告无需迁移；选择图型取决于真实数据和读者问题，不要求用遍所有图型。
-
-`proportion` 允许单个有明确量尺的比例，`range` 允许单个有据区间；不用虚构第二个比较对象。`waterfall` 校验首末角色与累计数值，`stacked_bar` 校验分类一致与非负完整值。`diagram` 的节点和边分别有依据属性与引用，只有 `purpose=business_model` 才可满足业务机制图要求；关系图不计入定量图数。
-
-HTML构建输出和检查输出的 `visual_review` 按章节列出视觉类型、计数和编辑线索，自动摘要写入同名 `-audit.md`。检查输出的警告不自动改变研究状态，也不证明文字中的数字足够可比；分析者应逐项决定转图或说明保留原因。无需新增CLI参数，不把审阅面板插入HTML正文。
+HTML 构建输出和检查输出的 `visual_review` 按章节列出视觉类型、计数和编辑线索，摘要写入同名 `-audit.md`。警告不自动改变研究状态，也不证明文字中的数字足够可比；分析者逐项决定转图或说明保留原因。
 
 ## 退出码与安全写入
 

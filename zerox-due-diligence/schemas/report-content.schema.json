@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ZeroX 尽调 HTML 阅读稿内容契约",
-  "description": "1.2 是新 HTML 报告内容契约。运行时额外验证 11 个解释主题各一次、业务图及未知例外、公司时间线与 identity 同章、people 与 identity 分章，以及证据/主体引用、图片边界与大小等。无公司时间线仅在 history_team 为 partial/unknown 且有具体限制时允许，仍需人工核查确实不足两个有依据事件；缺 people 给警告。历史 1.0/1.1 HTML 仅兼容草稿检查，不可新建或通过完成态。结构有效不证明事实正确或解释充分。",
+  "description": "1.2 是新 HTML 报告内容契约。运行时额外验证 11 个解释主题各一次、业务图及未知例外、公司时间线与 identity 同章、people 与 identity 分章，以及证据/主体引用、图片边界与大小等。目标为品牌（entity_type=brand）时，identity 非 unknown 须有 purpose=ownership 的关系图说明品牌背后的主体。无公司时间线仅在 history_team 为 partial/unknown 且有具体限制时允许，仍需人工核查确实不足两个有依据事件；缺 people 给警告。历史 1.0/1.1 HTML 仅兼容草稿检查，不可新建或通过完成态。结构有效不证明事实正确或解释充分。",
   "type": "object",
   "properties": {
     "version": {
@@ -1812,7 +1812,7 @@
         "edges"
       ],
       "additionalProperties": false,
-      "description": "定性有向关系图，不计为定量图表。每条边的方向和内容须有对应依据，不由系统推断；unknown/inference 显示虚线，线粗不表示数量。节点 ID 唯一，端点必须存在，无自连接、完全重复边或孤立节点；运行时校验。business_model 可满足业务机制图要求。"
+      "description": "定性有向关系图，不计为定量图表。每条边的方向和内容须有对应依据，不由系统推断；unknown/inference 显示虚线，线粗不表示数量。节点 ID 唯一，端点必须存在，无自连接、完全重复边或孤立节点；运行时校验。business_model 可满足业务机制图要求；ownership 用于品牌—主体关系与控制链，品牌目标必需。"
     }
   }
 }

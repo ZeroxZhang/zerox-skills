@@ -1,5 +1,8 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "compatible_versions": [
+    "1.0.0"
+  ],
   "description": "统一数据契约；字段验证、枚举、引用、评分与研报类别的唯一机器规则来源。",
   "encoding": {
     "csv": "UTF-8，逗号分隔，标准CSV引号；表头顺序固定；空单元格为null，0不是null。",
@@ -111,6 +114,11 @@
       "significant_influence",
       "minority",
       "brand_of",
+      "trademark_holder",
+      "operator",
+      "licensee",
+      "manufacturer",
+      "distributor",
       "branch_of",
       "other"
     ],
@@ -152,7 +160,8 @@
         },
         "registration_id": {
           "type": "string",
-          "required": false
+          "required": false,
+          "description": "非自然人按身份类型填写可核验登记号；person 留空，不收私人证件号。"
         },
         "aliases": {
           "type": "list",
@@ -170,8 +179,10 @@
             "group",
             "segment",
             "brand",
-            "branch"
-          ]
+            "branch",
+            "person"
+          ],
+          "description": "person 仅为商标权利人、股东或实际控制人等关联角色，不能作为研究目标、上市主体或公司营业数据主体。"
         },
         "identity_status": {
           "type": "enum",
@@ -223,7 +234,6 @@
             "identity_status": "resolved"
           },
           "required": [
-            "registration_id",
             "evidence_ids"
           ]
         },
@@ -234,6 +244,60 @@
           "required": [
             "exchange",
             "security_code"
+          ]
+        },
+        {
+          "if": {
+            "identity_status": "resolved",
+            "entity_type": "legal_entity"
+          },
+          "required": [
+            "registration_id"
+          ]
+        },
+        {
+          "if": {
+            "identity_status": "resolved",
+            "entity_type": "group"
+          },
+          "required": [
+            "registration_id"
+          ]
+        },
+        {
+          "if": {
+            "identity_status": "resolved",
+            "entity_type": "segment"
+          },
+          "required": [
+            "registration_id"
+          ]
+        },
+        {
+          "if": {
+            "identity_status": "resolved",
+            "entity_type": "brand"
+          },
+          "required": [
+            "registration_id"
+          ]
+        },
+        {
+          "if": {
+            "identity_status": "resolved",
+            "entity_type": "branch"
+          },
+          "required": [
+            "registration_id"
+          ]
+        },
+        {
+          "if": {
+            "identity_status": "resolved",
+            "entity_type": "person"
+          },
+          "required": [
+            "identity_notes"
           ]
         }
       ]
@@ -273,7 +337,8 @@
         },
         "effective_from": {
           "type": "date",
-          "required": true
+          "required": false,
+          "description": "待核实线索可留空，不猜生效日；verification=verified 时必须提供。未知起日的 pending 边保留为潜在关系，不能确认控制或品牌经营主体。"
         },
         "effective_to": {
           "type": "date",
@@ -308,7 +373,8 @@
             "verification": "verified"
           },
           "required": [
-            "evidence_ids"
+            "evidence_ids",
+            "effective_from"
           ]
         }
       ]
@@ -403,7 +469,8 @@
         },
         "published_date": {
           "type": "date",
-          "required": true
+          "required": false,
+          "description": "原件未载明时留空；必须用 grade_reason 说明缺日期与时点可用性，不能用访问日期代替。"
         },
         "revised_date": {
           "type": "date",
@@ -430,7 +497,8 @@
         },
         "grade_reason": {
           "type": "string",
-          "required": false
+          "required": false,
+          "description": "来源评级与可用性说明；发布日期未知时必填，说明缺日期及研究时点限制。"
         },
         "origin_group": {
           "type": "string",
@@ -472,7 +540,16 @@
           "required": false
         }
       },
-      "conditions": []
+      "conditions": [
+        {
+          "if": {
+            "published_date": null
+          },
+          "required": [
+            "grade_reason"
+          ]
+        }
+      ]
     },
     "evidence-ledger": {
       "primary_key": "evidence_id",
@@ -1314,8 +1391,42 @@
     "control_relations": [
       "control",
       "brand_of",
-      "branch_of"
+      "branch_of",
+      "trademark_holder",
+      "operator"
     ],
+    "brand_roles": {
+      "holding": [
+        "trademark_holder",
+        "brand_of"
+      ],
+      "operating": [
+        "operator",
+        "brand_of"
+      ],
+      "all": [
+        "brand_of",
+        "trademark_holder",
+        "operator",
+        "licensee",
+        "manufacturer",
+        "distributor"
+      ]
+    },
+    "relation_names": {
+      "control": "控制",
+      "joint_control": "共同控制",
+      "significant_influence": "重大影响",
+      "minority": "参股",
+      "brand_of": "品牌归属（同一主体持有并经营，或子品牌归属主品牌）",
+      "trademark_holder": "商标权利人",
+      "operator": "品牌经营主体",
+      "licensee": "被授权经营方",
+      "manufacturer": "生产/代工方",
+      "distributor": "经销/代理方",
+      "branch_of": "分支机构",
+      "other": "其他"
+    },
     "status_names": {
       "complete": "完成",
       "partial": "部分完成",
@@ -1502,7 +1613,9 @@
     "报告获取与阅读状态分别记录",
     "来源同源组只用于识别独立性，不能自动产生置信度",
     "历史研究隔离事后资料",
-    "覆盖表中not_found不创建虚构报告"
+    "覆盖表中not_found不创建虚构报告",
+    "品牌目标须以有效且已核实的关系查明商标权利人和经营主体，否则控制链保持待核实",
+    "品牌角色关系的下层为品牌或业务单元，上层为法律主体、集团或分支；授权、生产和经销不构成控制"
   ],
   "purpose_labels": {
     "company_research": "公司研究",

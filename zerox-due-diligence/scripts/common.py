@@ -32,6 +32,8 @@ def fail(message):
 
 
 CONTRACT = load_json(ROOT / "schemas/data-contract.json")
+# 支撑主报告十一个必答主题与风险判断的模块；可以资料受限，不能被裁剪掉。
+CORE_MODULES = ("01", "02", "03", "05", "09", "12", "15")
 
 
 def finite(value, label="数值"):
@@ -176,6 +178,15 @@ def record(table, raw):
             for key in condition["required"]:
                 if row[key] is None or row[key] == [] or row[key] == "":
                     fail(f"{table}.{key}：条件必填（{condition['if']}）")
+    if table == "entity-map" and row["entity_type"] == "person":
+        if row["registration_id"]:
+            fail("自然人不填写企业登记号或私人证件号；身份依据写入 evidence_ids 和 identity_notes")
+        if row["listing_status"] != "unlisted" or any(row[key] for key in (
+                "exchange", "security_code", "security_class", "listing_start", "listing_end")):
+            fail("自然人不能上市；listing_status 须为 unlisted，证券字段留空")
+    if table == "source-register" and row["published_date"] is None:
+        if not isinstance(row["grade_reason"], str) or not row["grade_reason"].strip():
+            fail("来源发布日期未知时，grade_reason 须说明缺日期情况及对研究时点的可用性限制")
     for start, end in (("period_start", "period_end"), ("effective_from", "effective_to"),
                        ("listing_start", "listing_end"), ("published_date", "revised_date")):
         if row.get(start) and row.get(end) and row[start] > row[end]:
@@ -224,7 +235,7 @@ def load_config(project):
     baseline = load_json(ROOT / "templates/project-config.json")
     # 兼容旧项目只补新增的安全默认值；不写盘，也不据已有评分推定启用。
     if isinstance(cfg, dict):
-        for key in ("scoring_enabled", "completion_review"):
+        for key in ("scoring_enabled", "completion_review", "key_questions"):
             cfg.setdefault(key, baseline[key])
     if not isinstance(cfg, dict) or set(cfg) != set(baseline):
         fail("项目配置字段与模板不一致")
@@ -232,7 +243,7 @@ def load_config(project):
         if not isinstance(cfg[key], str) or not cfg[key].strip():
             fail(f"配置 {key} 必须为非空字符串")
     for key in ("materials", "control_evidence_ids", "industry_keywords", "languages", "events",
-                "category_exemptions", "completed_actions"):
+                "category_exemptions", "completed_actions", "key_questions"):
         if not isinstance(cfg[key], list):
             fail(f"配置 {key} 必须为数组")
     for key in ("control_evidence_ids", "industry_keywords", "languages"):
@@ -244,7 +255,7 @@ def load_config(project):
         fail("network 必须为 unknown/online/offline")
     if not all(isinstance(e, dict) for e in cfg["category_exemptions"]):
         fail("category_exemptions 元素必须为对象")
-    if cfg["contract_version"] != CONTRACT["version"]:
+    if cfg["contract_version"] not in (CONTRACT["version"], *CONTRACT.get("compatible_versions", [])):
         fail("数据契约版本不匹配")
     iso_date(cfg["as_of_date"])
     if cfg["purpose"] is not None and cfg["purpose"] not in CONTRACT["enums"]["purpose"]:
@@ -300,17 +311,55 @@ def load_config(project):
     if set(cfg["module_scope"]) != {f"{i:02}" for i in range(1, 19)}:
         fail("module_scope 必须记录全部十八模块")
     for key, value in cfg["module_scope"].items():
-        if not isinstance(value, dict) or value.get("status") not in ("pending", "applicable", "not_applicable"):
+        if not isinstance(value, dict) or value.get("status") not in ("pending", "applicable", "deferred", "not_applicable"):
             fail(f"模块 {key} 状态错误")
-        if value["status"] == "not_applicable" and not value.get("reason"):
-            fail(f"模块 {key} 不适用必须给理由")
+        if value["status"] in ("not_applicable", "deferred") and (
+                not isinstance(value.get("reason"), str) or not value["reason"].strip()):
+            fail(f"模块 {key} 不适用或延后必须给理由")
     for event in cfg["events"]:
         if not isinstance(event, dict) or not all(event.get(k) for k in ("date", "entity_id", "description")):
             fail("事件必须包含 date/entity_id/description")
         iso_date(event["date"])
         if event["date"] > cfg["as_of_date"]:
             fail("基准日之后的事件不得作为当时已知事件")
+    check_key_questions(cfg["key_questions"])
     return cfg
+
+
+KEY_QUESTION_FIELDS = {"kq_id", "question", "why_it_matters", "sub_questions", "claim_ids", "status", "answer"}
+KEY_QUESTION_STATUS = ("open", "answered", "answered_with_limits", "unanswerable")
+
+
+def check_key_questions(questions):
+    """关键问题是研究的起点和完成审核的对照；只校验结构，回答是否充分仍需人工判断。"""
+    if not isinstance(questions, list):
+        fail("key_questions 必须为数组")
+    seen = set()
+    for item in questions:
+        if not isinstance(item, dict) or set(item) != KEY_QUESTION_FIELDS:
+            fail("key_questions 每项需 kq_id/question/why_it_matters/sub_questions/claim_ids/status/answer")
+        kid = item["kq_id"]
+        if not isinstance(kid, str) or not re.fullmatch(r"KQ-[0-9]{2,}", kid) or kid in seen:
+            fail(f"关键问题 ID 非法或重复：{kid!r}，格式为 KQ-01")
+        seen.add(kid)
+        for key in ("question", "why_it_matters"):
+            if not isinstance(item[key], str) or not item[key].strip():
+                fail(f"{kid}.{key} 必须为非空文字")
+        if not isinstance(item["sub_questions"], list) or not all(isinstance(x, str) and x.strip() for x in item["sub_questions"]):
+            fail(f"{kid}.sub_questions 必须为文字数组")
+        claims = item["claim_ids"]
+        if (not isinstance(claims, list)
+                or not all(isinstance(x, str) and re.fullmatch(r"C-[0-9]{4,}", x) for x in claims)
+                or len(claims) != len(set(claims))):
+            fail(f"{kid}.claim_ids 必须为不重复的声明 ID 数组")
+        if item["status"] not in KEY_QUESTION_STATUS:
+            fail(f"{kid}.status 需为 {'/'.join(KEY_QUESTION_STATUS)}")
+        if not isinstance(item["answer"], str):
+            fail(f"{kid}.answer 必须为文字")
+        if item["status"] != "open" and not item["answer"].strip():
+            fail(f"{kid}：已回答或判定无法回答时须写明回答或无法回答的原因")
+        if item["status"] in ("answered", "answered_with_limits") and not claims:
+            fail(f"{kid}：已回答的关键问题须关联支撑结论的声明")
 
 
 def read_project(project):
@@ -340,13 +389,62 @@ def structural_errors(data, cfg=None):
     if cfg:
         if cfg["target_id"] not in idx["entity-map"]:
             errors.append("配置 target_id 不存在")
+        elif idx["entity-map"][cfg["target_id"]]["entity_type"] == "person":
+            errors.append("自然人仅可作为公司或品牌的关联权利人、控制方，不能作为本技能研究目标")
         for eid in cfg["control_evidence_ids"]:
             if eid not in idx["evidence-ledger"]:
                 errors.append(f"控制链依据不存在：{eid}")
         for event in cfg["events"]:
             if event["entity_id"] not in idx["entity-map"]:
                 errors.append(f"事件主体不存在：{event['entity_id']}")
+        for question in cfg["key_questions"]:
+            for cid in question["claim_ids"]:
+                if cid not in idx["claim-register"]:
+                    errors.append(f"关键问题 {question['kq_id']} 引用不存在的声明：{cid}")
     return errors
+
+
+def edge_active(edge, when):
+    """筛选当时有效或尚不能排除的线索；缺起日仅保留 pending 边，调用方仍须核实。"""
+    if edge["state"] == "proposed" or (edge["effective_to"] and when >= edge["effective_to"]):
+        return False
+    if edge["effective_from"] is None:
+        return edge["verification"] == "pending"
+    return edge["effective_from"] <= when
+
+
+def brand_resolution(cfg, data, brand_id=None):
+    """沿有效且已核实的品牌角色关系查明经营主体与商标权利人；授权、生产和经销只记录，不构成控制。"""
+    roles = CONTRACT["research"]["brand_roles"]
+    entities = indices(data)["entity-map"]
+    found = {"operating": [], "holding": [], "licensee": [], "manufacturer": [], "distributor": [],
+             "unverified_relations": []}
+    seen, todo = set(), [brand_id or cfg["target_id"]]
+    while todo:
+        brand = todo.pop()
+        if brand in seen:
+            continue
+        seen.add(brand)
+        for edge in data["entity-relations"]:
+            if (edge["child_id"] != brand or edge["relation_type"] not in roles["all"]
+                    or not edge_active(edge, cfg["as_of_date"])):
+                continue
+            parent = edge["parent_id"]
+            if (edge["verification"] != "verified"
+                    or entities.get(parent, {}).get("identity_status") != "resolved"
+                    or entities.get(brand, {}).get("identity_status") != "resolved"):
+                found["unverified_relations"].append(edge["relation_id"])
+                continue
+            if edge["relation_type"] == "brand_of" and entities.get(parent, {}).get("entity_type") == "brand":
+                todo.append(parent)  # 子品牌沿主品牌继续追溯
+                continue
+            for role in ("operating", "holding"):
+                valid_types = ("legal_entity", "group", "branch") + (("person",) if role == "holding" else ())
+                if edge["relation_type"] in roles[role] and entities.get(parent, {}).get("entity_type") in valid_types:
+                    found[role].append(parent)
+            if edge["relation_type"] in ("licensee", "manufacturer", "distributor"):
+                found[edge["relation_type"]].append(parent)
+    return {key: list(dict.fromkeys(value)) for key, value in found.items()}
 
 
 def listed_entities(cfg, data):
@@ -377,13 +475,16 @@ def listed_entities(cfg, data):
         for edge in data["entity-relations"]:
             if edge["child_id"] != entity_id or edge["relation_type"] not in CONTRACT["research"]["control_relations"]:
                 continue
-            if edge["state"] == "proposed" or edge["effective_from"] > when or (edge["effective_to"] and when >= edge["effective_to"]):
+            if not edge_active(edge, when):
                 continue
             if edge["verification"] != "verified":
                 pending = True
                 continue
             todo.append(edge["parent_id"])
     pending = pending or not cfg["control_chain_checked"] or not cfg["control_evidence_ids"]
+    # 品牌名不是法律主体；查明经营主体之前，控制链和上市关系都不能视为已核实。
+    if entities.get(target, {}).get("entity_type") == "brand" and not brand_resolution(cfg, data)["operating"]:
+        pending = True
     return sorted(listed), pending
 
 
@@ -432,7 +533,9 @@ def candidates(coverage, data, as_of):
             and r["coverage_entity_id"] == coverage["research_entity_id"]
             and coverage["category"] in r["categories"] and r["relevance"] != "excluded"
             and r["report_date"] <= as_of
-            and sources.get(r["source_id"], {}).get("time_scope") == "as_of"]
+            and sources.get(r["source_id"], {}).get("time_scope") == "as_of"
+            and r["report_date"] == (sources.get(r["source_id"], {}).get("revised_date")
+                                      or sources.get(r["source_id"], {}).get("published_date"))]
     superseded = {r["supersedes_id"] for r in rows if r["supersedes_id"]}
     rows = [r for r in rows if r["research_id"] not in superseded]
     return sorted(rows, key=lambda r: (r["report_date"], r["research_id"]), reverse=True)
@@ -490,6 +593,26 @@ def completion_errors(cfg, data):
     _, pending = requirements(cfg, data)
     if pending:
         errors.append("主体或控制链仍未核实，不能确认研究范围完成")
+    target = idx["entity-map"].get(cfg["target_id"], {})
+    if target.get("entity_type") == "brand":
+        brand = brand_resolution(cfg, data)
+        if not brand["operating"]:
+            errors.append("品牌目标尚未以已核实关系查明经营主体，公司层判断缺少承担主体")
+        if not brand["holding"]:
+            errors.append("品牌目标尚未查明商标权利人；无法取得时登记缺口并保持 limited")
+    if not cfg["key_questions"]:
+        errors.append("约定范围完成需在 key_questions 记录研究开始时约定的关键问题")
+    for question in cfg["key_questions"]:
+        if question["status"] == "open":
+            errors.append(f"{question['kq_id']}：关键问题仍未回答")
+        elif question["status"] == "unanswerable":
+            errors.append(f"{question['kq_id']}：关键问题判定无法回答，研究应保持 limited")
+        else:
+            # 被反证推翻的假设同样可以构成回答，但须有高/中把握。
+            settled = [idx["claim-register"].get(cid) for cid in question["claim_ids"]]
+            if not any(c and c["verification"] in ("verified", "refuted") and c["confidence"] in ("high", "medium")
+                       for c in settled):
+                errors.append(f"{question['kq_id']}：回答没有已核实或已被反证推翻的声明支撑")
     keys = set(review["key_claim_ids"])
     for cid in keys:
         claim = idx["claim-register"].get(cid)
@@ -549,10 +672,13 @@ def semantic_errors(cfg, data):
     when = cfg["as_of_date"]
     for source in data["source-register"]:
         published = source["revised_date"] or source["published_date"]
-        if published > source["accessed_date"]:
+        if published and published > source["accessed_date"]:
             errors.append(f"{source['source_id']}：访问早于发布/修订")
-        if source["time_scope"] == "as_of" and published > when:
-            errors.append(f"{source['source_id']}：历史截止日后资料未隔离")
+        if source["time_scope"] == "as_of":
+            if published and published > when:
+                errors.append(f"{source['source_id']}：历史截止日后资料未隔离")
+            elif not published and source["accessed_date"] > when:
+                errors.append(f"{source['source_id']}：发布日期与修订日期均未知且访问晚于截止日，须标 retrospective；不能把访问日伪装成发布日期")
     for evidence in data["evidence-ledger"]:
         source = idx["source-register"].get(evidence["source_id"], {})
         if source.get("access_status") in ("metadata_only", "access_blocked", "unreadable"):
@@ -610,16 +736,34 @@ def semantic_errors(cfg, data):
                       or prior["publisher"] != research["publisher"]
                       or prior["coverage_entity_id"] != research["coverage_entity_id"]):
             errors.append(f"{rid}：修订替代关系不合理")
+    entity_types = {r["entity_id"]: r["entity_type"] for r in data["entity-map"]}
+    brand_roles = CONTRACT["research"]["brand_roles"]["all"]
     for edge in data["entity-relations"]:
         if edge["parent_id"] == edge["child_id"]:
             errors.append(f"{edge['relation_id']}：不能自我控制")
+        if edge["relation_type"] in brand_roles:
+            if entity_types.get(edge["child_id"]) not in ("brand", "segment"):
+                errors.append(f"{edge['relation_id']}：品牌角色关系的下层须为品牌或业务单元")
+            allowed = ("legal_entity", "group", "branch")
+            if edge["relation_type"] == "brand_of":
+                allowed += ("brand",)
+            elif edge["relation_type"] == "trademark_holder":
+                allowed += ("person",)
+            if entity_types.get(edge["parent_id"]) not in allowed:
+                errors.append(f"{edge['relation_id']}：品牌角色的上层须为法律主体、集团或分支；brand_of 可指向主品牌，trademark_holder 可指向自然人")
+        if entity_types.get(edge["child_id"]) == "person":
+            errors.append(f"{edge['relation_id']}：自然人只作为关联权利人或控制方，不作为被经营、被持有或被控制的公司主体")
+    listed, _ = listed_entities(cfg, data)
+    if listed and cfg["module_scope"]["18"]["status"] in ("not_applicable", "deferred"):
+        errors.append("上市关系已触发，模块18不能标为不适用或延后")
+    for module in CORE_MODULES:
+        if cfg["module_scope"][module]["status"] in ("not_applicable", "deferred"):
+            errors.append(f"模块 {module} 支撑主报告必答主题，不能标为不适用或延后；资料不足时保留缺口")
     # 生效控制图不能含循环；股权交叉持有可保留为非控制关系。
     adjacency = {}
     for edge in data["entity-relations"]:
         if (edge["relation_type"] in CONTRACT["research"]["control_relations"]
-                and edge["verification"] == "verified" and edge["state"] != "proposed"
-                and edge["effective_from"] <= when
-                and (not edge["effective_to"] or when < edge["effective_to"])):
+                and edge["verification"] == "verified" and edge_active(edge, when)):
             adjacency.setdefault(edge["parent_id"], []).append(edge["child_id"])
     visiting, visited = set(), set()
     def cycle(node):

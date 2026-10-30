@@ -212,6 +212,48 @@
       }
     },
     {
+      "id": "estimate-triangulation",
+      "question": "未披露的规模或营收，用几种独立方法估出来大约在什么区间，方法之间是否一致？",
+      "use_when": "已按 references/estimation-triangulation.md 运行 triangulate.py，结果为 triangulated 或 divergent；直接使用其 presentation 输出，或按下列结构手工填写。",
+      "do_not_use_when": "结果为 insufficient；方法共用同一证据；把估算与财报实际值画在同一张图或同一条趋势线上；只给单点不给区间。",
+      "edit_notes": [
+        "kind 固定为 estimate；每个方法一行，label 写方法名，low/high 为该方法区间，evidence_ids 为该方法的证据。",
+        "triangulated 时可加一行“独立方法重叠区间”；divergent 时不加重叠行，在 note 解释分歧来自哪个假设。",
+        "note 写清公式、关键假设和“不是披露数据、不是统计置信区间”；正文同样只给区间并标为推断。"
+      ],
+      "block": {
+        "type": "chart",
+        "chart_type": "range",
+        "title": "{{待填写：指标估算区间与方法一致性}}",
+        "unit": "{{待填写：结果单位}}",
+        "period": "{{待填写：估算期间}}",
+        "entity_id": "ENT-0001",
+        "kind": "estimate",
+        "evidence_ids": [
+          "E-0001"
+        ],
+        "note": "{{待填写：本项目估算，不是披露数据；列出各方法公式与关键假设；区间由输入上下限组合得出，不是统计置信区间。}}",
+        "points": [
+          {
+            "label": "{{待填写：方法一}}",
+            "low": null,
+            "high": null,
+            "evidence_ids": [
+              "E-0001"
+            ]
+          },
+          {
+            "label": "{{待填写：与方法一证据独立的方法二}}",
+            "low": null,
+            "high": null,
+            "evidence_ids": [
+              "E-0002"
+            ]
+          }
+        ]
+      }
+    },
+    {
       "id": "business-and-relationship-map",
       "question": "哪些实际参与者之间存在什么有依据的产品、资金、信息或关系连接？",
       "use_when": "需要同时区分参与方及连接性质，且至少有两个可辨识节点和一条方向明确、有依据的关系；适用于业务机制、营销关系或股权/合同关系。",

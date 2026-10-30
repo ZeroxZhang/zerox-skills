@@ -1,4 +1,4 @@
 interface:
   display_name: "ZeroX 公司研究与尽调"
-  short_description: "全面理解公司的业务、竞争与经营变化，按商业目的开展专项尽调，形成可追溯判断。"
-  default_prompt: "使用 $zerox-due-diligence 全面研究指定公司的业务、客户、竞争和经营变化，核验关键解释与反证，按需要叠加商业专项，交付图文 HTML 报告与独立研究底稿。"
+  short_description: "全面理解公司或品牌背后的公司如何经营、竞争与变化，按商业目的开展专项尽调，形成可追溯判断。"
+  default_prompt: "使用 $zerox-due-diligence 全面研究指定公司或品牌：品牌先追溯背后的经营主体与控制方，再研究业务、客户、竞争和经营变化，围绕关键问题核验解释与反证，按需要叠加商业专项，交付图文 HTML 报告与独立研究底稿。"

@@ -8,14 +8,23 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from common import CONTRACT, ROOT, cli, csv_text, dumps, fail, iso_date, load_json, record, safe_write, sync_coverage
 
 
+TARGET_TYPES = [kind for kind in CONTRACT["tables"]["entity-map"]["fields"]["entity_type"]["values"]
+                if kind != "person"]
+IDENTITY_NOTES = {
+    "brand": "用户输入的品牌名，不是法律主体；需追溯商标权利人、经营主体、控制集团及授权/生产/经销关系，见 references/brand-to-company.md。",
+}
+
+
 def initialize(output, target, purpose=None, depth="Standard", as_of=None, timezone="Asia/Shanghai",
                registration_id="", geography="", listing_status="unknown", exchange="", security_code="",
-               enable_scoring=False):
+               enable_scoring=False, target_type="legal_entity"):
     output = Path(output)
     if output.exists():
         fail(f"输出路径已存在，请选择新目录：{output}")
     if not target.strip():
         fail("目标名称不能为空")
+    if target_type not in TARGET_TYPES:
+        fail(f"未知目标类型；允许：{TARGET_TYPES}")
     if purpose is not None and purpose not in CONTRACT["enums"]["purpose"]:
         fail("未知目的")
     if enable_scoring and purpose not in CONTRACT["scoring"]["purposes"]:
@@ -35,9 +44,9 @@ def initialize(output, target, purpose=None, depth="Standard", as_of=None, timez
     data = {name: [] for name in CONTRACT["tables"]}
     data["entity-map"] = [record("entity-map", {
         "entity_id": cfg["target_id"], "legal_name": target, "registration_id": registration_id,
-        "geography": geography, "entity_type": "legal_entity", "identity_status": "pending",
+        "geography": geography, "entity_type": target_type, "identity_status": "pending",
         "listing_status": listing_status, "exchange": exchange, "security_code": security_code,
-        "identity_notes": "用户输入，仅为待核实身份；需补登记证据和控制链核查。"})]
+        "identity_notes": IDENTITY_NOTES.get(target_type, "用户输入，仅为待核实身份；需补登记证据和控制链核查。")})]
     if enable_scoring:
         for n, (dimension, weight) in enumerate(CONTRACT["scoring"]["purposes"][purpose]["weights"].items(), 1):
             data["scorecard"].append(record("scorecard", {
@@ -51,16 +60,21 @@ def initialize(output, target, purpose=None, depth="Standard", as_of=None, timez
     safe_write(output / "project-config.json", dumps(cfg))
     for name in ("financial-input.json", "report-content.json", "request-list.md", "interview-outline.md"):
         shutil.copyfile(ROOT / "templates" / name, output / name)
-    for folder in ("materials", "modules", "reports"):
+    for folder in ("materials", "modules", "reports", "estimates"):
         (output / folder).mkdir()
+    note = "仅初始化工作区；未执行检索、身份核验或研报阅读。"
+    if target_type == "brand":
+        note += " 目标为品牌：先按检索计划中的 brand_trace 任务查明背后的法律主体，再开展公司研究。"
     return {"status": "created", "path": str(output.resolve()), "research_gate": cfg["research_gate"],
-            "note": "仅初始化工作区；未执行检索、身份核验或研报阅读。"}
+            "target_type": target_type, "note": note}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, help="不存在的新目录；父目录须存在")
-    parser.add_argument("--target", required=True, help="目标法定名或待消歧名称")
+    parser.add_argument("--target", required=True, help="目标法定名、品牌名或待消歧名称")
+    parser.add_argument("--target-type", choices=TARGET_TYPES, default="legal_entity",
+                        help="用户给的是品牌时用 brand：先追溯背后的法律主体，品牌本身不是签约或财务主体")
     parser.add_argument("--purpose", choices=CONTRACT["enums"]["purpose"], help="全面了解公司用 company_research；未给出时保持待确认")
     parser.add_argument("--enable-scoring", action="store_true",
                         help="仅决策目的可显式启用；发布前仍需确认项目权重和关键维度")

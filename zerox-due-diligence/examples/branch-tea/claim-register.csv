@@ -1,0 +1,5 @@
+claim_id,statement,label,entity_id,module,materiality,verification,confidence,attribute,numeric,scope,assumptions,counterevidence,unresolved
+C-0001,品牌、商标持有人与零售经营主体分离；经营与收款责任在枝间零售公司。,【事实】,ENT-0001,01,critical,verified,high,actual,false,brand,,,
+C-0002,在列明假设成立时，枝间零售公司2025年单体营收估算区间重叠为1800–2200万元。,【推断】,ENT-0002,12,critical,verified,medium,estimate,true,standalone,门店全年营业；单店年营收120–160万元；线上净收入200–300万元；人均年营收18–22万元。均为演示情景假设，不是已披露收入。,缺少真实流水，区间收敛不证明实际收入，两个方法可能共同受需求变化影响。,未取得实际财报与退款/净额口径，不能据此确定毛利率或净利率。
+C-0003,现有样本只支持品牌定位与触点已形成，不能证明无补贴复购或定价权。,【判断】,ENT-0001,09,major,verified,medium,opinion,false,brand,活动期便利样本不足以代表全部客户，正面评论可能受促销和选样影响。,评论中的茶味认可支持产品有一定吸引力，但没有非活动期留存对照。,需分群复购、非促销实付价及退货数据。
+C-0004,无法判断扩张是否创造利润与现金；门店规模和收入估算不能替代盈利证据。,【缺口】,ENT-0002,12,critical,unsupported,unknown,not_applicable,false,standalone,,,未取得毛利、净利、现金流、租约和扩店投入。

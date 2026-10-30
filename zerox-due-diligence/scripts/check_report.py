@@ -3,13 +3,18 @@ import argparse
 import re
 from pathlib import Path
 
-from common import (InputError, cli, completion_errors, emit, finite, indices, iso_time, load_json, read_project,
-                    research_errors, research_gate, semantic_errors, structural_errors)
+from common import (InputError, brand_resolution, cli, completion_errors, emit, finite, indices, iso_time, load_json,
+                    read_project, research_errors, research_gate, semantic_errors, structural_errors)
 from scoring import project_score
 from report_model import READER_TOPICS
+from triangulate import project_estimates
 
 
 MANUAL_REVIEW = [
+    "目标为品牌时，核对正文是否先讲清品牌背后的经营主体、商标权利人与所属集团，并区分品牌口径与公司/集团口径的数字。",
+    "核对每个估算是否至少两种互相独立、有证据的方法，正文只给区间并标为推断，分歧时分别列出而非取平均。",
+    "核对决策部分是否写出本报告与公司自述或主流看法不同的判断及依据；没有差异时说明为何同意主流看法。",
+    "核对 key_questions 的每个回答能在正文找到对应论证，未回答或无法回答的问题在正文说明影响。",
     "逐章处理 visual_review 的编辑线索：可比数字、比例、区间、结构和业务关系应有合适图示；记录已转图或保留文字的理由，不用图片数或固定图数替代判断。",
     "核对目标官网身份、相关内页和实际读取记录；无法访问/无官网保留原因，不能只引用媒体或只读首页代替。",
     "有公开人物资料时独立介绍创始人/合伙人；公司介绍以有据时间线说明发展与转折，不把融资公告、计划或前任写成已完成事实/现任。",
@@ -76,6 +81,16 @@ def check(project=None, report=None, mode="draft"):
         score = {"status": "invalid"}
     if cfg["identity_status"] == "resolved" and idx["entity-map"].get(cfg["target_id"], {}).get("identity_status") != "resolved":
         errors.append("配置已锁定主体与台账身份状态不一致")
+    brand = None
+    if idx["entity-map"].get(cfg["target_id"], {}).get("entity_type") == "brand":
+        brand = brand_resolution(cfg, data)
+        if not brand["operating"]:
+            warnings.append("目标为品牌但尚未以已核实关系查明经营主体；公司层结论须保持受限。")
+        if brand["unverified_relations"]:
+            warnings.append(f"品牌角色关系仍待核实：{brand['unverified_relations']}")
+    estimate_errors, estimate_warnings = project_estimates(project, cfg, data)
+    errors.extend(estimate_errors)
+    warnings.extend(estimate_warnings)
     if complete:
         errors.extend(completion_errors(cfg, data))
         if not report:
@@ -84,6 +99,9 @@ def check(project=None, report=None, mode="draft"):
             errors.append("主体未锁定不能宣称完成")
         if any(v["status"] == "pending" for v in cfg["module_scope"].values()):
             errors.append("完成报告仍有模块适用性待确认")
+        deferred = [k for k, v in cfg["module_scope"].items() if v["status"] == "deferred"]
+        if deferred:
+            warnings.append(f"模块 {deferred} 适用但本次未展开；正文须说明未展开范围及其对结论的限制。")
         if not cfg["last_refresh_at"]:
             errors.append("完成报告缺少最终最新性复查时间")
         if "{{" in text or "}}" in text:
@@ -137,10 +155,19 @@ def check(project=None, report=None, mode="draft"):
                 warnings.append(f"第 {n} 行可能含未引用数字，需人工判断；不是硬错误")
     groups = {}
     for source in data["source-register"]:
+        if not source["published_date"]:
+            warnings.append(f"{source['source_id']}：原始发布日期未知；访问日期不能代替发布日期，时点适用性见 grade_reason。")
         groups.setdefault(source["origin_group"], []).append(source["source_id"])
     for group, ids in groups.items():
         if len(ids) > 1:
             warnings.append(f"同源组 {group}：{ids}，不得计作多个独立事实来源")
+    # 并行分工合并后常见同一页面被不同工作线重复登记。
+    locators = {}
+    for source in data["source-register"]:
+        locators.setdefault(source["locator"].strip().rstrip("/").lower(), []).append(source)
+    for rows in locators.values():
+        if len(rows) > 1 and len({r["origin_group"] for r in rows}) > 1:
+            warnings.append(f"来源 {[r['source_id'] for r in rows]} 定位相同但同源组不同；核对是否重复登记，合并或统一 origin_group")
     if gate in ("partial", "incomplete"):
         warnings.append("研报资料覆盖未满足；须保留缺口与判断限制，约定研究范围是否完成另由 completion_review 核验")
     # 如存在财务结果输入，验证证据 ID；空模板允许留在项目内。
@@ -153,6 +180,9 @@ def check(project=None, report=None, mode="draft"):
                 calculate(fin)
                 for item in (fin, fin.get("prior")):
                     if item:
+                        entity = idx["entity-map"].get(item["entity_id"])
+                        if not entity or entity["entity_type"] == "person":
+                            errors.append(f"财务输入主体须为已登记的经营实体：{item['entity_id']}")
                         for sid in item["source_ids"]:
                             if sid not in idx["source-register"]:
                                 errors.append(f"财务来源不存在：{sid}")
@@ -164,6 +194,8 @@ def check(project=None, report=None, mode="draft"):
             errors.append(f"财务输入：{exc}")
     return {"status": "invalid" if errors else "structure_passed", "errors": errors, "warnings": warnings,
             "research_gate": gate, "score": score, "manual_review": MANUAL_REVIEW,
+            "brand_resolution": brand,
+            "key_questions": [{k: q[k] for k in ("kq_id", "question", "status")} for q in cfg["key_questions"]],
             "visual_review": visual_review,
             "reading_review": {"status": "requires_independent_reading",
                                "questions": READER_TOPICS,

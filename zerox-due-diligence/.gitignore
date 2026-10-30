@@ -7,7 +7,7 @@ __pycache__/
 .DS_Store
 .pytest_cache/
 
-# 本目录按可直接安装的技能发布；开发测试与过程材料只留本地。
+# 本目录按可直接安装的技能发布；正式回归测试在仓库 development/，旧本地测试与过程材料不发布。
 /tests/
 /evals/
 /test-results/
@@ -31,3 +31,10 @@ __pycache__/
 /htmlcov/
 .mypy_cache/
 .ruff_cache/
+
+# 会话交接与本地预览，不属于技能交付。
+/context.md
+/.screenshots/
+
+# 台账更新备份是本地恢复材料。
+.ledger-backup-*/

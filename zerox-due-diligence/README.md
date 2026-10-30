@@ -11,9 +11,9 @@
 
 # ZeroX Due Diligence
 
-全面理解公司的业务、客户、竞争与经营变化，并按具体商业目的开展专项尽调。锁定主体与控制关系，从原始资料验证关键解释和反证，形成可追溯判断。默认交付图文并茂、可离线阅读的 HTML 报告，研究过程与核验记录保存在独立底稿中。
+全面理解公司或品牌的业务、客户、竞争与经营变化，并按具体商业目的开展专项尽调。用户给的是品牌名时，先追溯品牌背后的商标权利人、经营主体与控制集团，再研究公司并补充品牌认知、口碑与定价。锁定主体与控制关系，从原始资料验证关键问题和反证，对未披露的关键数字做有约束的三角估算，形成可追溯判断。默认交付图文并茂、可离线阅读的 HTML 报告，研究过程与核验记录保存在独立底稿中。
 
-A company research skill for understanding a business, its customers, competition, and operating changes, with additional due diligence for specific commercial purposes. Resolve entities and control, test important explanations against alternatives and source evidence, and form traceable conclusions. Deliver a visual, offline HTML report with research and verification records in a separate audit file.
+A company and brand research skill for understanding a business, its customers, competition, and operating changes, with additional due diligence for specific commercial purposes. When given a brand name, trace the trademark owner, operating company, and controlling group behind it, then research the company and add brand awareness, reviews, and pricing. Resolve entities and control, test key questions against alternatives and source evidence, triangulate undisclosed figures under explicit constraints, and form traceable conclusions. Deliver a visual, offline HTML report with research and verification records in a separate audit file.
 
 ## 索引 / Index
 
@@ -37,8 +37,13 @@ A company research skill for understanding a business, its customers, competitio
 ### 核心能力
 
 - **实体与控制链**：区分集团、子公司、分部、品牌和签约主体，按基准日处理参股、拟收购、出售及多层控制。
-- **官网优先阅读**：目标有官网时，先确认网站归属，再直接阅读公司、产品与价格、团队、沿革、渠道和服务条款等相关页面。官网是重要的一手来源；经营宣传仍按公司自述标注，并结合独立资料核验。
-- **关键问题验证**：先建立公司全貌，再比较当前解释与其他可能解释，寻找区分证据及改变判断的条件；客户失败样本、资源配置、行业传导、盈利质量和外部暴露纳入现有模块。
+- **从品牌追溯到公司**：品牌不是法律主体。从商标登记、网站与 App 备案、用户协议与收款方、店铺资质、产品标签与备案、特许经营和集团披露中找出商标权利人、经营主体、被授权方、代工方与经销方，分别建档；查明经营主体之前，控制链与上市关系保持待核实。
+- **品牌健康**：消费品牌补充搜索与社媒关注度、用户口碑主题、价格与折扣、定位与实际的对照；这些信号解释营销与竞争，不当作收入证据。
+- **关键问题驱动**：开工时写下 3–5 个决定判断的问题并拆成可检验的子问题，研究以回答它们为主线；完成前每个问题都要有回答或说明无法回答的原因，决策部分对照有来源的主流看法说明自己的判断；一致时说明依据，不强造分歧。
+- **有约束的估算**：未披露的营收、规模或份额可用门店、人效、渠道、用户、产能等至少两种独立方法估出区间，脚本用区间运算检查方法独立性与结果是否重叠；结果始终标为推断，不与实际数据混用。
+- **管理层言行一致**：整理管理层历次公开的目标与指引，对照后来的实际结果。
+- **官网优先阅读**：目标有官网时，先确认网站归属，再直接阅读公司、产品与价格、团队、沿革、渠道和服务条款等相关页面，并用网页存档还原历史变化。官网是重要的一手来源；经营宣传仍按公司自述标注，并结合独立资料核验。
+- **关键解释验证**：先建立公司全貌，再比较当前解释与其他可能解释，寻找区分证据及改变判断的条件；客户失败样本、资源配置、行业传导、盈利质量和外部暴露纳入现有模块。
 - **上市研报研究**：上市公司及其控制子公司必须检索，并争取合法获取、阅读相关最新官方披露、公司跟踪、公司深度与行业研究，补查重大事件。
 - **资料覆盖与研究范围分开**：最新发现、最新全文、最新已读分别记录，旧全文不冒充最新资料。经过关键结论与剩余缺口影响复核，可结束约定范围；妨碍回答核心问题的缺口仍使研究受限。
 - **证据与未知分开**：来源、证据、声明和关联独立建表；预测、实际、估算和缺口不混用，同源转载不增加独立证据数量。
@@ -51,7 +56,7 @@ A company research skill for understanding a business, its customers, competitio
 - **可视化遗漏检查**：构建与检查返回 `visual_review`，提示连续长文、埋藏数字和核心主题缺少视觉等编辑机会，摘要进入研究底稿。分别统计定量图、结构图、指标、图片和人物；不把装饰图片或文字卡当作数字已被图示。
 - **真实图片与比较矩阵**：可内嵌真实 logo、官网截图、产品、门店或人物图片，记录出处、本次取得日期、使用范围、图注与替代文字；竞品、渠道和财务比较逐格标注依据。图片和定性矩阵不计作定量图，也不自动证明图片中的宣传。
 - **正文与底稿分层**：主报告保留重要判断和限制；模块适用性、完整台账、搜索日志、覆盖记录与请求清单进入独立 `*-audit.md`，正文引用可定位到折叠证据附录。
-- **可运行的本地工具**：七个核心 Python CLI、研究与报告内容契约、CSV 台账及离线 HTML 渲染资源。
+- **可运行的本地工具**：八个核心 Python CLI（含三角估算）、研究与报告内容契约、CSV 台账、离线 HTML 渲染资源，以及一个虚构品牌的完整示范项目。
 
 <a id="zh-report"></a>
 ### 最终报告包含什么
@@ -60,13 +65,13 @@ A company research skill for understanding a business, its customers, competitio
 
 | 阅读板块 | 需要回答的问题 | 适合的呈现方式 |
 | --- | --- | --- |
-| 公司介绍与发展 | 它是谁、从何而来、经历了哪些业务与阶段变化？ | 公司画像、同章发展时间线、真实企业素材 |
+| 公司介绍与发展 | 它是谁、从何而来、经历了哪些业务与阶段变化？品牌目标先回答品牌背后是谁 | 公司画像、同章发展时间线、品牌—主体关系图、真实企业素材 |
 | 创始人 / 核心合伙人 | 谁创办或经营公司，角色期间、相关经历和具体贡献是什么？ | 有足够公开资料时单设人物章节；区分创始团队与商业合作伙伴 |
 | 产品、客户与业务模式 | 卖什么、卖给谁、谁付款、谁供给与交付、怎样形成收入和成本？ | 业务运转图、产品图或渠道示意 |
-| 营收与盈利 | 营收规模和结构如何，毛利率、净利率是否有可比依据？ | 指标卡、趋势图、结构图或比较图，分别标明数据口径 |
-| 营销与增长 | 通过哪些渠道获客，内容与投放如何作用，转化和复购有何证据？ | 渠道矩阵、营销链路；有可靠数据时绘制效果图表 |
+| 营收与盈利 | 营收规模和结构如何，毛利率、净利率是否有可比依据？未披露时估算区间是多少？ | 指标卡、趋势图、结构图或比较图；估算用区间图，分别标明数据口径 |
+| 营销、增长与品牌 | 通过哪些渠道获客，内容与投放如何作用，转化和复购有何证据？品牌关注度、口碑与价格表现如何？ | 渠道矩阵、营销链路、关注度趋势、口碑主题与价格带图 |
 | 主要竞争对手 | 为什么选择这些对手，同一市场与口径下有哪些差异？ | 竞争矩阵、有据的规模或定位比较图 |
-| 风险与决策 | 哪些证据支持结论，哪些未知会改变判断，下一步做什么？ | 关键结论、风险说明与行动建议 |
+| 风险与决策 | 关键问题的答案是什么，哪些判断与主流看法不同，哪些未知会改变判断，下一步做什么？ | 关键结论、差异化观点、风险说明与行动建议 |
 
 时间线至少包含两个有日期依据的事件；确实不足时说明具体缺口。人物资料不足或真实图片不可得时如实说明，不凑履历、不用生成图冒充企业素材。财务、营销与竞争仍要逐项回答；无可靠数字时保留定性分析和限制，不绘制虚假趋势、份额或排名。
 
@@ -87,6 +92,13 @@ A company research skill for understanding a business, its customers, competitio
 呈现发展时间线，并逐项分析营收与盈利、营销渠道和主要竞争对手。
 ```
 
+只知道品牌名时可以直接说：
+
+```text
+请使用当前目录的 SKILL.md 研究品牌「品牌名」：查明背后的公司和控制方，
+再讲清它怎样经营和赚钱，补充品牌口碑与定价，交付 HTML 报告。
+```
+
 要让 Codex 自动发现，可把本目录的运行文件复制到 `~/.codex/skills/zerox-due-diligence/`。在当前目录执行下面的可选安装命令；目标已存在会停止，不覆盖已有 Skill：
 
 ```bash
@@ -94,15 +106,23 @@ python3 - <<'PY'
 from pathlib import Path
 import shutil
 
+names = ("SKILL.md", "agents", "references", "schemas", "templates", "scripts", "assets", "examples")
+missing = [name for name in names if not Path(name).exists()]
+if missing:
+    raise SystemExit(f"Incomplete skill package: {missing}")
 destination = Path.home() / ".codex" / "skills" / "zerox-due-diligence"
 destination.mkdir(parents=True, exist_ok=False)
-for name in ("SKILL.md", "agents", "references", "schemas", "templates", "scripts", "assets"):
-    source = Path(name)
-    if source.is_dir():
-        shutil.copytree(source, destination / name,
-                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-    else:
-        shutil.copy2(source, destination / name)
+try:
+    for name in names:
+        source = Path(name)
+        if source.is_dir():
+            shutil.copytree(source, destination / name,
+                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        else:
+            shutil.copy2(source, destination / name)
+except Exception:
+    shutil.rmtree(destination)
+    raise
 print(destination)
 PY
 ```
@@ -115,17 +135,22 @@ PY
 要求 Python 3.10+。核心工具仅使用标准库，不需要 API Key，不会自动联网、购买报告或对外发送文件。
 
 ```bash
-# 工作区应放在技能包之外；目标路径必须不存在。
+# 工作区应放在技能包之外；目标路径必须不存在。用户给的是品牌名时加 --target-type brand。
 python3 scripts/init_project.py \
   --output /tmp/dd-example \
   --target "待核验公司法定全称" \
   --purpose company_research \
   --depth Standard
 
-# 只生成检索计划，尚未执行检索。
+# 在 project-config.json 的 key_questions 写下关键问题，再生成检索计划（尚未执行检索）。
 python3 scripts/search_plan.py \
   --project /tmp/dd-example \
   --output /tmp/dd-search-plan.json
+
+# 未披露的关键数字：复制 templates/estimate-input.json 到 estimates/ 填写后估算区间。
+python3 scripts/triangulate.py \
+  --input /tmp/dd-example/estimates/EST-01-营收.json \
+  --project /tmp/dd-example
 
 # 实际研究、填台账和模块后，编辑生成的 report-content.json。
 # 按读者问题和证据先选主图，再把公司、业务及分析解释编排到对应图旁。
@@ -139,30 +164,30 @@ python3 scripts/check_report.py \
   --report /tmp/dd-example/reports/report.html
 ```
 
-初始化只创建待核实工作区和待编辑的报告内容模板；提供名称或证券代码不代表身份已核实。明确了解公司时使用 `company_research`；真正未说明目的才保留待确认。评分默认关闭，专项需要时用 `--enable-scoring` 初始化，再确认本项目的 `scoring_override`。研究范围完成须填写 `completion_review` 并通过检查；它不改写研报资料覆盖状态。生成后打开 `reports/report.html`；同目录 `report-audit.md` 保存底稿。报告编排见 [报告设计](./references/report-design.md)，配置与检查见 [CLI 使用说明](./scripts/README.md)。
-
-新建 HTML 使用1.2版内容契约。模板中的11个 `explanation` 主题须各填写一次，可自由安排章节。已知内容给依据，部分已知或未知内容说明具体限制；已有底稿中的基础信息要补回正文，缺证的部分需定向研究，不能虚构补齐。业务流程每步区分证据、公司自述、推断和未知；仅交易机制整体未知且说明原因时可免图。旧1.0/1.1 HTML仅可兼容做草稿检查，重新生成或完成态检查前须迁移。
-
-公司时间线放在公司介绍同章；有足够公开资料时，创始人与核心合伙人另设章节。模板图片必须替换成实际取得的项目内文件，否则删除图片块；本地用户材料可记录材料出处，无需虚构网页 URL。支持 PNG/JPEG/WebP，每张 ≤5 MiB、合计 ≤15 MiB，构建时内嵌为离线内容；不需要图片 CDN，也不支持任意 SVG。
+初始化只创建待核实工作区和待编辑的报告内容模板；提供名称或证券代码不代表身份已核实。评分默认关闭，专项需要时用 `--enable-scoring` 初始化。研究范围完成须回答全部关键问题、填写 `completion_review` 并通过检查；它不改写研报资料覆盖状态。生成后打开 `reports/report.html`；同目录 `report-audit.md` 保存底稿。报告编排见[报告设计](./references/report-design.md)，配置与检查见 [CLI 使用说明](./scripts/README.md)，完整示范见 [examples/](./examples/README.md)。
 
 <a id="zh-files"></a>
 ### 文件导航
 
-本目录以可直接安装的技能发布，仅包含使用说明、运行脚本、参考资料、数据契约、模板和渲染资源。开发测试、评估记录、调试材料及生成报告保留在本地，不进入公开版本。
+本目录以可直接安装的技能发布，包含使用说明、运行脚本、参考资料、数据契约、模板、渲染资源与虚构示范项目。可复用回归测试单独维护在仓库开发区，不复制到安装目录。真实研究工作区、评估记录、调试材料及运行日志不进入公开版本；示例 HTML 是随包交付的演示文件。
 
 | 目录/文件 | 用途 |
 | --- | --- |
 | [SKILL.md](./SKILL.md) | 触发、主流程、必经门槛与直接索引 |
-| [references/workflow.md](./references/workflow.md) | 阶段输入、动作、产出与失败处理 |
+| [references/workflow.md](./references/workflow.md) | 阶段输入、关键问题、深度裁剪、并行分工与失败处理 |
 | [references/purpose-playbooks.md](./references/purpose-playbooks.md) | 公司研究基础、六类专项与三种深度 |
-| [references/modules/](./references/modules/) | 公司、团队、业务、市场、竞争、阶段、增长、政策、商业、运营、技术、财务、法律、ESG、风险、估值、履约、上市研报 |
+| [references/brand-to-company.md](./references/brand-to-company.md) | 品牌目标的追溯路径、角色关系与报告写法 |
+| [references/estimation-triangulation.md](./references/estimation-triangulation.md) | 未披露数字的多方法区间估算与呈现边界 |
+| [references/modules/](./references/modules/) | 公司、团队、业务、市场、竞争、阶段、增长、政策、商业与品牌、运营、技术、财务、法律、ESG、风险、估值、履约、上市研报 |
 | [references/sources/](./references/sources/) | 中外来源目录、来源策略、研报与访谈方法 |
-| [schemas/data-contract.json](./schemas/data-contract.json) | 字段、类型、枚举、引用、研报类别、权重和评分锚点 |
+| [schemas/data-contract.json](./schemas/data-contract.json) | 字段、类型、枚举、引用、品牌角色、研报类别、权重和评分锚点 |
 | [references/report-design.md](./references/report-design.md) | 正文/底稿分层、编辑方法、图表与视觉验收 |
 | [schemas/report-content.schema.json](./schemas/report-content.schema.json) | HTML报告内容与可视化字段契约 |
-| [templates/](./templates/) | 配置、十三张CSV台账、HTML内容模型、财务输入、兼容Markdown底稿、资料请求与访谈提纲 |
+| [templates/](./templates/) | 配置、十三张CSV台账、HTML内容模型、估算输入、财务输入、兼容Markdown底稿、资料请求与访谈提纲 |
+| [examples/](./examples/README.md) | 虚构品牌的完整示范项目：台账、估算、内容模型与渲染出的报告 |
 | [assets/](./assets/) | 随包安装的离线报告样式等渲染资源 |
-| [scripts/](./scripts/README.md) | 七个核心 CLI 及共享校验实现 |
+| [scripts/](./scripts/README.md) | 八个核心 CLI 及共享校验实现 |
+| [开发区测试](../development/zerox-due-diligence/README.md) | 在仓库根目录运行 `python3 -m unittest discover -s development/zerox-due-diligence/tests`；安装包不包含测试 |
 
 <a id="zh-limits"></a>
 ### 能力边界
@@ -182,7 +207,12 @@ Supports **company research** as a confirmed purpose without requiring a transac
 ### Capabilities
 
 - **Entity and control mapping:** distinguish groups, subsidiaries, segments, brands, and contracting parties; assess minority stakes, pending acquisitions, disposals, and control chains at the research cutoff.
-- **Official websites first:** when a target has a website, verify ownership and directly read relevant company, product/pricing, team, history, channel, and terms pages. Treat it as an important primary source; label promotional statements as company claims and check them against independent material.
+- **From brand to company:** a brand is not a legal entity. Trace trademark registrations, website and app filings, user terms and payees, store licenses, product labels and filings, franchising, and group disclosures to identify the trademark holder, operator, licensees, manufacturers, and distributors as separate records. Control and listing status stay pending until the operator is confirmed.
+- **Brand health:** for consumer brands, add search and social attention, review themes, pricing and discounts, and positioning versus reality. These signals explain marketing and competition; they are not revenue evidence.
+- **Key-question driven:** write 3–5 decisive questions at kickoff and break them into testable sub-questions. Before completion, each question needs an answer or an explained reason it cannot be answered, and the decision section states where the view differs from consensus.
+- **Constrained estimation:** estimate undisclosed revenue, scale, or share with at least two independent methods such as stores, productivity, channels, users, or capacity. The script uses interval arithmetic to check method independence and overlap; results stay labeled as inferences and never mix with actuals.
+- **Management say-do record:** compare management's past public targets and guidance with later results.
+- **Official websites first:** when a target has a website, verify ownership and directly read relevant company, product/pricing, team, history, channel, and terms pages, using web archives to reconstruct historical changes. Treat it as an important primary source; label promotional statements as company claims and check them against independent material.
 - **Question-led verification:** establish a broad company view, compare plausible explanations, and identify evidence that distinguishes them and would change the conclusion. Existing modules cover unsuccessful customer outcomes, resource allocation, industry transmission, earnings quality, and external exposures.
 - **Listed-company research:** listed targets and controlled subsidiaries require searches and efforts to lawfully obtain and read current official disclosures, company updates, in-depth coverage, industry research, and relevant event updates.
 - **Separate source coverage from scope completion:** record latest discovered, full text obtained, and read without presenting older material as current. Complete the agreed scope only after reviewing key conclusions and remaining gap impacts; gaps blocking core questions keep the research limited.
@@ -196,7 +226,7 @@ Supports **company research** as a confirmed purpose without requiring a transac
 - **Visual omission review:** building and checking return `visual_review`, which flags editorial opportunities such as long prose, buried numbers, and core topics without suitable visuals. Its summary goes into the audit file. Quantitative charts, structural diagrams, metrics, images, and people are counted separately; decorative imagery and text cards do not establish numerical coverage.
 - **Real images and comparison matrices:** embed authentic logos, website screenshots, product, store, or people images with provenance, the date obtained for this research, usage scope, captions, and alternative text. Identify the evidence basis of each comparison cell. Images and qualitative matrices are not quantitative charts and do not verify promotional claims.
 - **Separate reading and audit layers:** keep material conclusions and limitations in the main report. Put full modules, ledgers, logs, coverage records, and request lists in `*-audit.md`; link citations to a collapsible evidence appendix.
-- **Runnable local tools:** seven Python CLIs, research and report-content contracts, CSV ledgers, and offline HTML rendering assets.
+- **Runnable local tools:** eight core Python CLIs (including triangulation), research and report-content contracts, CSV ledgers, offline HTML rendering assets, and a complete fictional brand example project.
 
 <a id="en-report"></a>
 ### What the report contains
@@ -205,13 +235,13 @@ The current HTML content contract is **1.2**. The report follows the reader's pa
 
 | Reading section | Questions it answers | Suitable presentation |
 | --- | --- | --- |
-| Company and development | What is the company, how did it begin, and how has its business changed? | Company profile, a timeline in the same section, authentic company imagery |
+| Company and development | What is the company, how did it begin, and how has its business changed? For brand targets, who is behind the brand? | Company profile, a timeline in the same section, a brand–entity relationship diagram, authentic company imagery |
 | Founders / core partners | Who founded or runs it, during which periods, with what relevant experience and contributions? | A separate people section when sufficient public material exists; distinguish founding partners from commercial partners |
 | Products, customers, and business model | What is sold, to whom, who pays, who supplies and delivers, and how do revenue and costs arise? | Business diagrams, product imagery, or channel diagrams |
-| Revenue and profitability | What are revenue scale and mix, and is there comparable evidence for gross and net margins? | Metric cards, trend, composition, or comparison charts with explicit scope |
-| Marketing and growth | Which channels acquire customers, how do content and advertising work, and what supports conversion and retention claims? | Channel matrices, marketing flows, and performance charts when reliable data exists |
+| Revenue and profitability | What are revenue scale and mix, and is there comparable evidence for gross and net margins? If undisclosed, what is the estimated range? | Metric cards, trend, composition, or comparison charts with explicit scope; estimates use range charts |
+| Marketing, growth, and brand | Which channels acquire customers, how do content and advertising work, and what supports conversion and retention claims? How do brand attention, reviews, and pricing perform? | Channel matrices, marketing flows, attention trends, review themes, and price-band charts |
 | Major competitors | Why are these competitors relevant, and how do they differ within comparable markets and definitions? | Competitor matrices and evidence-backed scale or positioning comparisons |
-| Risks and decisions | What supports the conclusions, which unknowns could change them, and what should happen next? | Key findings, risk explanations, and recommended actions |
+| Risks and decisions | What are the answers to the key questions, which judgments differ from consensus, which unknowns could change them, and what should happen next? | Key findings, contrarian views, risk explanations, and recommended actions |
 
 A company timeline needs at least two sourced, dated events; explain a specific shortage when they are unavailable. Disclose insufficient people information or unavailable imagery without inventing biographies or substituting generated company assets. Finance, marketing, and competition still require individual answers. Without reliable numbers, retain qualitative analysis and limitations instead of fabricating trends, shares, or rankings.
 
@@ -235,6 +265,14 @@ and business model, show its development timeline, and address revenue and
 profitability, marketing channels, and major competitors individually.
 ```
 
+When only a brand name is known:
+
+```text
+Use SKILL.md in the current directory to research the brand "Brand name":
+identify the company and controlling party behind it, explain how it operates
+and earns money, add brand reviews and pricing, and deliver an HTML report.
+```
+
 For Codex discovery, optionally copy the runtime files into `~/.codex/skills/zerox-due-diligence/`. Run the following from this directory. It stops if the destination already exists:
 
 ```bash
@@ -242,15 +280,23 @@ python3 - <<'PY'
 from pathlib import Path
 import shutil
 
+names = ("SKILL.md", "agents", "references", "schemas", "templates", "scripts", "assets", "examples")
+missing = [name for name in names if not Path(name).exists()]
+if missing:
+    raise SystemExit(f"Incomplete skill package: {missing}")
 destination = Path.home() / ".codex" / "skills" / "zerox-due-diligence"
 destination.mkdir(parents=True, exist_ok=False)
-for name in ("SKILL.md", "agents", "references", "schemas", "templates", "scripts", "assets"):
-    source = Path(name)
-    if source.is_dir():
-        shutil.copytree(source, destination / name,
-                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
-    else:
-        shutil.copy2(source, destination / name)
+try:
+    for name in names:
+        source = Path(name)
+        if source.is_dir():
+            shutil.copytree(source, destination / name,
+                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        else:
+            shutil.copy2(source, destination / name)
+except Exception:
+    shutil.rmtree(destination)
+    raise
 print(destination)
 PY
 ```
@@ -263,15 +309,22 @@ Then invoke `$zerox-due-diligence`. Other agents that support `SKILL.md` may use
 Requires Python 3.10+. Core tools use only the standard library, require no API key, and do not automatically browse, buy reports, or transmit files.
 
 ```bash
+# Keep the workspace outside this package; the output path must not exist. Add --target-type brand for a brand name.
 python3 scripts/init_project.py \
   --output /tmp/dd-example \
   --target "Company legal name to verify" \
   --purpose company_research \
   --depth Standard
 
+# Write key_questions in project-config.json, then generate the search plan (no searches are executed).
 python3 scripts/search_plan.py \
   --project /tmp/dd-example \
   --output /tmp/dd-search-plan.json
+
+# Undisclosed key figures: copy templates/estimate-input.json into estimates/, fill it, then estimate a range.
+python3 scripts/triangulate.py \
+  --input /tmp/dd-example/estimates/EST-01-revenue.json \
+  --project /tmp/dd-example
 
 # After research, choose visuals for each reader question, then interleave explanations and analysis in report-content.json.
 python3 scripts/build_report.py \
@@ -284,9 +337,9 @@ python3 scripts/check_report.py \
   --report /tmp/dd-example/reports/report.html
 ```
 
-Keep research workspaces outside this skill package. Initialization creates unverified records; a name or ticker is not verified identity. Search planning does not execute searches. Use `company_research` when the purpose is understanding the company; only a genuinely unspecified purpose stays pending. Scoring defaults to off; commercial projects can initialize with `--enable-scoring`, then confirm a project-specific `scoring_override`. Scope completion requires a checked `completion_review` and does not change research-source coverage. Complete the research and ledgers, then edit `report-content.json` before building the deliverable.
+Keep research workspaces outside this skill package. Initialization creates unverified records; a name or ticker is not verified identity. Search planning does not execute searches. Use `company_research` when the purpose is understanding the company; only a genuinely unspecified purpose stays pending. Scoring defaults to off; commercial projects can initialize with `--enable-scoring`, then confirm a project-specific `scoring_override`. Scope completion requires answering every key question, a checked `completion_review`, and passing checks; it does not change research-source coverage. Complete the research and ledgers, then edit `report-content.json` before building the deliverable.
 
-Open `reports/report.html` directly to read the report. The sibling `report-audit.md` contains the full research record. See the [report design guide](./references/report-design.md) for editorial and chart requirements, and the [CLI guide](./scripts/README.md) for ledger updates, financial inputs, configuration, and exit codes.
+Open `reports/report.html` directly to read the report. The sibling `report-audit.md` contains the full research record. See the [report design guide](./references/report-design.md) for editorial and chart requirements, the [CLI guide](./scripts/README.md) for ledger updates, financial inputs, configuration, and exit codes, and [examples/](./examples/README.md) for a complete worked project.
 
 New HTML builds require content contract 1.2. Complete each of the eleven `explanation` topics once, arranged into suitable sections. Cite known information and describe specific limitations for partial or unknown answers. Restore relevant facts omitted from existing research; investigate actual evidence gaps rather than inventing answers. Each business-flow step distinguishes evidence, company claims, inference, and unknowns. The diagram may be omitted only when the transaction mechanism is unknown and the reason is explained. Legacy 1.0/1.1 HTML remains readable by draft checks; migrate before rebuilding or requesting completed-mode checks.
 
@@ -295,21 +348,25 @@ Keep the company timeline in the company overview section. Introduce founders an
 <a id="en-files"></a>
 ### Package contents
 
-This directory is published as an installable skill containing usage instructions, runtime scripts, references, schemas, templates, and rendering assets. Development tests, evaluation records, debugging materials, and generated reports stay local and are excluded from the public release.
+This directory is published as an installable skill containing usage instructions, runtime scripts, references, schemas, templates, rendering assets, and a fictional example project. Reusable regression tests live in the repository development area and are excluded from installation. Real research workspaces, evaluation records, debug artifacts, and execution logs stay outside the public release; the example HTML is a shipped demonstration.
 
 | Path | Purpose |
 | --- | --- |
 | [SKILL.md](./SKILL.md) | Entry point, workflow, mandatory gates, and resource index |
-| [references/workflow.md](./references/workflow.md) | Phase inputs, actions, outputs, and failure handling |
+| [references/workflow.md](./references/workflow.md) | Phase inputs, key questions, depth tailoring, parallel work, and failure handling |
 | [references/purpose-playbooks.md](./references/purpose-playbooks.md) | Company research foundation, six specialist purposes, and three depths |
-| [references/modules/](./references/modules/) | Eighteen company, business, industry, financial, legal, operational, and listed-company research modules |
+| [references/brand-to-company.md](./references/brand-to-company.md) | Tracing paths, role relationships, and reporting for brand targets |
+| [references/estimation-triangulation.md](./references/estimation-triangulation.md) | Multi-method range estimates for undisclosed figures and presentation limits |
+| [references/modules/](./references/modules/) | Eighteen company, business, brand, industry, financial, legal, operational, and listed-company research modules |
 | [references/sources/](./references/sources/) | China/global source directories, research and interview methods |
-| [schemas/data-contract.json](./schemas/data-contract.json) | Fields, types, enums, references, research categories, weights, and scoring anchors |
+| [schemas/data-contract.json](./schemas/data-contract.json) | Fields, types, enums, references, brand roles, research categories, weights, and scoring anchors |
 | [references/report-design.md](./references/report-design.md) | Reading/audit layers, editorial guidance, chart rules, and visual review |
 | [schemas/report-content.schema.json](./schemas/report-content.schema.json) | HTML report content and visualization fields |
-| [templates/](./templates/) | Configuration, thirteen CSV ledgers, HTML content model, financial inputs, legacy Markdown audit reports, requests, and interview outline |
+| [templates/](./templates/) | Configuration, thirteen CSV ledgers, HTML content model, estimate inputs, financial inputs, legacy Markdown audit reports, requests, and interview outline |
+| [examples/](./examples/README.md) | A complete fictional brand project: ledgers, estimates, content model, and the rendered report |
 | [assets/](./assets/) | Offline report styles and rendering resources installed with the skill |
-| [scripts/](./scripts/README.md) | Seven core CLIs and shared validation |
+| [scripts/](./scripts/README.md) | Eight core CLIs and shared validation |
+| [Development tests](../development/zerox-due-diligence/README.md) | From the repository root: `python3 -m unittest discover -s development/zerox-due-diligence/tests`; tests are excluded from installation |
 
 <a id="en-limits"></a>
 ### Limits

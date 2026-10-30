@@ -1,0 +1,8 @@
+source_id,title,source_type,publisher,author,published_date,revised_date,accessed_date,locator,grade,grade_reason,origin_group,upstream_source_id,access_status,authenticity,authorization,time_scope,checksum
+S-0001,虚构示例 / 主体与商标设定,other,ZeroX 示例作者（非真实资料机构）,,2026-10-29,,2026-10-30,materials/01-identity.md,D,合成教学材料，不具备真实商业证据效力,synthetic-origin-1,,full_text,checked,可随技能分发，仅供流程示范；不得作为真实企业事实,as_of,
+S-0002,虚构示例 / 公司自述与历史页面设定,other,ZeroX 示例作者（非真实资料机构）,,2026-10-29,,2026-10-30,materials/02-history-and-guidance.md,D,合成教学材料，不具备真实商业证据效力,synthetic-origin-2,,full_text,checked,可随技能分发，仅供流程示范；不得作为真实企业事实,as_of,
+S-0003,虚构示例 / 独立门店观察设定,other,ZeroX 示例作者（非真实资料机构）,,2026-10-29,,2026-10-30,materials/03-store-observations.md,D,合成教学材料，不具备真实商业证据效力,synthetic-origin-3,,full_text,checked,可随技能分发，仅供流程示范；不得作为真实企业事实,as_of,
+S-0004,虚构示例 / 独立用工规模设定,other,ZeroX 示例作者（非真实资料机构）,,2026-10-29,,2026-10-30,materials/04-workforce.md,D,合成教学材料，不具备真实商业证据效力,synthetic-origin-4,,full_text,checked,可随技能分发，仅供流程示范；不得作为真实企业事实,as_of,
+S-0005,虚构示例 / 产品与条款设定,other,ZeroX 示例作者（非真实资料机构）,,2026-10-29,,2026-10-30,materials/05-products-and-terms.md,D,合成教学材料，不具备真实商业证据效力,synthetic-origin-5,,full_text,checked,可随技能分发，仅供流程示范；不得作为真实企业事实,as_of,
+S-0006,虚构示例 / 评论和收据样本设定,other,ZeroX 示例作者（非真实资料机构）,,2026-10-29,,2026-10-30,materials/06-brand-sample.md,D,合成教学材料，不具备真实商业证据效力,synthetic-origin-6,,full_text,checked,可随技能分发，仅供流程示范；不得作为真实企业事实,as_of,
+S-0007,虚构示例 / 同城替代方案设定,other,ZeroX 示例作者（非真实资料机构）,,2026-10-29,,2026-10-30,materials/07-competition.md,D,合成教学材料，不具备真实商业证据效力,synthetic-origin-7,,full_text,checked,可随技能分发，仅供流程示范；不得作为真实企业事实,as_of,

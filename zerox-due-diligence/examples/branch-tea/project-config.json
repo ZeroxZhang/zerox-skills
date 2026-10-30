@@ -1,0 +1,209 @@
+{
+  "contract_version": "1.1.0",
+  "target": "枝间茶铺（虚构）",
+  "target_id": "ENT-0001",
+  "purpose": "company_research",
+  "purpose_status": "confirmed",
+  "depth": "Standard",
+  "geography": "虚构同城市场（没有现实地理指向）",
+  "focus": "从品牌入口解释经营主体、收入规模与品牌表现；检验扩张能否形成利润和现金。",
+  "key_questions": [
+    {
+      "kq_id": "KQ-01",
+      "question": "谁持有品牌、谁经营收款、谁控制这些公司？",
+      "why_it_matters": "决定财务与履约责任归属于谁。",
+      "sub_questions": [
+        "商标与经营角色是否分离？",
+        "经营主体是否受上市公司控制？"
+      ],
+      "claim_ids": [
+        "C-0001"
+      ],
+      "status": "answered",
+      "answer": "品牌管理公司持有商标，零售公司经营收款，二者均由未上市的星澄生活控制；仅为合成设定。"
+    },
+    {
+      "kq_id": "KQ-02",
+      "question": "经营公司的年度收入大致处于什么量级？",
+      "why_it_matters": "区分区域小规模业务与全国规模业务，同时避免把门店数当收入。",
+      "sub_questions": [
+        "门店与人员两条路径能否交叉印证？",
+        "结果对单店产出假设多敏感？"
+      ],
+      "claim_ids": [
+        "C-0002"
+      ],
+      "status": "answered_with_limits",
+      "answer": "在所列情景假设下，2025年经营公司单体收入重叠区间1800–2200万元；不是财报实绩，不能据此推算利润。"
+    },
+    {
+      "kq_id": "KQ-03",
+      "question": "现有资料支持多强的品牌吸引力判断，是否足够证明无补贴复购？",
+      "why_it_matters": "决定扩张能否依赖自然需求，而不是持续购买流量。",
+      "sub_questions": [
+        "正面口碑是否有代表性？",
+        "促销与非促销期是否存在留存差异？"
+      ],
+      "claim_ids": [
+        "C-0003"
+      ],
+      "status": "answered_with_limits",
+      "answer": "可观察到产品定位与渠道触点，但样本不能证明无补贴复购；该结论限定为证据边界。"
+    },
+    {
+      "kq_id": "KQ-04",
+      "question": "扩张是否创造可持续利润与现金？",
+      "why_it_matters": "收入规模可增长但现金可能被租约与开店投入消耗。",
+      "sub_questions": [
+        "同店利润怎样？",
+        "经营现金能否覆盖维持与扩张投入？"
+      ],
+      "claim_ids": [
+        "C-0004"
+      ],
+      "status": "unanswerable",
+      "answer": "未取得利润、现金流和门店投入资料，核心问题仍被G-0001阻断，研究保持limited。"
+    }
+  ],
+  "materials": [
+    "materials/01-identity.md",
+    "materials/02-history-and-guidance.md",
+    "materials/03-store-observations.md",
+    "materials/04-workforce.md",
+    "materials/05-products-and-terms.md",
+    "materials/06-brand-sample.md",
+    "materials/07-competition.md"
+  ],
+  "as_of_date": "2026-10-29",
+  "timezone": "Asia/Shanghai",
+  "historical": true,
+  "constraints": {
+    "network": "offline",
+    "budget": "",
+    "deadline": "",
+    "permissions": "公开信息及用户授权资料"
+  },
+  "identity_status": "resolved",
+  "listing_trigger": "not_triggered",
+  "control_chain_checked": true,
+  "control_evidence_ids": [
+    "E-0001",
+    "E-0002",
+    "E-0003",
+    "E-0004"
+  ],
+  "industry_keywords": [],
+  "languages": [
+    "zh",
+    "en"
+  ],
+  "events": [],
+  "peer_required": false,
+  "category_exemptions": [],
+  "scoring_threshold": 0.8,
+  "scoring_override": null,
+  "report_status": "limited",
+  "research_gate": "not_applicable",
+  "declared_complete": false,
+  "published_score": null,
+  "version": "示例1.0",
+  "confidentiality": "公开合成示例；非真实公司研究",
+  "module_scope": {
+    "01": {
+      "status": "applicable",
+      "reason": ""
+    },
+    "02": {
+      "status": "applicable",
+      "reason": ""
+    },
+    "03": {
+      "status": "applicable",
+      "reason": ""
+    },
+    "04": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "05": {
+      "status": "applicable",
+      "reason": ""
+    },
+    "06": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "07": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "08": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "09": {
+      "status": "applicable",
+      "reason": ""
+    },
+    "10": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "11": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "12": {
+      "status": "applicable",
+      "reason": ""
+    },
+    "13": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "14": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "15": {
+      "status": "applicable",
+      "reason": ""
+    },
+    "16": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "17": {
+      "status": "deferred",
+      "reason": "合成品牌研究示范未展开该专项；不能据此作法律、经营安全或交易结论。"
+    },
+    "18": {
+      "status": "not_applicable",
+      "reason": "合成主体及控制链全部设定为非上市；真实项目必须重新核查。"
+    }
+  },
+  "last_refresh_at": "2026-10-30T12:24:14+08:00",
+  "completed_actions": [],
+  "scoring_enabled": false,
+  "completion_review": {
+    "scope": "从品牌入口解释经营主体、收入规模与品牌表现；检验扩张能否形成利润和现金。",
+    "key_claim_ids": [
+      "C-0001",
+      "C-0002",
+      "C-0003"
+    ],
+    "gap_assessments": [
+      {
+        "gap_id": "G-0001",
+        "impact": "核心盈利与现金问题没有原件支持，KQ-04无法回答，范围不能宣称完成。",
+        "disposition": "blocks_completion"
+      },
+      {
+        "gap_id": "G-0002",
+        "impact": "只能判断品牌触点与样本特征，无法确认无补贴复购，限制品牌优势结论。",
+        "disposition": "limits_conclusion"
+      }
+    ],
+    "reviewed_at": "2026-10-30T12:24:14+08:00"
+  }
+}

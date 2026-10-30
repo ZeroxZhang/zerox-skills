@@ -31,11 +31,14 @@ BASIS = {"evidence": "资料支持", "company_claim": "公司口径", "inference
 def validate_content(content, cfg, data):
     evidence = {r["evidence_id"]: r for r in data["evidence-ledger"]}
     entities = {r["entity_id"] for r in data["entity-map"]} | {"industry"}
+    people = {r["entity_id"] for r in data["entity-map"] if r["entity_type"] == "person"}
+    brand_target = any(r["entity_id"] == cfg["target_id"] and r["entity_type"] == "brand" for r in data["entity-map"])
     used = set()
     chart_count = 0
     warnings = []
     explanations = {}
     business_flows = 0
+    ownership_maps = 0
     history_sections = []
     people_sections = []
     images = 0
@@ -78,6 +81,8 @@ def validate_content(content, cfg, data):
             text(item[field], f"{label}.{field}")
         if item["entity_id"] not in entities:
             fail(f"{label} 主体不存在：{item['entity_id']}")
+        if item["entity_id"] in people:
+            fail(f"{label} 不能以自然人作为经营数字主体；股权图以公司为主体、人物为标签")
         if not isinstance(item["kind"], str) or item["kind"] not in KINDS:
             fail(f"{label} 数据属性非法：{item['kind']}")
         refs(item["evidence_ids"], label)
@@ -441,6 +446,8 @@ def validate_content(content, cfg, data):
                 diagrams += 1
                 if block["purpose"] == "business_model":
                     business_flows += 1
+                elif block["purpose"] == "ownership":
+                    ownership_maps += 1
             elif kind in ("timeline", "process"):
                 obj(block, ["type", "title", "items"], ["purpose", "ordering"] if kind == "process" else (["purpose"] if current else []), kind)
                 text(block["title"], kind)
@@ -497,6 +504,10 @@ def validate_content(content, cfg, data):
             warnings.append("交易过程尚不清楚，已披露限制并免画业务图；不得据此宣称已理解或验证商业模式。")
         if all(item["status"] == "unknown" for item in explanations.values()):
             warnings.append("全部理解主题均未知；当前只能交付问题边界，不能形成公司的实质评价。")
+        if brand_target and current and not ownership_maps:
+            if explanations["identity"]["status"] != "unknown":
+                fail("目标是品牌：需要 purpose=ownership 的关系图说明品牌背后的经营主体、商标权利人及所属集团")
+            warnings.append("品牌背后的主体仍未查明，已免画品牌—主体关系图；公司层判断不能形成。")
     if current:
         identity_section = explanations["identity"]["section_id"]
         if history_sections and any(sid != identity_section for sid in history_sections):
@@ -517,6 +528,7 @@ def validate_content(content, cfg, data):
     return {"used_evidence": sorted(used), "chart_count": chart_count, "warnings": warnings,
             "reader_coverage": {"status": "mapped" if current else "legacy_unchecked",
                                 "topics": explanations, "business_flow_count": business_flows,
+                                "ownership_map_count": ownership_maps,
                                 "company_timeline_count": len(history_sections), "people_block_count": len(people_sections),
                                 "image_count": images, "matrix_count": matrices, "diagram_count": diagrams,
                                 "meaning": "只检查必答主题的结构映射；须独立阅读正文并复述，不能据此认定解释充分或事实正确。"}}

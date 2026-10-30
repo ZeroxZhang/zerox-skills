@@ -22,6 +22,46 @@
           "limitations": "{{待填写：说明身份或业务范围仍未核实的部分；替换真实引用并按证据设置 supported/partial/unknown。supported 可为空限制，partial/unknown 必须具体说明未知及影响。}}"
         },
         {
+          "type": "diagram",
+          "title": "{{仅品牌目标需要，公司目标删除本块：品牌背后是谁}}",
+          "purpose": "ownership",
+          "period": "{{待填写：关系适用的时点}}",
+          "entity_id": "ENT-0001",
+          "note": "{{待填写：说明商标权利人、经营主体、所属集团以及授权、生产、经销关系的依据；授权和代工不构成控制，未核实的关系标为待核实。按 references/brand-to-company.md 选择节点，没有依据的角色不要画。}}",
+          "nodes": [
+            {
+              "id": "brand",
+              "label": "{{待填写：品牌名}}",
+              "text": "{{待填写：品牌卖什么、在哪些市场}}",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0001"
+              ]
+            },
+            {
+              "id": "operator",
+              "label": "{{待填写：经营主体法定名}}",
+              "text": "{{待填写：经营主体做什么，如组织产品、销售与收款}}",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0001"
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "source": "operator",
+              "target": "brand",
+              "label": "{{待填写：具体关系，如经营品牌并收款}}",
+              "flow": "relationship",
+              "basis": "evidence",
+              "evidence_ids": [
+                "E-0001"
+              ]
+            }
+          ]
+        },
+        {
           "type": "timeline",
           "purpose": "company_history",
           "title": "公司发展沿革",
@@ -461,8 +501,13 @@
       "title": "{{待填写：推进条件与下一步}}",
       "blocks": [
         {
+          "type": "callout",
+          "title": "{{待填写：本报告与主流看法的不同之处}}",
+          "text": "{{待填写：先写公司自述、媒体或研报的主流说法，再写本报告的判断与依据 [E-0001]，以及什么新证据会让我们改变看法。确实与主流一致时，说明为什么同意以及检验过哪些反证；不要为了显得独到而制造分歧。}}"
+        },
+        {
           "type": "text",
-          "text": "{{待填写：给出与目的相符的建议、先决条件和暂停条件；资料请求及访谈问卷保留在底稿。}}"
+          "text": "{{待填写：逐条回答研究开始时约定的关键问题，并给出与目的相符的建议、先决条件和暂停条件；未能回答的问题说明原因和影响。资料请求及访谈问卷保留在底稿。}}"
         }
       ]
     }
