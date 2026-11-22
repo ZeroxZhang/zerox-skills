@@ -5,7 +5,7 @@ description: "将任何学术论文转换为精美的交互式 HTML 教程，帮
 
 # zerox-paper-to-course
 
-将任何学术论文转换为精美的交互式教程。输出是一个**目录**，包含预构建的 `styles.css`、`main.js`、各模块 HTML 文件和组装后的 `index.html` —— 直接在浏览器中打开即可，唯一外部依赖是 Google Fonts CDN 和 KaTeX CDN。
+将任何学术论文转换为精美的交互式教程。输出是一个**目录**，包含预构建的 `styles.css`、`main.js`、各模块 HTML 文件和组装后的 `index.html` —— 直接在浏览器中打开即可，唯一外部依赖是 Google Fonts CDN 和 KaTeX CDN。这两个外链只影响观感：断网打开时字体回退到系统字体、公式样式不生效；需要完全离线的交付物时，先把这两个 CDN 的 CSS 与字体文件下载到本地再改写 `<link>`。
 
 ## First-Run Welcome
 
