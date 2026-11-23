@@ -350,6 +350,7 @@ def print_report(
     path: Path,
     size: str,
     density: str,
+    style: str,
     metrics: Dict,
     errors: Sequence[str],
     warnings: Sequence[str],
@@ -363,6 +364,7 @@ def print_report(
                 "file": str(path),
                 "size": size,
                 "density": density,
+                "style": style,
                 "verdict": verdict,
                 "metrics": metrics,
                 "errors": list(errors),
@@ -377,7 +379,7 @@ def print_report(
     print("=" * 60)
     print("ZEROX-ONEPAGER LAYOUT COMPOSITION CHECK")
     print(f"File: {path}")
-    print(f"Size: {size}   Density: {density}")
+    print(f"Size: {size}   Density: {density}   Style: {style}")
     print("=" * 60)
     print(
         "blocks=%d  air=%.0f%%  max_gap=%.0fpx  scale=%.1f:1"
@@ -411,12 +413,25 @@ def main() -> None:
     parser.add_argument("input", type=Path)
     parser.add_argument("--size", required=True, choices=sorted(config["sizes"]))
     parser.add_argument("--density", choices=sorted(config["densities"]), default="C2")
+    parser.add_argument(
+        "--style",
+        choices=sorted(config["styles"], key=lambda code: int(code[1:])),
+        default="",
+        help="Design style; applies its layout_override when present",
+    )
     parser.add_argument("--timeout", type=int, default=30000)
     parser.add_argument("--format", choices=("text", "json"), default="text")
     args = parser.parse_args()
 
     targets = dict(config["layout"])
     targets["air_ratio"] = config["layout"]["air_ratio"][args.density]
+    style_config = config["styles"].get(args.style) or {}
+    override = style_config.get("layout_override") or {}
+    for key, value in override.items():
+        if key == "air_ratio":
+            targets["air_ratio"] = value[args.density]
+        else:
+            targets[key] = value
 
     try:
         measurement = asyncio.run(measure(args.input, args.size, args.timeout))
@@ -426,7 +441,10 @@ def main() -> None:
 
     metrics = summarize(measurement)
     errors, warnings, passed = classify(metrics, targets)
-    print_report(args.input, args.size, args.density, metrics, errors, warnings, passed, args.format)
+    print_report(
+        args.input, args.size, args.density, args.style or "default",
+        metrics, errors, warnings, passed, args.format,
+    )
     raise SystemExit(2 if errors else 1 if warnings else 0)
 
 

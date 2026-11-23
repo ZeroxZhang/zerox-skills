@@ -5,6 +5,10 @@ All notable changes to the Onepager skill are documented in this file.
 ## [1.6.0] - 2026-11-23
 
 ### Added
+- **B11 粗野平面 (Brutalist Graphic)** style: near-black `#0A0A0A` field, paper-white `#F4F4F0` inverted blocks, grayscale halftone collage (radial-dot halftone, grain filter, hard-edge clip masks, stair-stepped edges), split-character and edge-bleeding typography, and red `#FF2D16` / lime `#B6FF00` point signals capped at 3% each. Explicitly separated from B4 建筑粗野 with a seven-dimension comparison — B4 is "concrete architecture", B11 is "underground print shop"
+- **Per-style layout overrides**: `styles.B11.layout_override` raises the air band to 34-52%, the type scale to 22:1, distinct sizes to 8 and imbalance to 12%, because brutalist composition is built on extreme contrast and deliberate off-balance. `layout_check.py --style` applies it automatically, and values beyond B11's allowance still fail
+- **CJK companion families no longer count as a third voice**: `[FONT]` now separates Latin content families from CJK companions (Noto Sans SC and friends), so display + Latin body + CJK reads as 2 families, not 3
+- **Halftone and grain are recognised as texture, not gradient**: `[GRADIENT]` accepts repeating fills and selectors marked halftone/grain/noise/pattern, without loosening the rule for real decorative gradients
 - **Composition checker** `scripts/layout_check.py`: measures the rendered page for gaps that break the rhythm (holes), blocks whose content fills under 55% of their own box (content packed at the top), total air ratio against a per-density target, distinct font-size count and max:min scale, and horizontal ink imbalance. Full-bleed colour blocks count as ink, not air. This is the check that catches "looks fine locally, reads as empty space" — the failure mode that static and geometry checks both pass.
 - **`references/layout-archetypes.md`**: five poster archetypes with exact row budgets for A4 (band stack, oversized type + side rail, editorial two-column, card matrix, colour-block rhythm), each stating *why* it fills the canvas by construction, plus the three failure signatures it prevents
 - **Layout contract in `config-schema.json`**: per-density air-ratio targets (C1 34-52% / C2 22-38% / C3 12-28%), gap-ratio caps, max type scale 12:1 (hard 15:1), max 6 distinct font sizes, max 5% ink imbalance
@@ -28,6 +32,7 @@ All notable changes to the Onepager skill are documented in this file.
 
 ### Fixed
 - Web-font families declared through CSS variables are no longer reported as "loaded but unused", and CJK stacks declared the same way are now detected correctly
+- `examples/b11-brutalist.example.html` demonstrates a passing `S4 · A4 · B11 · C2 · T4` poster: 39% air, 5 type sizes, 15:1 scale, 2.3% ink imbalance, all checks green
 - `examples/b10-poster.example.html` demonstrates a passing `S4 · A4 · B10 · C1 · T4 · E2 · G4` poster — 21/21 checks, zero warnings — with its render at `examples/b10-poster.example.png`
 
 ## [1.5.0] - 2026-08-08

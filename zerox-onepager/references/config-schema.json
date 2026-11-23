@@ -121,6 +121,25 @@
       "mode_rules": {
         "T4": "Dark"
       }
+    },
+    "B11": {
+      "name": "粗野平面",
+      "modes": ["Dark"],
+      "default_mode": "Dark",
+      "mode_rules": {
+        "T4": "Dark"
+      },
+      "layout_override": {
+        "air_ratio": {
+          "C1": [0.44, 0.64],
+          "C2": [0.34, 0.52],
+          "C3": [0.24, 0.40]
+        },
+        "max_type_scale": 22,
+        "max_type_scale_hard": 26,
+        "max_distinct_sizes": 8,
+        "max_imbalance": 0.12
+      }
     }
   },
   "densities": {
@@ -173,6 +192,9 @@
     "max_type_scale_hard": 15,
     "max_distinct_sizes": 6,
     "max_imbalance": 0.05,
+    "style_overrides": {
+      "B11": "styles.B11.layout_override — brutalist pages need wider air bands, a 22:1 type range and a deliberate 12% imbalance"
+    },
     "reference": "references/layout-archetypes.md"
   },
   "bignumber": {

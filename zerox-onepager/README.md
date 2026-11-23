@@ -29,7 +29,7 @@ zerox-onepager is a Claude Agent Skill that transforms your provided text, Markd
 
 - **Multiple Sizes**: Vertical scroll (Mobile), Horizontal widescreen (16:9), Square (1:1), Portrait poster (3:4 for Xiaohongshu/WeChat) — 4 sizes total
 - **Usage Scenes First**: Six scenes (product intro, work report, client pitch, event promo, data insight, how-to) that each carry a validated default configuration, so users pick "what it is for" instead of decoding six abstract dimensions
-- **Ten Design Styles**: Dark Editorial, Swiss Precision, Organic Nature, Constructivist Brutalism, Neo-Pop Editorial, Minimalist East, Data Journalism, Cyber Street, Google Native, Short-Video Feed (B10, TikTok/Douyin-inspired immersive dark with red/cyan accents)
+- **Eleven Design Styles**: Dark Editorial, Swiss Precision, Organic Nature, Constructivist Brutalism, Neo-Pop Editorial, Minimalist East, Data Journalism, Cyber Street, Google Native, Short-Video Feed (B10), Brutalist Graphic (B11 — near-black field, inverted paper blocks, halftone collage, red/lime point signals, split-character typography)
 - **Font Matching Step**: A dedicated font-matching pass with a curated open-source/Google Fonts library, CDN loading, CJK-aware fallback chains, and a seven-option `G1-G7` scheme
 - **Three Information Densities**: Low/Medium/High density, automatically rewriting content to match the layout
 - **Content Intelligence**: Applies consulting-grade content principles (MECE, Pyramid, SCQA, So What, Quantification) to restructure content for maximum impact
@@ -119,7 +119,7 @@ zerox-onepager/
 │   ├── scenes.md             # Usage scene catalog: defaults, must-haves, acceptance tests
 │   ├── layout-archetypes.md  # Poster layout archetypes with exact row budgets
 │   ├── font-library.md       # Open-source / Google Fonts catalog, matching flow, loading rules
-│   ├── design-styles.md      # Full visual specifications for the 10 design styles
+│   ├── design-styles.md      # Full visual specifications for the 11 design styles
 │   ├── typography.md         # Chinese font schemes and typography parameters
 │   ├── layout-specs.md       # Layout specifications for the 4 sizes
 │   ├── diagram-guide.md      # Diagram type matching and drawing guide
@@ -174,7 +174,7 @@ zerox-onepager 是一个 Agent Skill，能够将用户提供的文字、Markdown
 
 - **多尺寸支持**：纵向长图、横向宽图 (16:9)、正方形 (1:1)、竖版海报 (3:4，适合小红书/公众号封面)
 - **先选使用场景**：产品介绍 / 工作汇报 / 客户沟通 / 活动宣传 / 数据洞察 / 知识方法，每个场景自带一套经过验证的默认配置，用户只需判断"这是什么用途"
-- **十种设计风格**：暗夜编辑、瑞士精密、有机自然、建筑粗野、新波普编辑、极简东方、数据新闻、赛博街道、谷歌原生、短视频潮流（B10，TikTok/抖音化的沉浸黑 + 红青对位）
+- **十一种设计风格**：暗夜编辑、瑞士精密、有机自然、建筑粗野、新波普编辑、极简东方、数据新闻、赛博街道、谷歌原生、短视频潮流（B10）、粗野平面（B11，近黑场 + 黑白反相块 + 半调拼贴 + 红绿点状信号 + 拆字排版）
 - **字体匹配环节**：独立的字体匹配步骤 + 精选开源字库（以 Google Fonts 为主）+ CDN 加载规范 + 中文 fallback 链 + `G1-G7` 七档字体方案
 - **三级信息密度**：低/中/高密度，自动改写内容匹配版式
 - **内容智能**：运用咨询级内容原则（MECE、金字塔原理、SCQA、So What、量化优先）重构内容，最大化传达效果
@@ -260,7 +260,7 @@ zerox-onepager/
 │   ├── scenes.md             # 使用场景目录：默认配置、必备模块、验收判据
 │   ├── layout-archetypes.md  # 版式原型与精确行预算
 │   ├── font-library.md       # 开源字库与字体匹配流程、加载规范
-│   ├── design-styles.md      # 十种设计风格的完整视觉规范
+│   ├── design-styles.md      # 十一种设计风格的完整视觉规范
 │   ├── typography.md         # 中文字体方案与排版参数
 │   ├── layout-specs.md       # 四种尺寸的版式规范
 │   ├── diagram-guide.md      # 图表类型匹配与绘制指南

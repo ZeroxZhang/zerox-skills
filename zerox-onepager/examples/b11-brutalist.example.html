@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>粗野平面 · Brutalist Graphic</title>
+<!-- design intent: 黑场 + 反相带 + 半调拼贴三层；拆字竖排贴边；红绿仅作信号；字号 150/48/22/12/10 = 15:1 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0A0A0A;
+    --line: #2E2E2E;
+    --gray: #6E6E6A;
+    --gray-2: #A8A8A2;
+    --paper: #F4F4F0;
+    --red: #FF2D16;
+    --green: #B6FF00;
+    --font-display: 'Archivo Black', 'Noto Sans SC', 'PingFang SC', sans-serif;
+    --font-body: 'Inter', 'Noto Sans SC', 'PingFang SC', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+
+  body { background: #0A0A0A; }
+
+  .page {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: var(--black);
+    color: var(--paper);
+    font-family: var(--font-body);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ---------- 1 巨型拆字 + 影像 ---------- */
+  .top { display: flex; }
+  .type-col { width: 648px; padding-top: 22px; }
+  .micro {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gray-2);
+    padding-left: 38px;
+  }
+  .micro b { color: var(--red); font-weight: 400; }
+  .stack {
+    font-family: var(--font-display);
+    font-size: 150px; line-height: 0.84; letter-spacing: -0.05em;
+    font-weight: 900; color: var(--paper);
+    margin: 14px 0 0 6px;
+  }
+  .stack span { display: block; }
+  .stack span:nth-child(2) { margin-left: 66px; }
+  .stack span:nth-child(3) { margin-left: 20px; }
+  .stack span:nth-child(4) { margin-left: 104px; }
+
+  .anchor {
+    margin-top: 26px; padding-left: 38px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gray);
+  }
+  .anchor i { width: 8px; height: 8px; background: var(--red); display: inline-block; }
+  .anchor .rule { flex: 0 0 96px; height: 1.5px; background: var(--line); }
+
+  .img-col { width: 432px; padding: 44px 38px 0 0; }
+  .photo-grain {
+    position: relative; height: 330px; overflow: hidden;
+    background: linear-gradient(to bottom, #383838 0%, #151515 60%, #0A0A0A 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 76%, 74% 76%, 74% 100%, 0 100%);
+  }
+  .photo-grain::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(#0A0A0A 1.1px, transparent 1.4px);
+    background-size: 5px 5px;
+    mix-blend-mode: multiply; opacity: 0.6;
+  }
+  .photo-grain .fig {
+    position: absolute; left: 12px; bottom: 12px; pointer-events: none;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--paper);
+    background: var(--black); padding: 4px 7px;
+  }
+  .photo-grain .subject {
+    position: absolute; left: 0; top: 96px; pointer-events: none;
+    width: 190px; height: 150px; background: #9A9A94;
+    clip-path: polygon(0 0, 100% 0, 100% 40%, 54% 40%, 54% 100%, 0 100%);
+  }
+  .photo-grain .subject-2 {
+    position: absolute; right: 0; bottom: 74px; pointer-events: none;
+    width: 118px; height: 118px; background: #C9C9C3; mix-blend-mode: screen; opacity: 0.5;
+  }
+  .photo-grain .sq {
+    position: absolute; right: 10px; top: 10px; pointer-events: none;
+    width: 12px; height: 12px; background: var(--green);
+  }
+  .caption {
+    margin-top: 14px;
+    font-family: var(--font-mono); font-size: 10px; line-height: 1.9;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray);
+    border-top: 1.5px solid var(--line); padding-top: 10px;
+  }
+  .caption .red { color: var(--red); }
+
+  /* ---------- 2 满宽反相带 ---------- */
+  .band {
+    background: var(--paper); color: var(--black);
+    padding: 26px 38px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .band .t {
+    font-family: var(--font-display);
+    font-size: 48px; letter-spacing: -0.03em; font-weight: 900;
+  }
+  .band .n {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em;
+  }
+  .band .n i { width: 10px; height: 10px; background: var(--red); display: inline-block; }
+
+  /* ---------- 3 三栏规程 ---------- */
+  .bottom { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 26px; padding: 0 38px; }
+  .col .h {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gray-2);
+    border-top: 1.5px solid var(--line); padding-top: 10px;
+  }
+  .col .h i { width: 6px; height: 6px; background: var(--green); display: inline-block; }
+  .col p.t {
+    margin-top: 12px;
+    font-size: 22px; line-height: 1.34; font-weight: 700; color: var(--paper);
+  }
+  .col p.d {
+    margin-top: 10px;
+    font-size: 12px; line-height: 1.85; font-weight: 400; color: var(--gray-2);
+  }
+  .col .num {
+    margin-top: 14px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--red); letter-spacing: 0.14em;
+  }
+
+  /* ---------- 4 编号索引带 ---------- */
+  .index {
+    padding: 0 38px;
+    display: flex; flex-wrap: wrap; gap: 0 0;
+    border-top: 1.5px solid var(--line);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+    color: var(--gray);
+  }
+  .index span { width: 46px; padding: 8px 0; border-right: 1.5px solid var(--line); }
+  .index span:last-child { border-right: none; }
+  .index span.on { color: var(--black); background: var(--green); }
+
+  /* ---------- 5 页脚微标记 ---------- */
+  .foot {
+    padding: 0 38px 24px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gray);
+  }
+  .foot .marks { display: flex; align-items: center; gap: 7px; }
+  .foot .marks span { width: 8px; height: 8px; display: inline-block; }
+  .foot .r { background: var(--red); }
+  .foot .g { background: var(--green); }
+  .foot .w { background: var(--paper); }
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="top">
+    <div class="type-col">
+      <p class="micro">[ STYLE 11 ] <b>&#9632;</b> BRUTALIST GRAPHIC / 2026</p>
+      <h1 class="stack"><span>粗</span><span>野</span><span>排</span><span>版</span></h1>
+      <p class="anchor"><i></i><span class="rule"></span>TYPE AS IMAGE / 04</p>
+    </div>
+
+    <div class="img-col">
+      <div class="photo-grain">
+        <span class="subject"></span>
+        <span class="subject-2"></span>
+        <span class="sq"></span>
+        <span class="fig">FIG.01 / HALFTONE 65 LPI</span>
+      </div>
+      <p class="caption">OFFSET PRINT <span class="red">/</span> 1-COLOR + SPOT<br>NEWSPRINT 45 GSM<br>NO BLEED CONTROL</p>
+    </div>
+  </section>
+
+  <div class="band">
+    <span class="t">BLACK / WHITE / SIGNAL</span>
+    <span class="n"><i></i>ISSUE 003</span>
+  </div>
+
+  <section class="bottom">
+    <div class="col">
+      <div class="h"><i></i>01 RULE</div>
+      <p class="t">字号只走两端</p>
+      <p class="d">150px 的字块就是图形本身，10px 的标注是印刷批注。中间层级越少，冲击越硬。</p>
+      <p class="num">[ 01 / 08 ]</p>
+    </div>
+    <div class="col">
+      <div class="h"><i></i>02 RULE</div>
+      <p class="t">红与绿是信号</p>
+      <p class="d">单色不超过 3%，只以 6-14px 的方块与 1-2 字标签出现。铺开就垮。</p>
+      <p class="num">[ 02 / 08 ]</p>
+    </div>
+    <div class="col">
+      <div class="h"><i></i>03 RULE</div>
+      <p class="t">黑场是材料</p>
+      <p class="d">大面积黑不是没排满，是压住版面；一块反相白就够把节奏切开。</p>
+      <p class="num">[ 03 / 08 ]</p>
+    </div>
+  </section>
+
+  <div class="index">
+    <span>01</span><span>02</span><span>03</span><span class="on">04</span><span>05</span><span>06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span>
+  </div>
+
+  <footer class="foot">
+    <span>ZEROX-ONEPAGER / B11</span>
+    <span class="marks"><span class="r"></span><span class="g"></span><span class="w"></span></span>
+    <span>SANS + MONO / 2026</span>
+  </footer>
+</main>
+</body>
+</html>

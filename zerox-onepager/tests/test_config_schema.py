@@ -15,7 +15,7 @@ class ConfigSchemaTests(unittest.TestCase):
 
     def test_public_option_sets(self):
         self.assertEqual(set(self.config["sizes"]), {"A1", "A2", "A3", "A4"})
-        self.assertEqual(set(self.config["styles"]), {f"B{index}" for index in range(1, 11)})
+        self.assertEqual(set(self.config["styles"]), {f"B{index}" for index in range(1, 12)})
         self.assertEqual(set(self.config["densities"]), {"C1", "C2", "C3"})
         self.assertEqual(set(self.config["types"]), {"T1", "T2", "T3", "T4"})
         self.assertEqual(set(self.config["scenes"]), {f"S{index}" for index in range(1, 7)})

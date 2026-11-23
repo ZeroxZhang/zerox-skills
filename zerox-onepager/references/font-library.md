@@ -409,6 +409,7 @@ https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@700&text=%E4%B8%80%E9
 | B8 赛博街道 | G5 | Chakra Petch 700 / Orbitron 700 | Inter 400 + Noto Sans SC 400 | JetBrains Mono 400/700 | Orbitron 无中文；中文标题落 Noto Sans SC 700-900 |
 | B9 谷歌原生 | G1 | Inter 500-600（英）+ Noto Sans SC 700-900（中） | Inter 400 + Noto Sans SC 400 | JetBrains Mono 500 / IBM Plex Mono 500 | 中英视觉权重对齐；标题 48px+ 才用负字距 |
 | B10 短视频潮流 | G1 / G4 | Inter / Archivo 700-800（-0.02em，line-height .95）+ Noto Sans SC 900 | Inter 400 + Noto Sans SC 400（line-height 1.6） | JetBrains Mono 400/500/700 | 字重只有 400/700/900；Paper 模式强调词用 Georgia / Noto Serif SC 斜体，全页 1 处 |
+| B11 粗野平面 | G4 | Archivo Black / Anton 900（-0.045em，line-height .86）+ Noto Sans SC 900 | Inter 400 + Noto Sans SC 400 | JetBrains Mono 400（9px / .18em 大写） | 大字极紧、小字极松；中文允许单字竖排；只用一个 display 家族，靠尺寸而非家族制造对比 |
 
 ---
 

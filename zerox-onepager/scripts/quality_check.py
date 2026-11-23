@@ -240,6 +240,11 @@ def parse_font_families(value: str, variables: Dict[str, str]) -> List[str]:
     return families
 
 
+def is_cjk_family(name: str) -> bool:
+    lowered = name.lower()
+    return any(marker in lowered for marker in CJK_FONT_MARKERS)
+
+
 def is_mono_family(name: str) -> bool:
     lowered = name.lower()
     return any(marker in lowered for marker in MONO_MARKERS)
@@ -438,7 +443,7 @@ def run_checks(
             elif property_name == "border-radius":
                 radii.append(value)
             elif property_name in ("background", "background-image") and "gradient(" in value.lower():
-                gradients.append(value)
+                gradients.append((rule.selector, value))
         if re.fullmatch(r"1(?:\s+1\s+0(?:%|px)?)?", rule.declarations.get("flex", "").strip()):
             flex_ones.append(rule.selector)
         if rule.declarations.get("display", "").strip().lower() == "grid":
@@ -447,7 +452,7 @@ def run_checks(
             absolute_rules.append(rule)
 
     seen_colors = {rgb for _, rgb in color_values}
-    limits = {"B5": 10, "B8": 10, "B9": 12, "B10": 12}
+    limits = {"B5": 10, "B8": 10, "B9": 12, "B10": 12, "B11": 12}
     limit = limits.get(style_norm, 7)
     if len(seen_colors) <= limit:
         passed.append(f"[COLOR] Palette uses {len(seen_colors)} unique colors (limit {limit})")
@@ -481,21 +486,37 @@ def run_checks(
             return False
         return len({rgb for rgb in colors}) == 1
 
+    texture_markers = ("halftone", "grain", "noise", "pattern", "dots", "texture", "screen", "stair")
+
+    def is_texture_pattern(selector: str, gradient: str) -> bool:
+        """Halftone dots and grain are print materials, not decorative gradients."""
+        lowered = selector.lower()
+        return "repeating-" in gradient.lower() or any(
+            marker in lowered for marker in texture_markers
+        )
+
     forbidden_gradients = []
     scrims = []
-    for gradient in gradients:
+    textures = []
+    for selector, gradient in gradients:
         gradient_colors = [rgb for _, rgb in extract_colors(gradient, variables)]
         if any(is_blue_purple(rgb) and not (style_norm == "B9" and rgb in b9_allowed) for rgb in gradient_colors):
             forbidden_gradients.append(gradient)
         elif is_readability_scrim(gradient):
             scrims.append(gradient)
+        elif is_texture_pattern(selector, gradient):
+            textures.append(gradient)
     if forbidden_gradients:
         errors.append(f"[GRADIENT] Blue/purple gradients are forbidden ({len(forbidden_gradients)} found)")
     if scrims:
         passed.append(f"[GRADIENT] {len(scrims)} readability scrim(s) accepted (single-hue alpha ramp)")
-    if not forbidden_gradients and not scrims and gradients:
+    if textures:
+        passed.append(
+            f"[GRADIENT] {len(textures)} texture pattern(s) accepted (halftone / grain / repeating fill)"
+        )
+    if not forbidden_gradients and not scrims and not textures and gradients:
         warnings.append(f"[GRADIENT] Found {len(gradients)} gradient(s); confirm each has an information purpose")
-    elif not forbidden_gradients and not scrims and not gradients:
+    elif not forbidden_gradients and not scrims and not textures and not gradients:
         passed.append("[GRADIENT] No gradients used")
 
     glow_shadows = [
@@ -598,14 +619,27 @@ def run_checks(
             else:
                 passed.append(f"[FONT] All {len(loaded_families)} loaded web fonts are referenced")
 
-            content_families = [name for name in loaded_families if not is_mono_family(name)]
+            # A CJK companion family (Noto Sans SC …) pairs with the Latin body
+            # face rather than counting as a third voice.
+            content_families = [
+                name for name in loaded_families
+                if not is_mono_family(name) and not is_cjk_family(name)
+            ]
+            cjk_families = [
+                name for name in loaded_families
+                if not is_mono_family(name) and is_cjk_family(name)
+            ]
             if len(content_families) > 2:
                 warnings.append(
                     "[FONT] More than 2 non-monospace web font families: "
                     + ", ".join(content_families)
                 )
             else:
-                passed.append(f"[FONT] {len(content_families)} non-monospace web font families (limit 2)")
+                suffix = f" + {len(cjk_families)} CJK" if cjk_families else ""
+                passed.append(
+                    f"[FONT] {len(content_families)} non-monospace web font families "
+                    f"(limit 2){suffix}"
+                )
 
             if not has_google_display_swap(content):
                 errors.append("[FONT] Google Fonts URL is missing display=swap; text may stay invisible while loading")
