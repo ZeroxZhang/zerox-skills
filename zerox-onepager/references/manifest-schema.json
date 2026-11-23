@@ -65,7 +65,10 @@
             "required": ["A", "B", "C", "T", "E", "F"],
             "properties": {
               "A": {"enum": ["A1", "A2", "A3", "A4"]},
-              "B": {"enum": ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9"]},
+              "B": {"enum": ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "B11", "B12"]},
+              "B_mode": {"enum": ["Light", "Dark", "Poster", "Paper", "Print"]},
+              "S": {"enum": ["S1", "S2", "S3", "S4", "S5", "S6"]},
+              "G": {"enum": ["G1", "G2", "G3", "G4", "G5", "G6", "G7"]},
               "C": {"enum": ["C1", "C2", "C3"]},
               "T": {"enum": ["T1", "T2", "T3", "T4"]},
               "E": {"enum": ["E1", "E2"]},
@@ -99,10 +102,13 @@
               "type": "object",
               "additionalProperties": false,
               "required": ["kind", "path", "verdict", "sha256"],
+              "if": {"properties": {"verdict": {"const": "WARN"}}},
+              "then": {"properties": {"kind": {"const": "layout"}}, "required": ["review"]},
               "properties": {
-                "kind": {"enum": ["static", "render"]},
+                "kind": {"enum": ["static", "layout", "render"]},
                 "path": {"type": "string", "minLength": 1},
-                "verdict": {"const": "PASS"},
+                "verdict": {"enum": ["PASS", "WARN"]},
+                "review": {"type": "string", "pattern": "\\S"},
                 "sha256": {
                   "type": "string",
                   "pattern": "^[a-f0-9]{64}$"

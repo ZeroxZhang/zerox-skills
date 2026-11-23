@@ -2,6 +2,13 @@
 
 All notable changes to the Onepager skill are documented in this file.
 
+## [Unreleased]
+
+- Poster composition now starts with the subject, reading order and supporting evidence. Each of the twelve styles has guidance for choosing imagery and placing text around it.
+- Added B12 Optical Print, an editable SVG lettering master and a guide to original illustration, static lettering effects and optical spacing.
+- Layout checks measure inline SVG geometry and overlapping bands. Project manifests can retain composition reports alongside static and render checks.
+- Rebuilt the bilingual README cover with the updated skill.
+
 ## [1.6.0] - 2026-11-23
 
 ### Added

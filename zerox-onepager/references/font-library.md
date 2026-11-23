@@ -395,7 +395,7 @@ https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@700&text=%E4%B8%80%E9
 
 ---
 
-## 字体匹配与风格的映射表（B1-B10）
+## 字体匹配与风格的映射表（B1–B12）
 
 | 风格 | G 推荐 | display | 正文/CJK | mono | 说明 |
 |------|------|------|------|------|------|
@@ -410,6 +410,7 @@ https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@700&text=%E4%B8%80%E9
 | B9 谷歌原生 | G1 | Inter 500-600（英）+ Noto Sans SC 700-900（中） | Inter 400 + Noto Sans SC 400 | JetBrains Mono 500 / IBM Plex Mono 500 | 中英视觉权重对齐；标题 48px+ 才用负字距 |
 | B10 短视频潮流 | G1 / G4 | Inter / Archivo 700-800（-0.02em，line-height .95）+ Noto Sans SC 900 | Inter 400 + Noto Sans SC 400（line-height 1.6） | JetBrains Mono 400/500/700 | 字重只有 400/700/900；Paper 模式强调词用 Georgia / Noto Serif SC 斜体，全页 1 处 |
 | B11 粗野平面 | G4 | Archivo Black / Anton 900（-0.045em，line-height .86）+ Noto Sans SC 900 | Inter 400 + Noto Sans SC 400 | JetBrains Mono 400（9px / .18em 大写） | 大字极紧、小字极松；中文允许单字竖排；只用一个 display 家族，靠尺寸而非家族制造对比 |
+| B12 光学版画 | G1 / G4 | Archivo Black 或原创字形，中文用 Noto Sans SC 粗体 | Noto Sans SC / PingFang SC | IBM Plex Mono / 系统等宽 | 镂空与切片集中在短词，正文用完整字面，静态导出时检查字腔 |
 
 ---
 

@@ -10,7 +10,7 @@ This checker measures the rendered composition and reports:
 
 * [LAYOUT] hole   - one gap clearly larger than the rhythm of the page
 * [LAYOUT] void   - a block whose content fills less than half its own box
-* [LAYOUT] air    - total air ratio outside the target band for the density
+* [LAYOUT] air    - vertical space not covered by content extents or filled bands
 * [TYPO] scale    - too many distinct sizes, or an extreme max:min ratio
 * [BALANCE] mass  - the ink is visibly off-centre horizontally
 
@@ -49,34 +49,71 @@ MEASURE_JS = """
     return position !== 'absolute' && position !== 'fixed';
   };
 
-  // Vertical extent of the block's real content (text leaves + media),
-  // ignoring its own padding. This is what exposes "content packed at the top
-  // of a tall band".
+  const media = new Set(['img', 'svg', 'hr', 'canvas', 'video', 'picture']);
+  const hasOwnText = (element) => [...element.childNodes].some(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim()
+  );
+
+  // The SVG viewport may contain a large unpainted margin. Map the drawing's
+  // bounds (in viewBox units) into CSS pixels, respecting letterboxing and
+  // transforms. As with other DOM bounds this is an extent, not pixel coverage.
+  const mediaBounds = (element) => {
+    const viewport = element.getBoundingClientRect();
+    if (!(element instanceof SVGSVGElement)) return viewport;
+
+    const box = element.getBBox();
+    const matrix = element.getScreenCTM();
+    if (!matrix || (!box.width && !box.height)) return null;
+    const points = [
+      new DOMPoint(box.x, box.y),
+      new DOMPoint(box.x + box.width, box.y),
+      new DOMPoint(box.x, box.y + box.height),
+      new DOMPoint(box.x + box.width, box.y + box.height)
+    ].map((point) => point.matrixTransform(matrix));
+    const bounds = {
+      left: Math.min(...points.map((p) => p.x)),
+      right: Math.max(...points.map((p) => p.x)),
+      top: Math.min(...points.map((p) => p.y)),
+      bottom: Math.max(...points.map((p) => p.y))
+    };
+    const style = getComputedStyle(element);
+    if (style.overflowX !== 'visible') {
+      bounds.left = Math.max(viewport.left, bounds.left);
+      bounds.right = Math.min(viewport.right, bounds.right);
+    }
+    if (style.overflowY !== 'visible') {
+      bounds.top = Math.max(viewport.top, bounds.top);
+      bounds.bottom = Math.min(viewport.bottom, bounds.bottom);
+    }
+    return bounds.left <= bounds.right && bounds.top <= bounds.bottom ? bounds : null;
+  };
+
+  // Measure text and graphics within a normal-flow band. SVG paths, masks
+  // and glyph definitions are parts of one picture, not independent blocks.
   const contentExtent = (block) => {
-    const tops = [];
-    const bottoms = [];
+    const rect = block.getBoundingClientRect();
+    const bounds = [];
     const walk = (element) => {
+      if (media.has(element.localName)) {
+        const painted = mediaBounds(element);
+        if (painted) bounds.push(painted);
+        return;
+      }
+      if (hasOwnText(element)) bounds.push(element.getBoundingClientRect());
       for (const child of element.children) {
-        if (!isVisible(child) || !isFlow(child)) continue;
-        const hasChildElements = child.children.length > 0;
-        const hasOwnText = [...child.childNodes].some(
-          (node) => node.nodeType === 3 && (node.textContent || '').trim()
-        );
-        const isMedia = ['IMG', 'SVG', 'HR', 'CANVAS', 'VIDEO', 'PICTURE'].includes(child.tagName);
-        if (hasOwnText || isMedia) {
-          const rect = child.getBoundingClientRect();
-          tops.push(rect.top);
-          bottoms.push(rect.bottom);
-        }
-        if (hasChildElements) walk(child);
+        if (isVisible(child) && (isFlow(child) || child instanceof SVGSVGElement)) walk(child);
       }
     };
     walk(block);
-    if (!tops.length) {
-      const rect = block.getBoundingClientRect();
-      return { top: rect.top, bottom: rect.bottom };
+    if (!bounds.length) {
+      // CSS-only illustrations have no text/media leaves.
+      const hasSvg = block instanceof SVGSVGElement || block.querySelector('svg');
+      return { top: rect.top, bottom: hasSvg ? rect.top : rect.bottom };
     }
-    return { top: Math.min.apply(null, tops), bottom: Math.max.apply(null, bottoms) };
+    return {
+      top: Math.max(rect.top, Math.min(...bounds.map((b) => b.top))),
+      bottom: Math.min(rect.bottom, Math.max(...bounds.map((b) => b.bottom)))
+    };
   };
 
   const rootRect = root.getBoundingClientRect();
@@ -107,21 +144,57 @@ MEASURE_JS = """
   const sizes = new Set();
   const inkLeft = [];
   const inkRight = [];
+  const svgTextNames = ['text', 'tspan', 'textPath'];
+  const addTypeSize = (element, matrix) => {
+    const px = parseFloat(getComputedStyle(element).fontSize);
+    const scale = matrix ? Math.hypot(matrix.c, matrix.d) : 1;
+    sizes.add(Math.round(px * scale * 10) / 10);
+  };
+
+  // The instance tree of <use> is browser-private. Follow local references
+  // through painted groups, composing their transforms with the viewport CTM.
+  const visitInstance = (node, matrix, ancestors) => {
+    if (!node || ancestors.has(node)) return;
+    const tag = node.localName;
+    if (tag !== 'g' && tag !== 'use' && !svgTextNames.includes(tag)) return;
+    const style = getComputedStyle(node);
+    if (style.display === 'none' || style.opacity === '0') return;
+    if (style.transform !== 'none') matrix = matrix.multiply(new DOMMatrix(style.transform));
+    if (svgTextNames.includes(tag) && hasOwnText(node) && style.visibility !== 'hidden') {
+      addTypeSize(node, matrix);
+    }
+    ancestors.add(node);
+    if (tag === 'use') {
+      const ref = node.href.baseVal;
+      if (ref.startsWith('#')) visitInstance(document.getElementById(ref.slice(1)), matrix, ancestors);
+    } else {
+      for (const child of node.children) visitInstance(child, matrix, ancestors);
+    }
+    ancestors.delete(node);
+  };
+
   Array.from(root.querySelectorAll('*')).forEach((element) => {
+    const isSvgChild = element instanceof SVGElement && !(element instanceof SVGSVGElement);
+    const isUse = isSvgChild && element.localName === 'use';
+    if (isSvgChild && !svgTextNames.includes(element.localName) && !isUse) return;
+    if (isSvgChild && element.closest('defs, symbol, mask, clipPath, pattern, marker')) return;
     if (!isVisible(element)) return;
-    const rect = element.getBoundingClientRect();
-    const hasOwnText = Array.from(element.childNodes).some(
-      (node) => node.nodeType === 3 && (node.textContent || '').trim()
-    );
-    const isMedia = ['IMG', 'SVG', 'CANVAS', 'VIDEO'].indexOf(element.tagName) >= 0;
-    if (hasOwnText) sizes.add(parseFloat(getComputedStyle(element).fontSize));
-    if (hasOwnText || isMedia) {
-      const left = rect.left - rootRect.left;
-      const right = rect.right - rootRect.left;
-      if (right > left) {
-        inkLeft.push(left);
-        inkRight.push(right);
+    if (isUse) {
+      const href = element.href.baseVal;
+      const matrix = element.getScreenCTM();
+      if (matrix && href.startsWith('#')) {
+        visitInstance(document.getElementById(href.slice(1)), DOMMatrix.fromMatrix(matrix), new Set());
       }
+      return;
+    }
+    const text = hasOwnText(element);
+    if (text) addTypeSize(element, isSvgChild ? element.getScreenCTM() : null);
+    const measuredMedia = media.has(element.localName) && element.localName !== 'hr';
+    if (!text && !measuredMedia) return;
+    const rect = measuredMedia ? mediaBounds(element) : element.getBoundingClientRect();
+    if (rect && rect.right > rect.left) {
+      inkLeft.push(rect.left - rootRect.left);
+      inkRight.push(rect.right - rootRect.left);
     }
   });
 
@@ -148,15 +221,26 @@ def summarize(measurement: Dict) -> Dict:
     canvas_height = float(canvas["height"]) or 1.0
 
     inner_gaps: List[float] = []
-    for previous, current in zip(blocks, blocks[1:]):
-        inner_gaps.append(max(0.0, current["top"] - previous["bottom"]))
+    if blocks:
+        previous_bottom = blocks[0]["bottom"]
+        for current in blocks[1:]:
+            inner_gaps.append(max(0.0, current["top"] - previous_bottom))
+            previous_bottom = max(previous_bottom, current["bottom"])
 
-    content_heights = [
-        block["height"] if block.get("filledBg")
-        else max(0.0, block["contentBottom"] - block["contentTop"])
+    # Side-by-side columns and overlapping layers can occupy the same rows.
+    # Count each vertical interval once, as for a single-column composition.
+    intervals = sorted(
+        (block["top"], block["bottom"]) if block.get("filledBg")
+        else (block["contentTop"], block["contentBottom"])
         for block in blocks
-    ]
-    air_ratio = 1.0 - (sum(content_heights) / canvas_height)
+    )
+    covered = 0.0
+    last_bottom = 0.0
+    for top, bottom in intervals:
+        bottom = min(bottom, canvas_height)
+        covered += max(0.0, bottom - max(top, last_bottom))
+        last_bottom = max(last_bottom, bottom)
+    air_ratio = 1.0 - covered / canvas_height
 
     voids = []
     for block in blocks:

@@ -1,4 +1,6 @@
+import asyncio
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -67,12 +69,57 @@ class SummarizeTests(unittest.TestCase):
         self.assertEqual(len(metrics["voids"]), 1)
         self.assertEqual(metrics["voids"][0]["fill"], 0.3)
 
+    def test_side_by_side_columns_share_the_same_vertical_space(self):
+        blocks = [block(0, 600), block(0, 200), block(650, 1000)]
+        metrics = layout_check.summarize(measure(blocks, [16], height=1000))
+        self.assertEqual(metrics["air_ratio"], 0.05)
+        self.assertEqual(metrics["inner_gaps"], [0, 50])
+
     def test_type_scale_and_imbalance(self):
         metrics = layout_check.summarize(
             measure([block(0, 1400)], [13, 144], ink={"min": 0, "max": 1080})
         )
         self.assertEqual(metrics["scale"], 11.1)
         self.assertEqual(metrics["imbalance"], 0.0)
+
+
+class SvgLayoutTests(unittest.TestCase):
+    def test_svg_paths_fill_drawing_bounds_without_counting_viewport_margins(self):
+        from test_render_check import browser_available
+
+        if not browser_available():
+            self.skipTest("Playwright Chromium is not installed")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "drawing.html"
+            path.write_text(
+                '<style>*{margin:0}svg{display:block}</style><main class="poster">'
+                '<figure><svg width="800" height="400" viewBox="0 0 400 200">'
+                '<defs><text x="2000" y="2000" font-size="500">mask</text>'
+                '<text id="headline" x="32" y="120" font-size="36">Page</text>'
+                '<g id="nested" transform="scale(.5)"><use href="#headline"/><use href="#nested"/></g></defs>'
+                '<use href="#headline"/><use href="#nested"/>'
+                '<path d="M30 15h320v130H30z"/></svg><figcaption>Paper</figcaption>'
+                '</figure></main>', encoding="utf-8"
+            )
+            result = asyncio.run(layout_check.measure(path, "A4"))
+        self.assertEqual(result["blocks"][0]["contentTop"], 30)
+        self.assertEqual(result["fontSizes"], [16, 36, 72])
+        self.assertEqual(result["blocks"][0]["contentBottom"], result["blocks"][0]["height"])
+
+    def test_lettering_template_uses_the_displayed_viewbox_scale(self):
+        from test_render_check import browser_available
+
+        if not browser_available():
+            self.skipTest("Playwright Chromium is not installed")
+        drawing = (ROOT / "assets/templates/lettering.svg").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "lettering.html"
+            path.write_text(
+                '<style>svg{width:320px;display:block}</style><main class="poster">'
+                + drawing + '</main>', encoding="utf-8"
+            )
+            measured = asyncio.run(layout_check.measure(path, "A4"))
+        self.assertEqual(measured["fontSizes"], [84])
 
 
 class ClassifyTests(unittest.TestCase):

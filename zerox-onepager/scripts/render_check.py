@@ -66,14 +66,14 @@ async def inspect_render(
 
         metrics = await page.evaluate(
             """() => {
-                const root = document.querySelector('.page') || document.body;
+                const root = document.querySelector('.poster, .page, .canvas, .onepager') || document.body;
                 const rootRect = root.getBoundingClientRect();
                 const candidates = [...root.querySelectorAll('*')].filter((element) => {
+                    if (element.closest('style, script, defs, symbol, clipPath, mask, pattern, marker, title, desc')) return false;
                     const style = getComputedStyle(element);
                     const rect = element.getBoundingClientRect();
                     if (style.display === 'none' || style.visibility === 'hidden') return false;
                     if (rect.width === 0 || rect.height === 0) return false;
-                    if (['STYLE', 'SCRIPT', 'SYMBOL', 'DEFS'].includes(element.tagName)) return false;
                     return true;
                 });
 

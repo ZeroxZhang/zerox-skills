@@ -15,7 +15,7 @@
          ============================================ -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap">
 
     <style>
         /* ============================================
@@ -124,29 +124,40 @@
             z-index: 1;
         }
 
-        /* ============================================
-           HEADER
-           ============================================ */
-        .header {
-            text-align: center;
-            margin-bottom: var(--section-gap);
-            padding-bottom: 32px;
-            border-bottom: 1px solid var(--color-border);
+        /* 标题和主图共用栅格。按真实内容调整列数、主图裁幅和文字落点。 */
+        .composition {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            grid-template-rows: auto auto;
+            align-content: start;
+            isolation: isolate;
+            margin-block-end: var(--section-gap);
         }
-
-        .header h1 {
+        .composition h1 {
+            grid-column: 1 / 9;
+            grid-row: 1;
+            align-self: end;
+            z-index: 1;
             font-family: var(--font-heading);
-            font-size: 36px;
-            font-weight: 700;
-            line-height: 1.3;
-            color: var(--color-text);
-            margin-bottom: 12px;
+            font-size: clamp(56px, 9vw, 132px);
+            font-weight: 900;
+            line-height: 1.04;
+            color: var(--color-primary);
         }
-
-        .header .subtitle {
-            font-size: 16px;
-            color: var(--color-text-secondary);
-            font-weight: 400;
+        .subject {
+            grid-column: 6 / -1;
+            grid-row: 1 / 3;
+            align-self: center;
+        }
+        .subject > svg, .subject > img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .composition .subtitle {
+            grid-column: 1 / 6;
+            grid-row: 2;
+            margin-block-start: var(--space-md);
         }
 
         /* ============================================
@@ -194,7 +205,7 @@
             font-size: 16px;
             color: var(--color-text-secondary);
             margin-top: 12px;
-            font-weight: 500;
+            font-weight: 400;
             letter-spacing: 0.05em;
         }
 
@@ -205,7 +216,7 @@
             margin-top: 8px;
             font-family: var(--font-mono);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         .bignum-trend.up { color: #14b8a6; }
@@ -387,7 +398,7 @@
 
         .diagram-title {
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 400;
             color: var(--color-text-secondary);
             margin-bottom: 16px;
             text-align: center;
@@ -514,62 +525,28 @@
         <symbol id="icon-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
     </svg>
 
-    <div class="page page-a1">
-        <!-- HEADER: ~15% of canvas height — title + subtitle + value proposition -->
-        <div class="header">
-            <h1><!-- [主标题/核心论点] --></h1>
-            <p class="subtitle"><!-- [副标题/价值主张一句话] --></p>
-        </div>
+    <main class="page page-a1">
+        <!-- 按内容关系选网格。固定尺寸另设根网格和行预算，主图可与标题共享同一行。 -->
+        <header class="composition">
+            <h1><!-- 完整标题；若绘制了字形，保留可读的标题语义。 --></h1>
+            <figure class="subject">
+                <!-- 放主题照片、带单位的图表，或内联原创 SVG。按对象轮廓保留纸面。 -->
+            </figure>
+            <p class="subtitle"><!-- 读者需要带走的结论。 --></p>
+        </header>
 
-        <!-- BIGNUMBER MODULE: Required if E1 selected; skip if E2 -->
-        <div class="bignum-module">
-            <div class="bignum-grid">
-                <div class="bignum-item">
-                    <div class="bignum-value">
-                        <!-- [数字] --><span class="bignum-unit"><!-- [单位] --></span>
-                    </div>
-                    <div class="bignum-label"><!-- [标签] --></div>
-                    <div class="bignum-trend up">
-                        <svg class="icon"><use href="#icon-trend-up"/></svg>
-                        <span><!-- [趋势值] --></span>
-                    </div>
-                </div>
-                <!-- [2-4 个数据项] -->
-            </div>
-        </div>
+        <section class="section">
+            <h2 class="section-title"><!-- 第一条证据或关键操作。 --></h2>
+            <div class="section-body"><!-- 就近放图注、对照或来源。 --></div>
+        </section>
 
-        <!-- QUOTE BLOCK: Alternative to BigNumber when E2 selected -->
-        <!-- <div class="quote-block">
-            <div class="quote-text"><!-- [核心金句/结论] --></div>
-            <div class="quote-source"><!-- [来源/出处] --></div>
-        </div> -->
-
-        <!-- KEY INSIGHT: Another E2 alternative -->
-        <!-- <div class="key-insight">
-            <div class="insight-text"><!-- [核心洞察数字/关键词] --></div>
-            <div class="insight-label"><!-- [标签说明] --></div>
-        </div> -->
-
-        <!-- [CONTENT SECTIONS]: Repeat as needed -->
-        <div class="section">
-            <h2 class="section-title"><!-- [小标题] --></h2>
-            <div class="section-body">
-                <!-- [正文内容] -->
-            </div>
-        </div>
-
-        <!-- [DIAGRAM]: Insert per diagram-guide.md -->
-        <div class="diagram-container">
-            <p class="diagram-title"><!-- [图表标题] --></p>
-            <!-- [SVG/CSS 图表代码] -->
-        </div>
-
-        <!-- FOOTER: ~15% of canvas height — CTA + trust signals + contact -->
-        <div class="footer">
-            <div class="cta"><!-- [明确、单一、可执行的行动号召] --></div>
-            <div class="trust-signals"><!-- [信任背书：数据/客户/认证] --></div>
-            <div class="signature"><!-- [署名] · [日期] --></div>
-        </div>
-    </div>
+        <!-- E1 使用 .bignum-module > .bignum-grid > .bignum-item，
+             每项写齐 .bignum-value、.bignum-unit 和 .bignum-label。
+             数据来自同一比较维度时共用基线。E2 可直接使用上面的图与证据。 -->
+        <footer class="footer">
+            <p class="cta"><!-- 行动或下一步。 --></p>
+            <p class="signature"><!-- 配置 F 选定的署名。 --></p>
+        </footer>
+    </main>
 </body>
 </html>

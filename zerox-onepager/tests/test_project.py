@@ -27,6 +27,12 @@ class ProjectTests(unittest.TestCase):
         invalid.pop("B")
         self.assertTrue(any("configuration.B" in error for error in project.validate_configuration(invalid)))
 
+    def test_print_mode_is_exclusive_to_optical_print(self):
+        configuration = {"A": "A4", "B": "B2", "C": "C2", "T": "T4", "E": "E2", "F": "无"}
+        self.assertEqual(project.validate_configuration({**configuration, "B_mode": "Poster"}), [])
+        self.assertTrue(project.validate_configuration({**configuration, "B_mode": "Print"}))
+        self.assertEqual(project.validate_configuration({**configuration, "B": "B12", "B_mode": "Print"}), [])
+
     def test_optional_scene_and_font_dimensions(self):
         base = {"A": "A4", "B": "B10", "C": "C2", "T": "T4", "E": "E2", "F": "无"}
         self.assertEqual(project.validate_configuration(base), [])
@@ -78,14 +84,18 @@ class ProjectTests(unittest.TestCase):
             static_report.write_text(json.dumps({"verdict": "PASS"}), encoding="utf-8")
             render_report.write_text(json.dumps({"verdict": "PASS"}), encoding="utf-8")
 
+            layout_report = root / "layout.json"
+            layout_report.write_text(json.dumps({"verdict": "PASS"}), encoding="utf-8")
             record = project.command_record_build(
                 Namespace(
                     project=project_dir,
                     version=None,
                     A="A4",
-                    B="B2",
+                    B="B12",
+                    B_mode="Print",
                     C="C2",
-                    T="T1",
+                    T="T4",
+                    layout_check=layout_report,
                     E="E2",
                     F="Zerox",
                     html=html,
@@ -96,6 +106,8 @@ class ProjectTests(unittest.TestCase):
                 )
             )
             self.assertEqual(record["version"], "v001")
+            self.assertEqual(record["build"]["configuration"]["B_mode"], "Print")
+            self.assertEqual({item["kind"] for item in record["build"]["checks"]}, {"static", "layout", "render"})
             self.assertEqual(record["build"]["tool"]["name"], "zerox-onepager")
 
             validation = project.command_validate(
@@ -151,6 +163,35 @@ class ProjectTests(unittest.TestCase):
                         render_check=render_report,
                     )
                 )
+
+    def test_reviewed_layout_warning_round_trip(self):
+        warning = {"verdict": "WARN", "warnings": ["vertical air estimate below target"], "errors": []}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            folder = root / "project"
+            parser = project.build_parser()
+            project.command_init(parser.parse_args(["init", str(folder), "--slug", "poster", "--title", "Poster"]))
+            (root / "pass.json").write_text('{"verdict":"PASS"}', encoding="utf-8")
+            (root / "layout.json").write_text(json.dumps(warning), encoding="utf-8")
+            (root / "poster.html").write_text("<main></main>", encoding="utf-8")
+            args = parser.parse_args([
+                "record-build", str(folder), "--A", "A4", "--B", "B12", "--B-mode", "Print",
+                "--C", "C2", "--T", "T4", "--E", "E2", "--F", "无", "--html", str(root / "poster.html"),
+                "--static-check", str(root / "pass.json"), "--layout-check", str(root / "layout.json"),
+                "--render-check", str(root / "pass.json")
+            ])
+            with self.assertRaisesRegex(project.ProjectError, "layout-review"):
+                project.command_record_build(args)
+            args.layout_review = "插图右侧留白容纳副标题，缩略图阅读顺序清楚。"
+            recorded = project.command_record_build(args)
+            note = next(check for check in recorded["build"]["checks"] if check["kind"] == "layout")
+            self.assertEqual(note["verdict"], "WARN")
+            self.assertEqual(note["review"], args.layout_review)
+            self.assertEqual(project.validate_manifest(project.read_json(folder / "manifest.json"), folder), [])
+            warning["errors"] = ["outside canvas"]
+            (root / "layout.json").write_text(json.dumps(warning), encoding="utf-8")
+            with self.assertRaisesRegex(project.ProjectError, "contains errors"):
+                project.command_record_build(args)
 
     def test_validate_detects_hash_changes(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -33,7 +33,7 @@ jobs:
       - name: Run test suite
         run: python -m unittest discover -s tests -v
 
-      - name: Check current showcase
+      - name: Check legacy B9 showcase
         shell: bash
         run: |
           set +e
@@ -44,3 +44,8 @@ jobs:
           rc=$?
           set -e
           test "$rc" -lt 2
+
+      - name: Check README poster
+        run: |
+          python scripts/quality_check.py onepager-readme-A4-B12-20261123.html \
+            --style B12 --size A4 --type T4 --no-bignum

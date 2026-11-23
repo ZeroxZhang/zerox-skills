@@ -16,17 +16,21 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Sequence
 
+CONFIG_PATH = Path(__file__).resolve().parents[1] / "references" / "config-schema.json"
+CONFIG = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
 VALID_OPTIONS = {
-    "A": {"A1", "A2", "A3", "A4"},
-    "B": {f"B{index}" for index in range(1, 11)},
-    "C": {"C1", "C2", "C3"},
-    "T": {"T1", "T2", "T3", "T4"},
+    "A": set(CONFIG["sizes"]),
+    "B": set(CONFIG["styles"]),
+    "C": set(CONFIG["densities"]),
+    "T": set(CONFIG["types"]),
     "E": {"E1", "E2"},
 }
 OPTIONAL_OPTIONS = {
-    "S": {f"S{index}" for index in range(1, 7)},
-    "G": {f"G{index}" for index in range(1, 8)},
+    "S": set(CONFIG["scenes"]),
+    "G": set(CONFIG["fonts"]["options"]),
 }
+STYLE_MODES = {mode for style in CONFIG["styles"].values() for mode in style.get("modes", [])}
+LEGACY_MODES = {"Light", "Dark", "Poster", "Paper"}
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 VERSION_RE = re.compile(r"^v(\d{3})$")
 TOOL_VERSION = "1.6.0"
@@ -87,6 +91,13 @@ def validate_configuration(configuration: dict) -> List[str]:
         value = configuration.get(key)
         if value is not None and value not in allowed:
             errors.append(f"configuration.{key} must be one of {sorted(allowed)}")
+    mode = configuration.get("B_mode")
+    if mode is not None:
+        style = CONFIG["styles"].get(configuration.get("B"), {})
+        modes = style.get("modes", LEGACY_MODES)
+        required_mode = style.get("mode_rules", {}).get(configuration.get("T"))
+        if mode not in modes or (required_mode and mode != required_mode):
+            errors.append(f"configuration.B_mode is invalid for {configuration.get('B')}/{configuration.get('T')}")
     signature = configuration.get("F")
     if not isinstance(signature, str) or not signature.strip():
         errors.append("configuration.F must be a non-empty string")
@@ -156,7 +167,27 @@ def validate_ir(value: dict) -> List[str]:
                 errors.append(f"ir.modules[{index}].locked must contain boolean content/layout")
         if len(ids) != len(set(ids)):
             errors.append("IR module IDs must be unique")
+        intent = value.get("design_intent", {})
+        if isinstance(intent, dict) and "reading_order" in intent:
+            order = intent["reading_order"]
+            if not isinstance(order, list) or not order or any(item not in ids for item in order):
+                errors.append("ir.design_intent.reading_order must list existing module IDs")
+            elif len(set(order)) != len(order):
+                errors.append("ir.design_intent.reading_order must contain unique module IDs")
     return errors
+
+
+def check_report_error(kind: str, report: dict, review: str = "") -> str:
+    verdict = report.get("verdict")
+    if report.get("errors"):
+        return f"{kind} report contains errors"
+    if verdict == "PASS":
+        return ""
+    if kind == "layout" and verdict == "WARN" and report.get("warnings"):
+        if isinstance(review, str) and review.strip():
+            return ""
+        return "layout WARN requires a visual review note (--layout-review)"
+    return f"{kind} check must be PASS before recording a build"
 
 
 def validate_manifest(value: dict, project: Path, verify_hashes: bool = True) -> List[str]:
@@ -213,12 +244,12 @@ def validate_manifest(value: dict, project: Path, verify_hashes: bool = True) ->
                 if verify_hashes and entry.get("sha256") != sha256(entry_path):
                     errors.append(f"Hash mismatch: {entry_path}")
                 if group == "checks":
-                    if entry.get("verdict") != "PASS":
-                        errors.append(f"Recorded check is not PASS: {entry_path}")
-                    else:
-                        report = read_json(entry_path)
-                        if report.get("verdict") != "PASS":
-                            errors.append(f"Check report content is not PASS: {entry_path}")
+                    report = read_json(entry_path)
+                    if entry.get("verdict") != report.get("verdict"):
+                        errors.append(f"Recorded verdict does not match the report: {entry_path}")
+                    report_error = check_report_error(entry.get("kind"), report, entry.get("review", ""))
+                    if report_error:
+                        errors.append(f"{report_error}: {entry_path}")
     if len(versions) != len(set(versions)):
         errors.append("Build versions must be unique")
     return errors
@@ -307,7 +338,7 @@ def command_record_build(args: argparse.Namespace) -> dict:
         "E": args.E,
         "F": args.F,
     }
-    for key in ("S", "G"):
+    for key in ("S", "G", "B_mode"):
         value = getattr(args, key, None)
         if value:
             configuration[key] = value
@@ -315,16 +346,23 @@ def command_record_build(args: argparse.Namespace) -> dict:
     if configuration_errors:
         raise ProjectError("; ".join(configuration_errors))
 
-    static_report = read_json(args.static_check)
-    render_report = read_json(args.render_check)
-    for name, report in (("static", static_report), ("render", render_report)):
-        if report.get("verdict") != "PASS":
-            raise ProjectError(f"{name} check must be PASS before recording a build")
+    reports = {"static": args.static_check, "render": args.render_check}
+    if getattr(args, "layout_check", None):
+        reports["layout"] = args.layout_check
+    layout_review = getattr(args, "layout_review", "") or ""
+    verdicts = {}
+    for name, path in reports.items():
+        report = read_json(path)
+        error = check_report_error(name, report, layout_review)
+        if error:
+            raise ProjectError(error)
+        verdicts[name] = report["verdict"]
+    if layout_review and verdicts.get("layout") != "WARN":
+        raise ProjectError("--layout-review applies only to a layout report with verdict WARN")
 
     build_dir = project / "builds" / version
     if build_dir.exists():
         raise ProjectError(f"Build directory already exists: {build_dir}")
-    build_dir.mkdir(parents=True)
 
     artifact_inputs = []
     if args.html:
@@ -336,6 +374,7 @@ def command_record_build(args: argparse.Namespace) -> dict:
     if not artifact_inputs:
         raise ProjectError("At least one artifact (--html, --png, or --svg) is required")
 
+    build_dir.mkdir(parents=True)
     try:
         artifacts = []
         for kind, source, filename in artifact_inputs:
@@ -350,19 +389,17 @@ def command_record_build(args: argparse.Namespace) -> dict:
             )
 
         checks = []
-        for kind, source, filename in (
-            ("static", args.static_check, "static-check.json"),
-            ("render", args.render_check, "render-check.json"),
-        ):
-            result = copy_artifact(source, build_dir / filename)
-            checks.append(
-                {
-                    "kind": kind,
-                    "path": relative_to_project(result["path"], project),
-                    "verdict": "PASS",
-                    "sha256": result["sha256"],
-                }
-            )
+        for kind, source in reports.items():
+            result = copy_artifact(source, build_dir / f"{kind}-check.json")
+            check = {
+                "kind": kind,
+                "path": relative_to_project(result["path"], project),
+                "verdict": verdicts[kind],
+                "sha256": result["sha256"],
+            }
+            if kind == "layout" and layout_review:
+                check["review"] = layout_review.strip()
+            checks.append(check)
     except Exception:
         shutil.rmtree(build_dir, ignore_errors=True)
         raise
@@ -418,6 +455,7 @@ def add_configuration_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--B", required=True, choices=sorted(VALID_OPTIONS["B"], key=lambda code: int(code[1:]))
     )
+    parser.add_argument("--B-mode", dest="B_mode", choices=sorted(STYLE_MODES), help="Confirmed style mode, e.g. Print for B12")
     parser.add_argument("--C", required=True, choices=sorted(VALID_OPTIONS["C"]))
     parser.add_argument("--T", required=True, choices=sorted(VALID_OPTIONS["T"]))
     parser.add_argument("--E", required=True, choices=sorted(VALID_OPTIONS["E"]))
@@ -464,6 +502,8 @@ def build_parser() -> argparse.ArgumentParser:
     record_parser.add_argument("--svg", type=Path)
     record_parser.add_argument("--static-check", type=Path, required=True)
     record_parser.add_argument("--render-check", type=Path, required=True)
+    record_parser.add_argument("--layout-check", type=Path, help="Include a verified composition report")
+    record_parser.add_argument("--layout-review", help="Explain a layout WARN after reviewing the poster")
     record_parser.set_defaults(handler=command_record_build)
 
     validate_parser = subparsers.add_parser("validate", help="Validate project assets and hashes")

@@ -32,8 +32,8 @@
       "properties": {
         "S": {"enum": ["S1", "S2", "S3", "S4", "S5", "S6"]},
         "A": {"enum": ["A1", "A2", "A3", "A4"]},
-        "B": {"enum": ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10"]},
-        "B_mode": {"enum": ["Light", "Dark", "Poster", "Paper"]},
+        "B": {"enum": ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "B11", "B12"]},
+        "B_mode": {"enum": ["Light", "Dark", "Poster", "Paper", "Print"]},
         "C": {"enum": ["C1", "C2", "C3"]},
         "T": {"enum": ["T1", "T2", "T3", "T4"]},
         "focus": {"enum": ["product", "solution", "steps", "spec"]},
@@ -127,10 +127,17 @@
       "required": ["visual_language", "color_role", "type_ratio"],
       "properties": {
         "visual_language": {
-          "enum": ["border-rhythm", "color-blocks", "typography-driven"]
+          "enum": ["border-rhythm", "color-blocks", "typography-driven", "illustration-led"]
         },
         "color_role": {"enum": ["spice", "main"]},
-        "type_ratio": {"type": "number", "minimum": 3}
+        "type_ratio": {"type": "number", "minimum": 3},
+        "main_visual": {"type": "string", "minLength": 1},
+        "type_treatment": {"type": "string", "minLength": 1},
+        "whitespace": {"type": "string", "minLength": 1},
+        "reading_order": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"}
+        }
       }
     },
     "typography": {

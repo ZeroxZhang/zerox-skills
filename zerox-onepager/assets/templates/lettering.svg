@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180"
+     role="img" aria-labelledby="lettering-title"
+     style="--ink:#172943; --paper:#F3EBDD; --accent:#D34E29">
+  <title id="lettering-title">FOLD</title>
+  <defs>
+    <!-- 换词后按真实字宽调整 viewBox 与基线；中文可用同一节点。 -->
+    <text id="lettering-word" x="320" y="145" text-anchor="middle"
+          font-family="'Arial Black', 'Noto Sans SC', 'PingFang SC', sans-serif"
+          font-size="168" font-weight="900" letter-spacing="-5">FOLD</text>
+
+    <clipPath id="lettering-upper">
+      <path d="M0 0H640V55L0 110Z"/>
+    </clipPath>
+    <clipPath id="lettering-lower">
+      <path d="M0 110L640 55V180H0Z"/>
+    </clipPath>
+    <mask id="lettering-window" maskUnits="userSpaceOnUse" x="0" y="0" width="640" height="180">
+      <rect width="640" height="180" fill="white"/>
+      <use href="#lettering-word" fill="black"/>
+    </mask>
+
+    <!-- 切片。标题的两个部分共享同一条斜缝和原始字面。 -->
+    <g id="lettering-slice">
+      <g clip-path="url(#lettering-upper)">
+        <use href="#lettering-word" fill="var(--ink)"/>
+      </g>
+      <g clip-path="url(#lettering-lower)">
+        <use href="#lettering-word" transform="translate(7 0)" fill="var(--accent)"/>
+      </g>
+    </g>
+
+    <!-- 镂空。遮罩挖穿整块墨面，露出下方实际放置的材质或主图。 -->
+    <g id="lettering-knockout">
+      <rect width="640" height="180" fill="var(--ink)" mask="url(#lettering-window)"/>
+    </g>
+
+    <!-- 浮雕。近处边缘受光，远处边缘露出暗面；正文保持平印。 -->
+    <g id="lettering-relief">
+      <use href="#lettering-word" transform="translate(6 6)" fill="var(--ink)"/>
+      <use href="#lettering-word" transform="translate(3 3)" fill="var(--accent)"/>
+      <use href="#lettering-word" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.25"/>
+    </g>
+
+    <!-- 扇折。同一个词的中段绕两道折痕压窄，相邻墨面共享端点。 -->
+    <clipPath id="lettering-fold-left"><rect width="250" height="180"/></clipPath>
+    <clipPath id="lettering-fold-middle"><rect x="250" width="140" height="180"/></clipPath>
+    <clipPath id="lettering-fold-right"><rect x="390" width="250" height="180"/></clipPath>
+    <g id="lettering-fold">
+      <use href="#lettering-word" clip-path="url(#lettering-fold-left)" fill="var(--ink)"/>
+      <g transform="matrix(.85 .12 0 1 37.5 -30)">
+        <use href="#lettering-word" clip-path="url(#lettering-fold-middle)" fill="var(--accent)"/>
+      </g>
+      <g transform="translate(-21 16.8)">
+        <use href="#lettering-word" clip-path="url(#lettering-fold-right)" fill="var(--ink)"/>
+      </g>
+    </g>
+  </defs>
+
+  <!-- 切换 href 选择一款工艺。做镂空时，把主题素材放在此处的 use 之前。 -->
+  <use href="#lettering-fold"/>
+</svg>
