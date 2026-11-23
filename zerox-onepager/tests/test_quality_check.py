@@ -11,11 +11,11 @@ import quality_check
 
 
 class QualityCheckTests(unittest.TestCase):
-    def run_html(self, html, style="B2", size="A1", no_bignum=False):
+    def run_html(self, html, style="B2", size="A1", no_bignum=False, content_type=None):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "fixture.html"
             path.write_text(html, encoding="utf-8")
-            return quality_check.run_checks(path, style, size, no_bignum)
+            return quality_check.run_checks(path, style, size, no_bignum, content_type)
 
     @staticmethod
     def document(style, body=None):
@@ -105,6 +105,93 @@ class QualityCheckTests(unittest.TestCase):
         )
         _, warnings, _ = self.run_html(html, size="A2")
         self.assertTrue(any("Absolute positioning" in warning for warning in warnings))
+
+
+    def test_google_fonts_without_display_swap_is_error(self):
+        html = self.document(
+            "body{color:#111;background:#fff;font-family:'Inter',sans-serif}"
+            ".bignum-value{color:#dc2626}",
+        ).replace(
+            "</head>",
+            '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700">'
+            "</head>",
+        )
+        errors, _, _ = self.run_html(html)
+        self.assertTrue(any("display=swap" in error for error in errors))
+
+    def test_display_swap_passes(self):
+        html = self.document(
+            "body{color:#111;background:#fff;font-family:'Inter',sans-serif}"
+            ".bignum-value{color:#dc2626}",
+        ).replace(
+            "</head>",
+            '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">'
+            "</head>",
+        )
+        errors, warnings, _ = self.run_html(html)
+        self.assertEqual(errors, [])
+        self.assertEqual(warnings, [])
+
+    def test_stack_without_generic_is_error_when_webfont_loaded(self):
+        html = self.document(
+            "body{color:#111;background:#fff;font-family:'Inter'}"
+            ".bignum-value{color:#dc2626}",
+        ).replace(
+            "</head>",
+            '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&display=swap">'
+            "</head>",
+        )
+        errors, _, _ = self.run_html(html)
+        self.assertTrue(any("generic family" in error for error in errors))
+
+    def test_stack_without_generic_warns_without_webfont(self):
+        html = self.document(
+            "body{color:#111;background:#fff;font-family:'Helvetica Neue'}"
+            ".bignum-value{color:#dc2626}"
+        )
+        errors, warnings, _ = self.run_html(html)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("generic family" in warning for warning in warnings))
+
+    def test_type_scale_below_three_is_warning(self):
+        html = self.document(
+            "body{color:#111;background:#fff;font-size:15px}"
+            "h1{font-size:18px}.bignum-value{color:#dc2626}"
+        )
+        _, warnings, _ = self.run_html(html)
+        self.assertTrue(any("[TYPO]" in warning for warning in warnings))
+
+    def test_poster_type_scale_below_eight_is_error(self):
+        html = self.document(
+            "body{color:#111;background:#fff;font-size:15px}"
+            "h1{font-size:40px}.bignum-value{color:#dc2626}"
+        )
+        errors, _, _ = self.run_html(html, content_type="T4")
+        self.assertTrue(any("[TYPO]" in error for error in errors))
+
+    def test_cjk_text_without_cjk_family_warns(self):
+        body = (
+            '<h1>中文标题</h1><div class="bignum-item">42</div><footer>Footer</footer>'
+        )
+        html = self.document(
+            "body{color:#111;background:#fff;font-family:'Inter',sans-serif}"
+            ".bignum-value{color:#dc2626}", body,
+        )
+        _, warnings, _ = self.run_html(html)
+        self.assertTrue(any("CJK" in warning for warning in warnings))
+
+    def test_b10_allows_larger_palette(self):
+        html = self.document(
+            "body{color:#111;background:#fff}"
+            ".a{color:#212121}.b{color:#313131}.c{color:#414141}"
+            ".d{color:#515151}.e{color:#616161}.f{color:#717171}"
+            ".g{color:#818181}"
+            ".bignum-value{color:#dc2626}"
+        )
+        errors_b2, _, _ = self.run_html(html, style="B2")
+        errors_b10, _, _ = self.run_html(html, style="B10")
+        self.assertTrue(any("[COLOR]" in error for error in errors_b2))
+        self.assertFalse(any("[COLOR]" in error for error in errors_b10))
 
     def test_blue_purple_gradient_is_error(self):
         html = self.document(

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>zerox-onepager · 一段文字，一页讲完</title>
+<!-- design intent: A4 卡片矩阵原型；满铺红色行动带 + 青色结构线双锚点；字号 144/88/38/22/16/13 共 6 级 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0B0B10;
+    --screen: #16161C;
+    --line: #262838;
+    --fg: #F5F5F7;
+    --fg-2: #AEB2C0;
+    --fg-3: #84868F;
+    --red: #FE2C55;
+    --cyan: #25F4EE;
+    --ink: #161823;
+    --font-display: 'Archivo', 'Noto Sans SC', 'PingFang SC', sans-serif;
+    --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+
+  body { background: #0B0B10; }
+  .icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2;
+          stroke-linecap: round; stroke-linejoin: round; }
+
+  .poster {
+    width: 1080px; height: 1440px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 56px 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    overflow: hidden;
+    position: relative;
+  }
+  .pad { padding: 0 72px; }
+
+  /* ---------- 报头 ---------- */
+  .rail { display: flex; align-items: center; justify-content: space-between; }
+  .kicker {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--fg-2);
+  }
+  .kicker::before { content: ""; width: 34px; height: 2px; background: var(--cyan); }
+  .meta {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--fg-3);
+  }
+  .meta .sep { width: 4px; height: 4px; background: var(--cyan); }
+
+  /* ---------- 主标题 ---------- */
+  .lead {
+    font-size: 38px; line-height: 1.32; font-weight: 500;
+    color: var(--fg-2); letter-spacing: -0.01em;
+  }
+  .lead b { color: var(--fg); font-weight: 700; }
+  h1 {
+    font-family: var(--font-display);
+    font-size: 144px; line-height: 1.04; font-weight: 900;
+    letter-spacing: -0.05em; color: var(--fg);
+    margin: 18px 0 0 -7px;
+  }
+  h1 .stop { color: var(--red); }
+  .sub {
+    margin-top: 18px;
+    font-size: 16px; line-height: 1.75; color: var(--fg-3);
+    padding-left: 14px; border-left: 2px solid var(--cyan);
+  }
+
+  /* ---------- 输入 / 输出 ---------- */
+  .io {
+    margin-top: 20px;
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em;
+    color: var(--fg-3);
+  }
+  .io .arrow { color: var(--cyan); font-weight: 700; }
+  .io .box {
+    border: 1.5px solid var(--line); padding: 7px 12px; color: var(--fg-2);
+  }
+
+  /* ---------- 数据矩阵 ---------- */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 28px; }
+  .stat {
+    border-top: 2px solid var(--cyan);
+    padding-top: 18px;
+  }
+  .stat:first-child { border-top-color: var(--red); }
+  .stat .n {
+    font-family: var(--font-mono);
+    font-size: 108px; font-weight: 700; line-height: 0.9;
+    letter-spacing: -0.055em; color: var(--fg);
+  }
+  .stat .n em {
+    font-style: normal; font-size: 16px; font-weight: 400;
+    color: var(--cyan); margin-left: 6px; letter-spacing: 0;
+  }
+  .stat .l { margin-top: 12px; font-size: 22px; font-weight: 700; color: var(--fg); }
+  .stat .d { margin-top: 8px; font-size: 13px; line-height: 1.7; color: var(--fg-3); }
+
+  /* ---------- 能力矩阵 ---------- */
+  .caps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 28px; }
+  .cap { border-top: 1.5px solid var(--line); padding-top: 16px; }
+  .cap .n {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.12em;
+    color: var(--cyan); text-transform: uppercase;
+  }
+  .cap .t { margin-top: 8px; font-size: 22px; font-weight: 700; color: var(--fg); }
+  .cap .d { margin-top: 8px; font-size: 13px; line-height: 1.7; color: var(--fg-3); }
+
+  /* ---------- 配置示例条 ---------- */
+  .spec {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-top: 1.5px solid var(--cyan);
+    padding-top: 16px;
+  }
+  .spec .k {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.12em;
+    color: var(--cyan); text-transform: uppercase;
+  }
+  .spec .v {
+    font-family: var(--font-mono); font-size: 16px; letter-spacing: 0.02em;
+    color: var(--fg-2);
+  }
+  .spec .v b { color: var(--fg); font-weight: 700; }
+
+  /* ---------- 行动带（满宽色块） ---------- */
+  .band {
+    background: var(--red); color: var(--ink);
+    padding: 30px 72px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .band .big { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; }
+  .band .big .icon { width: 24px; height: 24px; color: var(--ink); }
+  .band .url {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em;
+    color: var(--ink); opacity: 0.78;
+  }
+
+  /* ---------- 页脚 ---------- */
+  .foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  .src {
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.8;
+    color: var(--fg-3); padding-left: 14px; border-left: 2px solid var(--cyan);
+  }
+  .sig {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--fg-3); white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+</svg>
+
+<main class="poster">
+  <div class="rail pad">
+    <p class="kicker">zerox-onepager</p>
+    <div class="meta"><span>A4 · 3:4</span><span class="sep"></span><span>B10</span><span class="sep"></span><span>Product Intro</span></div>
+  </div>
+
+  <section class="pad">
+    <p class="lead">Markdown、PDF、会议记录都能起手。<br><b>先选场景，剩下的交给它。</b></p>
+    <h1>一页讲完<span class="stop">.</span></h1>
+    <p class="sub">一张能直接发出去的单页图。不用打开设计软件，也不用为一个字号来回调十遍——<br>它自己会算行高、会挑字体、会在交付前把自己检查一遍。</p>
+    <div class="io">
+      <span class="box">Markdown / PDF / 会议记录</span>
+      <span class="arrow">→</span>
+      <span class="box">单文件 HTML</span>
+      <span class="arrow">→</span>
+      <span class="box">PNG 交付图</span>
+    </div>
+  </section>
+
+  <section class="stats pad">
+    <div class="stat">
+      <div class="n">10<em>种</em></div>
+      <div class="l">设计风格</div>
+      <div class="d">从暗夜编辑、瑞士精密，到新增的短视频潮流，每种都有完整配色、排版与质检规则，混搭不会被允许</div>
+    </div>
+    <div class="stat">
+      <div class="n">6<em>个</em></div>
+      <div class="l">使用场景</div>
+      <div class="d">产品介绍、工作汇报、客户沟通、活动宣传、数据洞察、知识方法</div>
+    </div>
+    <div class="stat">
+      <div class="n">59<em>款</em></div>
+      <div class="l">开源字体</div>
+      <div class="d">Google Fonts 直连，中英双栈配对，断网自动回退系统字体</div>
+    </div>
+  </section>
+
+  <section class="caps pad">
+    <div class="cap">
+      <div class="n">01 蓝图</div><div class="t">先对齐内容</div>
+      <div class="d">受众、核心论点、缺失事实，出图之前先确认一遍，避免白做一张。蓝图不确认，不进下一步</div>
+    </div>
+    <div class="cap">
+      <div class="n">02 配置</div><div class="t">场景带出默认值</div>
+      <div class="d">S 定用途，A/B/C/T 自动填好，任意一项都能单独改</div>
+    </div>
+    <div class="cap">
+      <div class="n">03 质检</div><div class="t">静态 + 渲染双检</div>
+      <div class="d">字号比、对比度、裁切、越界、空气占比，不过不交付</div>
+    </div>
+  </section>
+
+  <div class="spec pad">
+    <span class="k">配置示例</span>
+    <span class="v"><b>S3</b> 场景 · <b>A2</b> 尺寸 · <b>B9</b> 风格 · <b>C2</b> 密度 · <b>T1</b> 类型 · <b>E1</b> 数据</span>
+  </div>
+
+  <div class="band">
+    <span class="big">打开仓库<svg class="icon"><use href="#icon-arrow"/></svg></span>
+    <span class="url">github.com/ZeroxZhang/zerox-skills</span>
+  </div>
+
+  <footer class="foot pad">
+    <p class="src">输入 · Markdown / PDF / 会议记录 / 公众号草稿<br>输出 · A1 / A2 / A3 / A4 单文件 HTML + PNG<br>许可 · Apache 2.0，可商用，可二次分发</p>
+    <span class="sig">Zerox &middot; 2026</span>
+  </footer>
+</main>
+</body>
+</html>

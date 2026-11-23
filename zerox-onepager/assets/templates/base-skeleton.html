@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnePage</title>
 
-    <!-- [OPTIONAL_FONT_IMPORT]: Network fonts enhance the design; keep system fallbacks complete -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
-    </style>
+    <!-- ============================================
+         [FONT LOADING] — see references/font-library.md
+         1. Every web font needs a complete system fallback stack
+         2. Google Fonts URLs must carry display=swap
+         3. Chinese needs a CJK family (Noto Sans SC / Noto Serif SC / PingFang SC ...)
+         4. Max 2 non-monospace families + 1 monospace; max 3 weights
+         For offline / G2 system-native delivery, delete this block entirely.
+         ============================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
 
     <style>
         /* ============================================
@@ -414,6 +420,52 @@
         .color-block-red { background: #ea4335; color: #ffffff; }
         .color-block-yellow { background: #fbbc04; color: #202124; }
         .color-block-green { background: #34a853; color: #ffffff; }
+
+        /* ============================================
+           FULL-BLEED & CROPPED TYPE (all styles)
+           Breaking the container is what separates a poster
+           from a slide deck. Use at least once per page.
+           ============================================ */
+        .full-bleed {
+            margin-left: calc(-1 * var(--page-padding));
+            margin-right: calc(-1 * var(--page-padding));
+        }
+        .full-bleed-inner {
+            padding-left: var(--page-padding);
+            padding-right: var(--page-padding);
+        }
+        .crop-type {
+            font-size: clamp(96px, 16vw, 220px);
+            line-height: 0.82;
+            letter-spacing: -0.04em;
+            margin-left: -0.06em;   /* optical alignment for the first glyph */
+        }
+
+        /* ============================================
+           B10 SHORTCUTS — only for B10 短视频潮流
+           One chromatic offset per page. Hard offset only,
+           never a blur or a glow.
+           ============================================ */
+        .chromatic { position: relative; display: inline-block; }
+        .chromatic::before,
+        .chromatic::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            white-space: nowrap;
+        }
+        .chromatic::before { color: #25F4EE; transform: translate(-3px, -2px); z-index: -1; }
+        .chromatic::after  { color: #FE2C55; transform: translate(3px, 2px);  z-index: -2; }
+
+        /* Bottom readability scrim — the only gradient B10 allows */
+        .bottom-scrim {
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 30%;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(11, 11, 16, 0.92), rgba(11, 11, 16, 0));
+        }
     </style>
 </head>
 <body>

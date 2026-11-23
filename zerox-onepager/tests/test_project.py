@@ -27,6 +27,25 @@ class ProjectTests(unittest.TestCase):
         invalid.pop("B")
         self.assertTrue(any("configuration.B" in error for error in project.validate_configuration(invalid)))
 
+    def test_optional_scene_and_font_dimensions(self):
+        base = {"A": "A4", "B": "B10", "C": "C2", "T": "T4", "E": "E2", "F": "无"}
+        self.assertEqual(project.validate_configuration(base), [])
+        self.assertEqual(
+            project.validate_configuration({**base, "S": "S4", "G": "G4"}), []
+        )
+        self.assertTrue(
+            any(
+                "configuration.S" in error
+                for error in project.validate_configuration({**base, "S": "S9"})
+            )
+        )
+        self.assertTrue(
+            any(
+                "configuration.G" in error
+                for error in project.validate_configuration({**base, "G": "G9"})
+            )
+        )
+
     def test_init_next_version_record_and_validate(self):
         with tempfile.TemporaryDirectory(prefix="onepager project ") as directory:
             root = Path(directory)

@@ -1,6 +1,76 @@
 {
-  "schema_version": 1,
-  "interaction_order": ["A", "B", "C", "T", "E", "F"],
+  "schema_version": 2,
+  "interaction_order": ["S", "A", "B", "C", "T", "E", "G", "F"],
+  "scenes": {
+    "S1": {
+      "name": "产品介绍",
+      "one_liner": "让第一次看到的人在一屏内看懂：这是什么、解决谁的问题、凭什么信。",
+      "audience": "潜在用户、客户、投资人、内部新同事",
+      "defaults": {"A": "A4", "B": "B2", "C": "C2", "T": "T1", "focus": "product", "E": "E1"},
+      "alternatives": {"A": ["A1"], "B": ["B9", "B10"], "C": ["C1", "C3"]},
+      "must_have": ["一句话价值主张", "痛点→方案", "2-4 个可验证数字", "单一 CTA"],
+      "avoid": ["功能清单堆砌", "没有数字的功效形容", "把参数表当卖点"],
+      "success": "外行读完能用自己的话复述：这是什么 + 为什么好用"
+    },
+    "S2": {
+      "name": "工作汇报",
+      "one_liner": "向上或平级讲清：结论是什么、支撑在哪、风险与下一步是什么。",
+      "audience": "上级、跨部门同事、项目干系人",
+      "defaults": {"A": "A2", "B": "B7", "C": "C3", "T": "T3", "E": "E1"},
+      "alternatives": {"A": ["A3"], "B": ["B1", "B9"], "C": ["C2"]},
+      "must_have": ["结论先行的一句话", "3-5 个支撑数据", "风险或阻塞", "明确的下一步与时间"],
+      "avoid": ["过程流水账", "只有描述没有结论", "用形容词代替数字"],
+      "success": "上级扫 30 秒就能做出决策"
+    },
+    "S3": {
+      "name": "客户沟通",
+      "one_liner": "对一个具体客户说清：为什么选我、怎么做、多久见效、需要你配合什么。",
+      "audience": "客户决策人、采购、业务负责人",
+      "defaults": {"A": "A2", "B": "B9", "C": "C2", "T": "T1", "focus": "solution", "E": "E1"},
+      "alternatives": {"A": ["A4"], "B": ["B2", "B6"], "C": ["C3"]},
+      "must_have": ["客户问题的复述（证明你听懂了）", "方案与差异化", "案例或数据", "交付节奏", "下一步"],
+      "avoid": ["只讲自己不讲客户", "案例无量化", "承诺没有边界"],
+      "success": "客户能复述出你的差异化在哪"
+    },
+    "S4": {
+      "name": "活动宣传",
+      "one_liner": "让人在 3 秒内产生「我要去 / 我要报名 / 我要用」的冲动。",
+      "audience": "潜在参与者、社交媒体刷到的人",
+      "defaults": {"A": "A4", "B": "B5", "C": "C1", "T": "T4", "E": "E2"},
+      "alternatives": {"A": ["A3"], "B": ["B8", "B10", "B9"], "C": ["C2"]},
+      "must_have": ["一个巨大的主视觉焦点", "时间地点或链接", "一个 CTA", "一句能被复述的口号"],
+      "avoid": ["把 brochure 塞进海报", "多个 CTA", "正文超过 3 行"],
+      "success": "缩略图状态下仍能读出「是什么 + 什么时候」"
+    },
+    "S5": {
+      "name": "数据洞察",
+      "one_liner": "用一组数据讲清一个结论，让人看见「原来如此」。",
+      "audience": "分析师、业务负责人、行业读者",
+      "defaults": {"A": "A2", "B": "B7", "C": "C3", "T": "T3", "E": "E1"},
+      "alternatives": {"A": ["A3"], "B": ["B1", "B9"], "C": ["C2"]},
+      "must_have": ["一句话结论", "数据来源与口径", "至少一组对比", "异常或反直觉发现"],
+      "avoid": ["只放图不放结论", "口径不明", "装饰性图表"],
+      "success": "读者能说清这组数据最反常识的一点"
+    },
+    "S6": {
+      "name": "知识方法",
+      "one_liner": "把一套做法拆成别人能照着执行的步骤或卡片。",
+      "audience": "学习者、团队新人、社群成员",
+      "defaults": {"A": "A1", "B": "B2", "C": "C2", "T": "T2", "focus": "steps", "E": "E2"},
+      "alternatives": {"A": ["A3"], "B": ["B6", "B9"], "C": ["C3"]},
+      "must_have": ["编号步骤", "每步的输入输出或判断标准", "常见坑", "一页可带走"],
+      "avoid": ["只讲是什么不讲怎么做", "步骤粒度不一", "缺少反例"],
+      "success": "读者第二天能照着做完第一步"
+    }
+  },
+  "scene_router": {
+    "questions": [
+      "这张图给谁看？（自己人 / 客户 / 陌生人）",
+      "你想让 TA 看完做什么？（做决策 / 掏钱 / 报名 / 学会）",
+      "你手上有多少内容？（几句话 / 一页 / 一堆材料）"
+    ],
+    "fallback": "说不清时默认 S2 工作汇报：它要求结论先行，几乎任何素材都能被它逼出主线。"
+  },
   "sizes": {
     "A1": {
       "name": "纵向长图",
@@ -43,6 +113,14 @@
       "mode_rules": {
         "T4": "Poster"
       }
+    },
+    "B10": {
+      "name": "短视频潮流",
+      "modes": ["Dark", "Paper"],
+      "default_mode": "Dark",
+      "mode_rules": {
+        "T4": "Dark"
+      }
     }
   },
   "densities": {
@@ -63,6 +141,39 @@
     },
     "T3": {"name": "信息图"},
     "T4": {"name": "宣传海报"}
+  },
+  "fonts": {
+    "key": "G",
+    "default": "G1",
+    "options": {
+      "G1": {"name": "自动匹配", "network": true, "description": "由设计风格与使用场景推导字体组合"},
+      "G2": {"name": "系统原生", "network": false, "description": "零网络依赖，最快最稳，离线友好"},
+      "G3": {"name": "编辑衬线", "network": true, "description": "标题衬线 + 正文无衬线，适合长文与高端定位"},
+      "G4": {"name": "展示黑体", "network": true, "description": "压缩巨型标题，适合海报与冲击型内容"},
+      "G5": {"name": "几何科技", "network": true, "description": "几何无衬线 + 等宽，适合产品与数据"},
+      "G6": {"name": "手写人文", "network": true, "description": "标题用手写或仿宋，正文必须换回无衬线"},
+      "G7": {"name": "自定义", "network": true, "description": "用户直接指定字体名，含本地字体或品牌字体"}
+    },
+    "custom_value": true,
+    "max_families": 2,
+    "max_weights": 3,
+    "fallback_required": true,
+    "reference": "references/font-library.md"
+  },
+  "layout": {
+    "air_ratio": {
+      "C1": [0.34, 0.52],
+      "C2": [0.22, 0.38],
+      "C3": [0.12, 0.28]
+    },
+    "max_gap_ratio": 1.8,
+    "max_gap_ratio_hard": 2.4,
+    "min_gap_px": 72,
+    "max_type_scale": 12,
+    "max_type_scale_hard": 15,
+    "max_distinct_sizes": 6,
+    "max_imbalance": 0.05,
+    "reference": "references/layout-archetypes.md"
   },
   "bignumber": {
     "E1": {"name": "包含"},

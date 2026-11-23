@@ -35,12 +35,14 @@
     ]
   },
   "configuration": {
+    "S": "S3",
     "A": "A4",
     "B": "B2",
     "C": "C2",
     "T": "T1",
     "focus": "solution",
     "E": "E2",
+    "G": "G3",
     "F": "Zerox"
   },
   "modules": [
@@ -77,6 +79,15 @@
       }
     }
   ],
+  "typography": {
+    "display": "Noto Serif SC",
+    "body": "Noto Sans SC",
+    "mono": "JetBrains Mono",
+    "origin": "google-fonts",
+    "weights": [400, 700, 900],
+    "fallback_chain": "'Songti SC', 'STSong', 'SimSun', serif",
+    "cdn_url": "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap"
+  },
   "design_intent": {
     "visual_language": "border-rhythm",
     "color_role": "spice",

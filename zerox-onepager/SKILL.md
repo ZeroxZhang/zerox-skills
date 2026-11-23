@@ -2,13 +2,16 @@
 name: zerox-onepager
 description: >-
   Generate beautiful OnePage infographic posters and visual summary images from
-  user-provided content (text, Markdown, PDF). Supports multiple sizes (portrait,
-  landscape, square, 3:4 poster), nine design styles, three information density
-  levels, four content types (commercial persuasion, usage guide, infographic,
-  promotional poster) with focus sub-parameters, optional BigNumber data
-  displays, auto-matched visual diagrams (flowcharts, tree diagrams,
-  architecture diagrams, matrices, radar/pie charts), signature/署名,
-  content-based file naming, and automated quality checks.
+  user-provided content (text, Markdown, PDF). Starts from six usage scenes
+  (product intro, work report, client pitch, event promo, data insight, how-to)
+  that each carry a validated default configuration, then multiple sizes
+  (portrait, landscape, square, 3:4 poster), ten design styles (including the
+  short-video/TikTok-inspired B10), three information density levels, four
+  content types with focus sub-parameters, optional BigNumber data displays,
+  a font-matching step with a curated open-source/Google Fonts library and CDN
+  loading, auto-matched visual diagrams (flowcharts, tree diagrams, architecture
+  diagrams, matrices, radar/pie charts), signature/署名, content-based file
+  naming, and automated static + rendered quality checks.
   Use this skill whenever the user asks to create a one-page summary, product
   introduction poster, strategy overview, methodology display, infographic,
   promotional poster, visual card, or any single-page visual presentation.
@@ -74,20 +77,42 @@ description: >-
 
 5. 将分析结果整理为符合 [内容蓝图 Schema](references/blueprint-schema.json) 的简洁蓝图，至少包含目标读者、传播目标、核心论点、3-5 个建议模块、来源引用和缺失事实
 
-6. 蓝图用于帮助用户校准内容理解，不替代 Phase 2 的 `A/B/C/T/E/F` 选择
+6. 蓝图用于帮助用户校准内容理解，不替代 Phase 2 的 `S/A/B/C/T/E/G/F` 选择
 
 ### Phase 2: 渐进式交互配置
 
 先展示 Phase 1 的简洁内容蓝图，再展示以下配置菜单，一次性呈现，让用户选择。对于每个维度，提供一个**推荐选项和一句与当前内容相关的理由**，并给出完整推荐配置供一键确认。
 
-`A/B/C/T/E/F` 是 zerox-onepager 的核心渐进式交互协议，必须完整保留：
+`S/A/B/C/T/E/G/F` 是 zerox-onepager 的核心渐进式交互协议，必须完整保留：
 
+- **S（场景）排在最前**：它带出其余维度的默认值，是"一眼看出该选什么"的入口
+- **原来的 `A/B/C/T/E/F` 一个都没少**，用户仍然可以逐项覆盖；S 只是前置的推荐器，不是强制层
+- `G（字体）` 默认可不选，走自动匹配
 - 推荐只帮助决策，不替用户静默选择
 - 用户可接受全部推荐，也可覆盖任意一个或多个维度
 - 不得把配置菜单隐藏为“高级参数”
-- 迭代时允许只修改单个维度，如“改成 B6”或“E2”
+- 迭代时允许只修改单个维度，如“改成 B10”或“E2”
 
-**请告诉我以下配置偏好（可直接回复编号组合，如 "A4 B2 C2 T1 E1 F默认"，或直接回车采纳推荐配置）：**
+**请告诉我以下配置偏好（可直接回复编号组合，如 "S3 A2 B9 C2 T1 E1 G1 F默认"；只回 `S3` 表示其余维度全部采纳该场景的默认值；直接回车则采纳我的完整推荐）：**
+
+#### S. 使用场景 — 先选这个
+
+| 编号 | 场景 | 选它的判据 | 默认配置 |
+|:--|:--|:--|:--|
+| `S1` | **产品介绍** | 第一次看到的人，要在这一屏里决定"要不要了解你" | `A4 · B2 · C2 · T1/product · E1` |
+| `S2` | **工作汇报** | 上级扫 30 秒就要能拍板 | `A2 · B7 · C3 · T3 · E1` |
+| `S3` | **客户沟通** | 客户看完要能说出"你和别人有什么不一样" | `A2 · B9 · C2 · T1/solution · E1` |
+| `S4` | **活动宣传** | 3 秒内让人想报名、想去、想转发 | `A4 · B5 · C1 · T4 · E2` |
+| `S5` | **数据洞察** | 读者要能说出"这组数据最反常识的一点" | `A2 · B7 · C3 · T3 · E1` |
+| `S6` | **知识方法** | 读者第二天能照着做完第一步 | `A1 · B2 · C2 · T2/steps · E2` |
+
+选场景不是多一道手续，而是省掉后面四道：每个场景都自带一套经过验证的 `A/B/C/T/E` 默认值。用户说"我要发给客户"，直接落到 `S3`，不用再解释该用 A2 还是 A4。
+
+- 如果用户已经用自然语言说明了用途（"给老板汇报""发朋友圈招人"），直接映射到对应 `S` 并说明映射理由，不必再问一遍
+- 如果场景与内容明显冲突（例如内容是海报却选了 `S2`），提示一次并允许改；用户坚持则以用户为准
+- 如果用户拒绝选场景，退回到逐项确认 `A/B/C/T/E/F`；此时不再提场景
+
+详细场景定义、必备模块、禁忌与验收判据见 [scenes.md](references/scenes.md)。
 
 **A. 尺寸与排版**
 - `A1` 纵向长图 (适合手机阅读，宽 800px，长度自适应)
@@ -105,13 +130,14 @@ description: >-
 - `B7` 数据新闻 — 报纸白+海军蓝，经济学人数据可视化风格
 - `B8` 赛博街道 — 深黑+霓虹粉/电青， gritty 赛博朋克
 - `B9` 谷歌原生 — 白底+Google蓝+品牌四色大色块，复刻 Google 官方网站设计语言（系统化克制+局部胆大）。T1-T3 支持 `B9-Light`（默认）或 `B9-Dark`；T4 自动使用 `B9-Poster`，无需再选择 Light/Dark
+- `B10` 短视频潮流 — 沉浸黑+官方红/对位青+压缩巨字+mono元信息，短视频 Feed 的界面质感。T1-T3 支持 `B10-Dark`（默认）或 `B10-Paper`；T4 强制 `B10-Dark`，无需再选择
 
 **C. 信息密度**
 - `C1` 低密度 — 大留白，金句提炼，视觉优先
 - `C2` 中密度 — 图文均衡，结构化呈现，重点突出
 - `C3` 高密度 — 干货满满，多栏/卡片布局，信息完整保留
 
-**D. 内容类型**（影响内容重构策略与必备要素）
+**T. 内容类型**（影响内容重构策略与必备要素；场景已给出默认值，通常无需改）
 - `T1` 商业说服 — 价值主张 + 痛点方案 + 核心支撑 + 信任背书 + CTA（含 `focus=product` / `focus=solution` 子参数）
 - `T2` 使用指南 — 步骤/流程 + 参数/规格 + 注意事项/关键提示 + 示意图/FAQ（含 `focus=steps` / `focus=spec` 子参数）
 - `T3` 信息图 — 主线叙事 + 数据对比 + 视觉隐喻 + 来源标注
@@ -121,15 +147,27 @@ description: >-
 - `E1` 包含（默认）— 提取 2-4 个核心数据指标，生成 BigNumber 模块
 - `E2` 不包含 — 跳过 BigNumber 模块，用更多内容/图表/留白替代
 
+**G. 字体方案**（可选；默认 `G1` 自动匹配，不选也行）
+
+- `G1` 自动匹配 — 由设计风格与使用场景推导字体组合（推荐）
+- `G2` 系统原生 — 零网络依赖，最快最稳，适合离线/内网交付
+- `G3` 编辑衬线 — 标题衬线 + 正文无衬线，适合长文、高端定位
+- `G4` 展示黑体 — 压缩巨型标题，适合海报与冲击型内容
+- `G5` 几何科技 — 几何无衬线 + 等宽，适合产品与数据
+- `G6` 手写人文 — 仅标题用手写/仿宋，正文仍必须用无衬线
+- `G7` 自定义 — 直接给出字体名（品牌字体、本地字体均可）
+
+> ⚠️ 每页最多 2 个非等宽字体家族、最多 3 种字重；所有网络字体必须配置完整系统 fallback，断网时不得阻断渲染。字体目录与加载写法见 [font-library.md](references/font-library.md)。
+
 **F. 署名**
 - 默认署名：优先取 `git config user.name`，其次取 `whoami`，均失败则署名"匿名"
 - 输入自定义署名（如品牌名、公众号名）
 - 输入 `无` 则不署名
 
-> 基于内容分析，我推荐：**A? B? C? T? E? F?默认**
-> 推荐理由：A? 因为…；B? 因为…；C? 因为…；T? 因为…；E? 因为…；F? 因为…
+> 基于内容分析，我推荐：**S? A? B? C? T? E? G? F默认**
+> 推荐理由：S? 因为…（先讲场景，它决定了其余默认值）；B? 因为…；C? 因为…；T? 因为…；E? 因为…；G? 因为…；F? 因为…
 >
-> 请先确认内容蓝图是否准确，再告诉我你的配置选择。可直接回复组合（如 `A4 B2 C2 T1 E1 F默认`），或回复“蓝图确认，采用推荐”。
+> 请先确认内容蓝图是否准确，再告诉我你的配置选择。可直接回复组合（如 `S3 A2 B9 C2 T1 E1 G1 F默认`），或回复"蓝图确认，采用推荐"。
 
 等待用户回复后，确认蓝图和最终配置，再进入 Phase 3。如果用户的回复模糊，友好地追问确认。不得在用户未确认配置时进入 HTML 生成。
 
@@ -206,15 +244,70 @@ description: >-
 
 #### 3.6 zerox-onepager IR
 
-将已确认的内容蓝图、`A/B/C/T/E/F`、内容模块、来源、图表规划和锁定状态写入符合 [zerox-onepager IR Schema](references/onepager-ir-schema.json) 的 `onepager.ir.json`。
+将已确认的内容蓝图、`S/A/B/C/T/E/G/F`、内容模块、来源、图表规划和锁定状态写入符合 [zerox-onepager IR Schema](references/onepager-ir-schema.json) 的 `onepager.ir.json`。
 
 - 每个模块必须有稳定 ID
-- `configuration` 必须完整记录用户最终确认的 `A/B/C/T/E/F`
+- `configuration` 必须完整记录用户最终确认的 `A/B/C/T/E/F`，以及（若已确认）场景 `S`、字体方案 `G` 与子模式 `B_mode`
 - 不得用推荐值覆盖用户已选择的值
 - 用户在迭代中只修改一个维度时，其他配置保持不变
 - IR 是生成 HTML 的源文件；HTML 和 PNG 是构建产物
 
-#### 3.7 设计意图声明（T4 海报必须，T1-T3 推荐）
+#### 3.7 字体匹配（生成 HTML 之前必须完成）
+
+字体不是"选一个好看的"，而是**给内容配一个声音**。这一步在风格确定之后、写 CSS 之前执行，产出会写入 IR 的 `typography` 字段。
+
+**五步流程**（详细字库见 [font-library.md](references/font-library.md)）：
+
+| 步骤 | 动作 | 产出 |
+|:--|:--|:--|
+| 1 读语气 | 从内容里提取 3 个气质词（权威 / 活泼 / 精密 / 温柔 / 未来 / 质朴…），并结合所选场景（`S2` 偏冷静、`S4` 偏热情）| 语气标签 |
+| 2 定 display | 决定"这张页面的声音"：压缩黑体=冲击，几何无衬线=现代，衬线=人文，等宽=技术 | 标题家族 |
+| 3 定正文 | 中文正文必须单独指定 CJK 家族（`Noto Sans SC` / `Noto Serif SC` 等），不能只写西文字体 | 正文家族 + 中文家族 |
+| 4 定 mono | 元信息、数字、标签统一走等宽 | 等宽家族 |
+| 5 声明与降级 | 写入 IR `typography`（display / body / mono / origin / weights / fallback_chain），并给出完整 fallback | 最终字体栈 |
+
+**硬性约束**：
+- 每页最多 **2 个非等宽家族**（一个标题、一个正文），等宽家族不计入
+- 每页最多 **3 种字重**
+- 选择网络字体时，`origin` 必须是 `google-fonts` 或 `custom-cdn`，并且**必须**同时写 `fallback_chain`
+- 断网、字体 CDN 被墙、字体名拼错时，页面必须仍然可读——验收标准是"关掉网络截图，排版不塌"
+- 中文不得使用纯西文字体渲染（会掉字或变成宋体默认）
+
+**加载写法**（三选一，按稳定性排序）：
+
+```html
+<!-- ① 首选：link + preconnect（浏览器可并行解析） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<!-- ② 单文件自包含场景：@import 写在第一个 <style> 里 -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&display=swap');
+</style>
+
+<!-- ③ 离线/内网：不加载任何网络字体，只留系统栈 -->
+```
+
+> `display=swap` 必须写。它让文字先用系统字体渲染，字体到位后替换——宁可闪一下，也不能白屏。
+
+**写入 IR**：
+
+```json
+"typography": {
+  "display": "Archivo",
+  "body": "Noto Sans SC",
+  "mono": "JetBrains Mono",
+  "origin": "google-fonts",
+  "weights": [400, 700, 800],
+  "fallback_chain": "'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+  "cdn_url": "https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&display=swap"
+}
+```
+
+**字体与设计意图的关系**：字体是设计意图声明（3.8）里"主要视觉语言"的执行手段之一。如果声明是"字体驱动"，字体选择就是主角，字号对比 ≥ 10:1；如果声明是"边框节奏"或"满铺色块"，字体应当退居次位，选用克制的正文家族即可。
+
+#### 3.8 设计意图声明（T4 海报必须，T1-T3 推荐）
 
 在生成 HTML 之前，声明你的设计意图。这不是 checklist——**它是一句话定义这张页面的审美方向**。
 
@@ -227,7 +320,7 @@ description: >-
 
 2. **色彩的角色**：强调色是"香料"还是"主菜"？
    - 香料：白底/米底 + 一个强调色仅用于 CTA 和关键标注（参考网页的做法）
-   - 主菜：每个 section 满铺不同色块（G1 四色循环）
+   - 主菜：每个 section 满铺不同色块（品牌四色循环）
 
 3. **字体对比目标**：最大字号 ÷ 最小字号 ≥ 10:1（海报底线）
 
@@ -260,10 +353,12 @@ python3 scripts/project.py init .onepager/projects/{主题slug} \
 #### 4.1 读取参考文件
 
 - 设计风格细节 → 参考 [design-styles.md](references/design-styles.md)
-- 字体方案 → 参考 [typography.md](references/typography.md)
+- 字体方案 → 先看 [font-library.md](references/font-library.md) 选家族与加载方式，再看 [typography.md](references/typography.md) 定字号/行高/风格映射
 - 版式尺寸 → 参考 [layout-specs.md](references/layout-specs.md)
 - 视觉规范 → 参考 [visual-standards.md](references/visual-standards.md)
 - 维度交叉规则（T×B 适配、T×A 布局、T×C 字号、B×T 配色覆盖）→ 参考 [cross-reference.md](references/cross-reference.md)
+- 使用场景与内容骨架 → 参考 [scenes.md](references/scenes.md)
+- 字体目录、匹配流程与加载写法 → 参考 [font-library.md](references/font-library.md)
 - 基础模板 → 参考 [base-skeleton.html](assets/templates/base-skeleton.html)
 
 #### 4.2 HTML 生成规范
@@ -272,11 +367,25 @@ python3 scripts/project.py init .onepager/projects/{主题slug} \
 
 **构图原则**（先读，再写 CSS）：
 - **单一视觉语言**：一张海报只用一个主导视觉系统——边框节奏 / 满铺色块 / 字体驱动，三者选其一。不可混搭。参考仓库中的 [B9/T4 示例](onepager-A4-B9-T4-20260531.html)，其主要视觉语言为满铺色块 + 极端字号对比。
-- **字体对比 ≥ 10:1**：最大字号（Hero 标题或 BigNumber）与最小字号（mono 标签/署名）的比值至少 10:1。这是海报的物理底线——低于此比值，页面看起来像文档而非海报。
+- **字号是台阶，不是悬崖**：最大字号 ÷ 最小字号 = **8:1 ~ 12:1**（低于 8 像文档，高于 12 读成两份东西）。**全页字号种类 ≤ 6 级**，且必须存在中间层（例如 144 / 88 / 38 / 22 / 16 / 13）。只规定下限不规定上限，结果一定是 150px 标题配 11px 正文的断层。
+- **先选版式原型，再画 CSS**：不要从零发明网格。按 [layout-archetypes.md](references/layout-archetypes.md) 选一个原型（T1/T4 优先 A2 巨字侧轨或 A4 卡片矩阵），按它给定的行预算填。
 - **色彩克制**：强调色（通常是风格 accent color）占全页色彩面积 ≤ 10%。它可以出现在边框线、CTA 按钮、kicker 数字、装饰圆点上——但绝不出现在正文、标题、背景中大面积铺开。
 - **间距呼吸**：section padding 至少 48px（A4），A2 至少 64px。海报不是文档——不需要把信息塞满每一寸画布。
 - **Mono 纹理**：所有元信息（标签、眉题、署名、列表编号、页脚）统一使用 JetBrains Mono 12-14px——这不是"规则"而是"质感"。display 字体（Anton/Smiley Sans）说"看这里"，mono 字体说"这是细节，可信赖"。
-- **先声明，后验证**：CSS 写完后对照 Phase 3.6 的设计意图声明逐项验证——如果某个视觉元素不符合声明，删除它。
+- **先声明，后验证**：CSS 写完后对照 Phase 3.8 的设计意图声明逐项验证——如果某个视觉元素不符合声明，删除它。
+
+**视觉冲击（大图设计感，A2/A3/A4 尤其重要）**：
+
+一张"有设计感"的单页图，与一张"信息齐全但平庸"的图，差别通常只在这 6 件事上。它们不是可选项：
+
+1. **只有一个视觉事件**（One Hero Moment）：整页只能有一个争夺注意力的主角——一个巨型数字 / 一个满铺色块 / 一个切边巨字 / 一张大图。出现两个 hero，等于没有 hero。写完 CSS 后自问："如果拿走这一个元素，页面还成立吗？"成立就说明它不够强。
+2. **满血出血至少一处**（Full-Bleed）：必须有元素突破 `page padding` 直达画布边缘（色块、巨字、分隔条）。全靠内缩的盒子堆叠，页面一定像 PPT 模板。实现方式：`margin: 0 calc(-1 * var(--page-padding))` 或对父容器加负 margin，配合 `overflow: hidden`。
+3. **切边巨字**（Cropped Type）：主标题允许被画布边界裁切，但要保证语义可读——被切掉的只能是字形外延（笔画末端、字身下缘），不能切掉整个字或关键笔画。字号估算：`字号 ≈ 容器宽 ÷ 字符数 × 1.5~1.8`。
+4. **节奏而非等分**：section 高度不可平均。用"大—小—大"或"密—空—密"制造呼吸感。如果每个区块高度都差不多，它就是文档不是海报。
+5. **负空间是主体**：至少一处连续留白 ≥ 画布 25%，并且它是被设计过的（用来聚焦、表达昂贵感、或制造停顿），不是"内容不够"剩下来的。
+6. **光学对齐**：标点、引号、圆形图标、箭头都要做视觉补偿——圆形比方形看着小，需放大 2-4%；引号需要负 `text-indent`；箭头需要基线偏移 1-2px。像素对齐是及格线，光学对齐才是专业线。
+
+> 这 6 条的详细手法、代码与反例见 [visual-standards.md](references/visual-standards.md) 与 [aesthetic-standards.md](references/aesthetic-standards.md)。
 
 **文件结构**：
 - 单一 `.html` 文件，所有 CSS 内联在 `<style>` 标签中
@@ -301,6 +410,15 @@ python3 scripts/project.py init .onepager/projects/{主题slug} \
 - 图标风格全页统一：线性/面性/粗边框三选一
 - 正文与背景对比度 ≥ 4.5:1（WCAG AA）
 - 每页最多 3 种字重
+
+**B10 短视频潮流 专项规则**（若选择 B10）：
+- 沉浸黑用 `#0B0B10` 而不是纯黑 `#000`；银色/白色文字压在深底上，不要压灰
+- 红 `#FE2C55` 与青 `#25F4EE` 是"主音 + 对位音"：红承载 CTA 与首个 BigNumber，青承载对位、装饰线与第二个数字，合计面积 ≤12%
+- 标志性手法每页最多选 2 个：双色错位（全页 1 处）、底部渐隐、右栏动作堆叠、mono 元信息、硬边框、胶囊 CTA
+- 双色错位只能作用于一个元素，且必须是 0 模糊的硬偏移（`translate(±3px, ±2px)`），不是发光
+- 圆角 ≤ 12px，`border-radius: 999px` 只留给 CTA
+- 禁止扫描线、故障效果、霓虹光晕（那是 B8）；出现两项以上，说明选错风格了
+- Paper 模式下红青不能承载文字（对比度不足），BigNumber 用墨黑 `#161823`
 
 **BigNumber 模块**（若选择 E1 则必须包含）：
 - 必须在 Header 下方或第一个内容模块中包含 `.bignum-module`
@@ -351,6 +469,11 @@ A2、A3 和 A4 的高度是固定的，所有内容必须在固定像素高度�
 - [ ] 视觉层级是否能让人不读字也能猜到信息重点？
 - [ ] 颜色、字体、图标、间距是否完全一致？
 - [ ] 是否存在一个明确、单一、可执行的 CTA？
+- [ ] 所选场景（S）的必备模块是否齐全？（逐项对照 [scenes.md](references/scenes.md)）
+- [ ] 是否只有一个视觉事件？hero 视觉区 ≥ 画布 25%；截图模糊 8px 后，最抢眼的两块是否属于同一元素？
+- [ ] 是否至少有一处元素与画布边缘间距为 0px（满血出血）？切边巨字是否 ≤1 处且语义完整？
+- [ ] 是否有一处连续留白 ≥ 画布 25%，section 高度极差是否 ≥1.5×（不是等高卡片阵列）？
+- [ ] 字重差是否 ≥300？灰度截图后是否仍有 ≥3 级层级？
 - [ ] 在手机缩略图查看，整体是否依然清晰可读？
 - [ ] 技术类内容的解读/摘要/建议是否全部为中文？是否误用了纯英文？（见 3.1.5 语言强制门控）
 
@@ -359,6 +482,11 @@ A2、A3 和 A4 的高度是固定的，所有内容必须在固定像素高度�
 - [ ] 颜色对比度足够，文字清晰可读
 - [ ] 图表与文字有合理的间距
 - [ ] 字体加载语句完整且有 fallback
+- [ ] 字体是否按 3.7 完成匹配，并写入 IR 的 `typography`？display / body / mono / origin / weights / fallback_chain 六项齐全
+- [ ] 每个 `font-family` 是否都以通用字族结尾（`sans-serif` / `serif` / `monospace` / `system-ui`）？
+- [ ] Google Fonts URL 是否带 `display=swap`？中文是否有对应的 CJK 字族？
+- [ ] 非等宽字体家族是否 ≤ 2？字重是否 ≤ 3 种？
+- [ ] 最大字号 ÷ 最小字号是否达到 10:1（T4 海报）或 3:1（T1-T3）？
 - [ ] **未使用 Emoji，所有图标均为 SVG**
 - [ ] **未使用蓝紫渐变，配色符合所选风格**
 - [ ] 若使用渐变或光效，是否具有明确信息目的且不属于禁止项
@@ -382,32 +510,46 @@ HTML 生成后、截图前，必须依次执行静态检查与浏览器渲染检
    ```bash
    bash scripts/install_deps.sh
    ```
+   - 脚本最后会打印 `PLAYWRIGHT_PYTHON=...`。若它不是 `python3`（系统 Python 拒绝安装、回落到虚拟环境时会出现这种情况），本阶段后续所有命令都要换成该解释器。
 
 2. 运行静态质检脚本：
    ```bash
    python3 scripts/quality_check.py {output_filename}.html \
-     --style B? --size A? [--no-bignum] --format json \
+     --style B? --size A? --type T? [--no-bignum] --format json \
      > static-check.json
    ```
    - 若用户选择 E2（不包含 BigNumber），需加 `--no-bignum` 参数
+   - 传 `--type T4` 时字号比门槛自动提升到 8:1 且升级为 ERROR——海报没有极端字号对比就是失败
+   - 检查项包含 `[FONT]`（family 数量、通用字族兜底、`display=swap`、CJK 覆盖）与 `[TYPO]`（字号比）
 
-3. 运行浏览器渲染质检，验证真实画布尺寸、滚动溢出、文字裁切和边界：
+3. 运行构图质检，测量空气占比、块间间隙、块内填充率、字号跨度与左右配重：
+   ```bash
+   python3 scripts/layout_check.py {output_filename}.html \
+     --size A? --density C? --format json \
+     > layout-check.json
+   ```
+   - 空气占比超出该密度的目标区间（C1 34-52% / C2 22-38% / C3 12-28%）= ERROR，说明"留白"其实是"没填满"
+   - 出现明显大于页面节奏的间隙 = 空洞；某个块的内容填充不到 55% = 内容贴顶
+   - 字号种类 > 6 或跨度 > 12:1 = ERROR
+   - 修复方式是**加内容或加大字号**，不是调 margin 或 justify-content
+
+4. 运行浏览器渲染质检，验证真实画布尺寸、滚动溢出、文字裁切和边界：
    ```bash
    python3 scripts/render_check.py {output_filename}.html \
      --size A? --format json \
      > render-check.json
    ```
 
-4. 如果任一报告包含 ERROR：
+5. 如果任一报告包含 ERROR：
    - 必须修复所有错误后重新生成 HTML
    - 不得跳过错误直接截图
    - 常见需要修复的错误：缺少 BigNumber、Emoji 未替换、对比度不足、蓝紫色调
 
-5. 如果质检报告包含 WARNING：
+6. 如果质检报告包含 WARNING：
    - 必须逐项评估并在交付摘要中记录保留理由
    - 无法解释的 WARNING 视同 ERROR 处理
 
-6. 将两份质检报告摘要附加在交付信息中
+7. 将三份质检报告摘要附加在交付信息中（静态 / 构图 / 渲染）
    - **B9 谷歌原生**：务必传入 `--style B9`。该风格使用 Google 蓝（`#4285f4`/`#1a73e8`）和品牌四色，质检脚本会因 `--style B9` 自动放宽蓝色与色彩数量检查；不传则会误报蓝色/颜色超限
 
 ### Phase 6: 截图转换与交付
@@ -451,6 +593,7 @@ A4 竖版海报：`--width 1080 --height 1440`
    ```bash
    python3 scripts/project.py record-build .onepager/projects/{主题slug} \
      --A A? --B B? --C C? --T T? --E E? --F "{署名或无}" \
+     --S S? --G G? \
      --html {output_filename}.html \
      --png {output_filename}.png \
      --static-check static-check.json \
@@ -463,7 +606,7 @@ A4 竖版海报：`--width 1080 --height 1440`
 
 交付后用户若要求调整，遵循以下流程：
 - **微调**（配色、字重、间距、署名等）：直接修改当前 HTML → 重新质检 → 重新截图，输出文件追加版本号（如 `-v2`）
-- **配置变更**（A/B/C/T/E/F 任一维度）：保留未修改维度，只更新用户明确指定的选择 → 更新 IR → 重新质检和截图 → 记录新构建版本
+- **配置变更**（S/A/B/C/T/E/G/F 任一维度）：保留未修改维度，只更新用户明确指定的选择 → 更新 IR → 重新质检和截图 → 记录新构建版本。改了 S 要检查场景必备模块是否还齐全；改了 G 要重新跑 `[FONT]` 检查
 - **内容变更**：从 Phase 3 开始重新改写，输出新文件
 
 如果截图工具不可用（沙箱环境等），则：

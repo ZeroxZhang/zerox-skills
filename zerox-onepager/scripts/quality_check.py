@@ -24,6 +24,25 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 RGB = Tuple[int, int, int]
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "references" / "config-schema.json"
 
+GENERIC_FAMILIES = {
+    "serif", "sans-serif", "monospace", "cursive", "fantasy", "system-ui",
+    "ui-serif", "ui-sans-serif", "ui-monospace", "ui-rounded", "emoji", "math",
+    "fangsong",
+}
+CJK_FONT_MARKERS = (
+    "noto sans sc", "noto serif sc", "noto sans tc", "noto serif tc",
+    "noto sans hk", "source han", "pingfang", "hiragino", "microsoft yahei",
+    "yahei", "wenquanyi", "lxgw", "zcool", "songti", "simsun", "stheiti",
+    "heiti", "kaiti", "fangsong", "sarasa",
+)
+MONO_MARKERS = (
+    "mono", "code", "courier", "consolas", "menlo", "sf mono", "cascadia",
+    "jetbrains", "fira", "ibm plex mono", "roboto mono", "space mono",
+)
+GOOGLE_FONT_URL_RE = re.compile(
+    r"https://fonts\.googleapis\.com/css2?[^\s\"'<>)]+", re.IGNORECASE
+)
+
 
 def load_config() -> dict:
     return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
@@ -211,6 +230,41 @@ def extract_colors(value: str, variables: Dict[str, str]) -> List[Tuple[str, RGB
     return colors
 
 
+def parse_font_families(value: str, variables: Dict[str, str]) -> List[str]:
+    resolved = resolve_css_value(value, variables)
+    families = []
+    for part in resolved.split(","):
+        name = part.strip().strip('"').strip("'")
+        if name:
+            families.append(name)
+    return families
+
+
+def is_mono_family(name: str) -> bool:
+    lowered = name.lower()
+    return any(marker in lowered for marker in MONO_MARKERS)
+
+
+def parse_google_font_families(text: str) -> List[str]:
+    families: List[str] = []
+    for url in GOOGLE_FONT_URL_RE.findall(text):
+        for match in re.finditer(r"family=([^&\"')]+)", url):
+            for part in match.group(1).split("|"):
+                name = part.replace("+", " ").strip()
+                if ":" in name:
+                    name = name.split(":")[0]
+                if name and name not in families:
+                    families.append(name)
+    return families
+
+
+def has_google_display_swap(text: str) -> bool:
+    urls = GOOGLE_FONT_URL_RE.findall(text)
+    if not urls:
+        return True
+    return all("display=swap" in url for url in urls)
+
+
 def is_blue_purple(rgb: RGB) -> bool:
     red, green, blue = rgb
     maximum = max(rgb)
@@ -320,6 +374,7 @@ def run_checks(
     style: Optional[str] = None,
     size: Optional[str] = None,
     no_bignum: bool = False,
+    content_type: Optional[str] = None,
 ) -> Tuple[List[str], List[str], List[str]]:
     path = Path(html_path)
     if not path.is_file():
@@ -392,7 +447,7 @@ def run_checks(
             absolute_rules.append(rule)
 
     seen_colors = {rgb for _, rgb in color_values}
-    limits = {"B5": 10, "B8": 10, "B9": 12}
+    limits = {"B5": 10, "B8": 10, "B9": 12, "B10": 12}
     limit = limits.get(style_norm, 7)
     if len(seen_colors) <= limit:
         passed.append(f"[COLOR] Palette uses {len(seen_colors)} unique colors (limit {limit})")
@@ -419,16 +474,28 @@ def run_checks(
     else:
         passed.append("[COLOR] No unexpected blue/purple tones")
 
+    def is_readability_scrim(gradient: str) -> bool:
+        """A single-hue alpha ramp used to keep captions readable over media."""
+        colors = [rgb for _, rgb in extract_colors(gradient, variables)]
+        if len(colors) < 2 or "to top" not in gradient.lower():
+            return False
+        return len({rgb for rgb in colors}) == 1
+
     forbidden_gradients = []
+    scrims = []
     for gradient in gradients:
         gradient_colors = [rgb for _, rgb in extract_colors(gradient, variables)]
         if any(is_blue_purple(rgb) and not (style_norm == "B9" and rgb in b9_allowed) for rgb in gradient_colors):
             forbidden_gradients.append(gradient)
+        elif is_readability_scrim(gradient):
+            scrims.append(gradient)
     if forbidden_gradients:
         errors.append(f"[GRADIENT] Blue/purple gradients are forbidden ({len(forbidden_gradients)} found)")
-    elif gradients:
+    if scrims:
+        passed.append(f"[GRADIENT] {len(scrims)} readability scrim(s) accepted (single-hue alpha ramp)")
+    if not forbidden_gradients and not scrims and gradients:
         warnings.append(f"[GRADIENT] Found {len(gradients)} gradient(s); confirm each has an information purpose")
-    else:
+    elif not forbidden_gradients and not scrims and not gradients:
         passed.append("[GRADIENT] No gradients used")
 
     glow_shadows = [
@@ -466,7 +533,10 @@ def run_checks(
         passed.append("[LAYOUT] Absolute positioning is absent or marked decorative")
 
     body_rule = find_rule(rules, r"(^|,)\s*body\s*(,|$)")
-    page_rule = find_rule(rules, r"(^|,)\s*\.page(?:\b|[.#:\[])")
+    page_rule = find_rule(
+        rules,
+        r"(^|,)\s*(?:\.page|\.poster|\.canvas|\.onepager)(?:\b|[.#:\[])",
+    )
     background = declaration_color(page_rule, ("background-color", "background"), variables)
     if background is None:
         background = declaration_color(body_rule, ("background-color", "background"), variables)
@@ -491,15 +561,106 @@ def run_checks(
     else:
         warnings.append("[CONTRAST] No resolvable foreground/background pair found")
 
+    # ---------------------------------------------------------------- fonts
+    font_family_values = [
+        value
+        for rule in rules
+        for key, value in rule.declarations.items()
+        if key == "font-family"
+    ]
+    loaded_families = parse_google_font_families(content)
+    if font_family_values:
+        missing_generic = []
+        for value in font_family_values:
+            families = parse_font_families(value, variables)
+            if families and families[-1].lower() not in GENERIC_FAMILIES:
+                missing_generic.append(value)
+        if missing_generic:
+            message = (
+                "[FONT] font-family must end with a generic family "
+                f"(sans-serif/serif/monospace): {missing_generic[0]}"
+            )
+            if loaded_families:
+                errors.append(message)
+            else:
+                warnings.append(message)
+        else:
+            passed.append("[FONT] Every font stack ends with a generic family")
+
+        resolved_stacks = " ".join(
+            " ".join(parse_font_families(value, variables)) for value in font_family_values
+        ).lower()
+
+        if loaded_families:
+            unused = [name for name in loaded_families if name.lower() not in resolved_stacks]
+            if unused:
+                warnings.append(f"[FONT] Web fonts loaded but not referenced in any stack: {', '.join(unused)}")
+            else:
+                passed.append(f"[FONT] All {len(loaded_families)} loaded web fonts are referenced")
+
+            content_families = [name for name in loaded_families if not is_mono_family(name)]
+            if len(content_families) > 2:
+                warnings.append(
+                    "[FONT] More than 2 non-monospace web font families: "
+                    + ", ".join(content_families)
+                )
+            else:
+                passed.append(f"[FONT] {len(content_families)} non-monospace web font families (limit 2)")
+
+            if not has_google_display_swap(content):
+                errors.append("[FONT] Google Fonts URL is missing display=swap; text may stay invisible while loading")
+            else:
+                passed.append("[FONT] Web font URLs request display=swap")
+
+        visible_text = "".join(checker.text_content)
+        if re.search(r"[\u4e00-\u9fff]", visible_text):
+            if any(marker in resolved_stacks for marker in CJK_FONT_MARKERS):
+                passed.append("[FONT] CJK text has a CJK-capable family in the stack")
+            else:
+                warnings.append(
+                    "[FONT] CJK text detected but no CJK family appears in any font stack; "
+                    "Chinese may fall back to an unrelated face"
+                )
+
+    # ------------------------------------------------------- type scale
+    font_sizes: List[float] = []
+    for rule in rules:
+        value = rule.declarations.get("font-size", "")
+        if not value:
+            continue
+        resolved = resolve_css_value(value, variables)
+        font_sizes.extend(float(number) for number in re.findall(r"(\d+(?:\.\d+)?)px", resolved))
+    if len(font_sizes) >= 2 and min(font_sizes) > 0:
+        ratio = max(font_sizes) / min(font_sizes)
+        poster = (content_type or "").upper() == "T4"
+        minimum = 8.0 if poster else 3.0
+        if ratio < minimum:
+            message = (
+                f"[TYPO] Type scale ratio {ratio:.1f}:1 ({max(font_sizes):.0f}px / "
+                f"{min(font_sizes):.0f}px) is below {minimum:.0f}:1"
+            )
+            if poster:
+                errors.append(message + " — T4 posters need >= 8:1")
+            else:
+                warnings.append(message)
+        else:
+            passed.append(f"[TYPO] Type scale ratio {ratio:.1f}:1")
+
     radius_numbers = {
         int(number)
         for radius in radii
         for number in re.findall(r"(\d+)px", resolve_css_value(radius, variables))
     }
-    if len(radius_numbers) > 3:
-        warnings.append(f"[CONSISTENCY] Too many border-radius values: {sorted(radius_numbers)}")
+    radius_limit = 4 if style_norm == "B10" else 3
+    if len(radius_numbers) > radius_limit:
+        warnings.append(
+            f"[CONSISTENCY] Too many border-radius values: {sorted(radius_numbers)} "
+            f"(limit {radius_limit} for {style_norm or 'default'})"
+        )
     else:
-        passed.append(f"[CONSISTENCY] Border-radius values are consistent ({len(radius_numbers)} unique)")
+        passed.append(
+            f"[CONSISTENCY] Border-radius values are consistent ({len(radius_numbers)} unique, limit {radius_limit})"
+        )
 
     return errors, warnings, passed
 
@@ -512,6 +673,7 @@ def print_report(
     warnings: Sequence[str],
     passed: Sequence[str],
     output_format: str,
+    content_type: Optional[str] = None,
 ) -> None:
     verdict = "FAIL" if errors else "WARN" if warnings else "PASS"
     if output_format == "json":
@@ -520,6 +682,7 @@ def print_report(
                 "file": str(path),
                 "style": style,
                 "size": size,
+                "type": content_type,
                 "verdict": verdict,
                 "errors": list(errors),
                 "warnings": list(warnings),
@@ -537,6 +700,8 @@ def print_report(
         print(f"Style: {style}")
     if size:
         print(f"Size: {size}")
+    if content_type:
+        print(f"Type: {content_type}")
     print("=" * 60)
     for heading, values, marker in (
         ("ERRORS", errors, "X"),
@@ -555,19 +720,34 @@ def main() -> None:
     config = load_config()
     parser = argparse.ArgumentParser(description="Static quality check for zerox-onepager HTML")
     parser.add_argument("input", type=Path, help="Path to input HTML")
-    parser.add_argument("--style", choices=sorted(config["styles"]), help="Design style")
+    parser.add_argument(
+        "--style",
+        choices=sorted(config["styles"], key=lambda code: int(code[1:])),
+        help="Design style",
+    )
     parser.add_argument("--size", choices=sorted(config["sizes"]), help="Canvas size")
     parser.add_argument("--no-bignum", action="store_true", help="Skip BigNumber requirement (E2)")
+    parser.add_argument(
+        "--type",
+        dest="content_type",
+        choices=sorted(config["types"]),
+        help="Content type; T4 raises the type-scale floor to 8:1",
+    )
     parser.add_argument("--format", choices=("text", "json"), default="text")
     args = parser.parse_args()
 
     try:
-        errors, warnings, passed = run_checks(args.input, args.style, args.size, args.no_bignum)
+        errors, warnings, passed = run_checks(
+            args.input, args.style, args.size, args.no_bignum, args.content_type
+        )
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         raise SystemExit(2)
 
-    print_report(args.input, args.style, args.size, errors, warnings, passed, args.format)
+    print_report(
+        args.input, args.style, args.size, errors, warnings, passed, args.format,
+        args.content_type,
+    )
     raise SystemExit(2 if errors else 1 if warnings else 0)
 
 

@@ -1,6 +1,7 @@
 # 中文字体方案
 
-本文件定义了不同设计风格对应的字体栈方案。
+本文件定义 B1-B10 十种设计风格对应的字号阶梯、行高、字重与字体栈基线。
+字体家族的选择（用哪一款字体、从哪个 CDN 加载、断网怎么降级）请先读 [font-library.md](font-library.md)；本文件只负责字号阶梯、行高、字重与风格映射。
 Google Fonts 是可选增强，不是运行前提。所有方案必须配置完整的系统字体 fallback，确保离线或受限网络环境仍可稳定渲染。
 
 ---
@@ -11,7 +12,7 @@ Google Fonts 是可选增强，不是运行前提。所有方案必须配置完�
 
 ### 核心原则
 
-1. **每页最多 2 种字体家族**（一种标题，一种正文），超过 2 种即视觉噪音
+1. **每页最多 2 种字体家族**（一种标题，一种正文；等宽 mono 不计入），超过 2 种即视觉噪音
 2. **每页最多 3 种字重**（如 400/600/900），字重过多会消解层级对比的力量
 3. **数据必须使用等宽字体**：数字在等宽字体下对齐精确，传达可信感
 4. **衬线体 = 人文/历史/优雅；无衬线体 = 现代/理性/效率**
@@ -21,11 +22,35 @@ Google Fonts 是可选增强，不是运行前提。所有方案必须配置完�
 
 | 字体类型 | 传递情绪 | 适用风格 |
 |---------|---------|---------|
-| 无衬线体 (Sans-serif) | 现代、理性、效率 | B1, B2, B4, B5, B8, B9 |
+| 无衬线体 (Sans-serif) | 现代、理性、效率 | B1, B2, B4, B5, B8, B9, B10 |
 | 衬线体 (Serif) | 人文、历史、优雅 | B3, B6, B7 |
-| 等宽体 (Monospace) | 精确、技术、数据 | B1, B7, B8, B9 (数据展示) |
+| 等宽体 (Monospace) | 精确、技术、数据 | B1, B7, B8, B9, B10 (数据展示) |
 | 系统字体 | 原生、直接、无修饰 | B4 (粗野主义专用) |
 | Inter + Noto Sans SC | 克制、专业、国际化 | B9 (Google 原生专用) |
+
+---
+
+## 字体匹配环节
+
+风格选定后（SKILL.md Phase 3.7）、写 CSS 之前，先执行 5 步字体匹配，结果写入 IR 的 typography 字段。完整判断依据、字体目录与可复制加载代码见 [font-library.md](font-library.md)。
+
+1. **读语气**：从素材提取 3 个气质词（权威/活泼/精密/温柔/未来/质朴…），必须覆盖"体积、温度、时代"三个槽位
+2. **定 display**：决定"声音"——要"喊"（T4/压缩展示）、"说理"（编辑衬线或中性无衬线）还是"未来"（几何科技）
+3. **定正文**：决定"可读性"。**中文必须单独指定 CJK 家族**，不能靠西文字体栈兜底；正文只允许 400/500
+4. **定 mono**：元信息与数据统一走等宽，mono 不计入"每页最多 2 个非 mono 家族"预算
+5. **声明与降级**：结果写成 typography 声明块（HTML 注释 + CSS 变量），每条 fallback 必须以通用族收尾
+
+| 方案 | 一句话 | 何时用 |
+|------|--------|--------|
+| G1 自动匹配 | 由 B 风格 + T 类型推导 | 默认 |
+| G2 系统原生 | 不加载任何网络字体 | B4、零网络、企业内网 |
+| G3 编辑衬线 | 标题衬线 + 正文无衬线 | B3/B6/B7、长文案 |
+| G4 展示黑体 | 压缩巨型标题 | T4、B5、B10 |
+| G5 几何科技 | 几何无衬线 + 等宽 | B1/B8、科技/硬件 |
+| G6 手写人文 | 仅标题手写/仿宋，正文必须换无衬线 | 邀请函、节日、书信 |
+| G7 自定义 | 用户指定字体名 | 用户点名要求时 |
+
+> ⚠️ 无论选哪个方案：display 家族不得出现在 `--font-body`；网络字体加载失败必须回退到系统字体栈并保持可读。
 
 ---
 
@@ -344,6 +369,31 @@ BigNumber 的字号必须是**页面上最大的文字元素**，必须超过主
 
 ---
 
+### B10 短视频潮流
+
+传达沉浸、潮流、克制的攻击性。Dark 为默认模式，T4 强制 Dark；Paper 为编辑白变体。
+
+```css
+:root {
+  --font-heading: 'Inter', 'Archivo', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-body: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', monospace;
+  --font-accent: 'Georgia', 'Noto Serif SC', 'Songti SC', serif; /* 仅 Paper 模式强调词，全页 1 处 */
+}
+```
+
+- 主标题：英文 Inter / Archivo 700-800，`letter-spacing: -0.02em`，`line-height: 0.95`；中文标题 Noto Sans SC 900 补偿笔画密度，使中英视觉权重相等
+- 模块标题：字重 700，与主标题同一家族，不换字体
+- 正文：Inter + Noto Sans SC 400，`line-height: 1.6`（十种风格中最紧的一档，与 B2/B4 并列）
+- BigNumber：JetBrains Mono 700，红 `#FE2C55`（主）/ 青 `#25F4EE`（辅），无装饰线；仅 T4 且全页仅 1 个数字允许一次 `text-shadow: 3px 2px 0 #25F4EE, -3px -2px 0 #FE2C55`
+- 元信息：JetBrains Mono 400/500，11px，`letter-spacing: .14em`，uppercase
+- Paper 模式：墨黑标题 800，强调词用 Georgia / Noto Serif SC 斜体（`font-style: italic`），全页仅 1 处；红青只做 1px 线与角标
+- 字重限制：400 / 700 / 900（最多 3 种；中文 900 只用于标题补偿，不与英文 900 混排）
+- 禁止：渐变（底部 scrim 除外）、发光、扫描线与故障效果（属 B8）；display 家族（Inter/Archivo）不得进入 `--font-body`
+- 字体匹配：推荐 G1（默认推导）或 G4（标题需要更强压缩感时），字体见 [font-library.md](font-library.md)
+
+---
+
 ## 中文排版核心参数
 
 无论何种风格，以下参数必须遵守：
@@ -383,6 +433,7 @@ p {
 | B7 数据新闻 | 1.8 | 1.4 | 0.01em | 图表标签全大写 |
 | B8 赛博街道 | 1.8 | 1.4 | 0.03em | 正文 letter-spacing: 0.03em |
 | B9 谷歌原生 | 1.6-1.7 | 1.15-1.3 | 0 | 英文 500 字重为主，中文 700-900；标题 48px+ 负 letter-spacing |
+| B10 短视频潮流 | 1.6 | 0.95-1.15 | -0.02em | 英文 700-800 压缩，中文 900 补偿；mono 元信息 uppercase .14em |
 
 ---
 

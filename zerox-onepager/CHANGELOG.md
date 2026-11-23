@@ -2,6 +2,34 @@
 
 All notable changes to the Onepager skill are documented in this file.
 
+## [1.6.0] - 2026-11-23
+
+### Added
+- **Composition checker** `scripts/layout_check.py`: measures the rendered page for gaps that break the rhythm (holes), blocks whose content fills under 55% of their own box (content packed at the top), total air ratio against a per-density target, distinct font-size count and max:min scale, and horizontal ink imbalance. Full-bleed colour blocks count as ink, not air. This is the check that catches "looks fine locally, reads as empty space" — the failure mode that static and geometry checks both pass.
+- **`references/layout-archetypes.md`**: five poster archetypes with exact row budgets for A4 (band stack, oversized type + side rail, editorial two-column, card matrix, colour-block rhythm), each stating *why* it fills the canvas by construction, plus the three failure signatures it prevents
+- **Layout contract in `config-schema.json`**: per-density air-ratio targets (C1 34-52% / C2 22-38% / C3 12-28%), gap-ratio caps, max type scale 12:1 (hard 15:1), max 6 distinct font sizes, max 5% ink imbalance
+- **B10 colour roles**: red and cyan are now defined by *function*, not just area — red is the action colour, cyan is the structural colour and must carry at least two structural jobs per page. Combined budget raised from 12% to 12-16%, because squeezing cyan under 4% turns B10 into a generic dark template with one red button
+- **Usage scenes (S1-S6)** as the first decision in the interaction protocol: 产品介绍 / 工作汇报 / 客户沟通 / 活动宣传 / 数据洞察 / 知识方法. Each scene ships a validated default `A/B/C/T/E` configuration, must-have modules, anti-patterns, and an acceptance test; see `references/scenes.md`
+- **B10 短视频潮流 (Short-Video Feed)** design style with `Dark` (default) and `Paper` sub-modes, full palette with same-hue scales, six signature devices (chromatic offset, bottom scrim, action rail, mono metadata, hard rules, pill CTA), BigNumber and signature specs, and an explicit boundary against B8
+- **Font matching step (Phase 3.7)** and the `G1-G7` font-scheme dimension: automatic matching, system-native, editorial serif, display sans, geometric-tech, handwritten, and custom
+- **`references/font-library.md`**: curated open-source / Google Fonts catalog with copy-paste CSS2 URLs, the five-step matching flow, CDN loading rules (`display=swap`, preconnect, `@import`), CJK subsetting notes, per-style mapping for B1-B10, and a forbidden-usage list
+- **Design-impact layer** in the visual standards: single hero moment, full-bleed, cropped type, rhythm over equal division, negative space as a subject, optical alignment, and controlled texture
+- **Typography contract in the IR**: optional `typography` block (display / body / mono / origin / weights / fallback_chain / cdn_url) plus `S`, `G`, `B_mode`, `G_font` in `configuration`
+
+### Changed
+- The type rule is now a band, not a floor: 8:1 to 12:1 with at most six distinct sizes. The old "at least 10:1" wording pushed generated pages into 150px headlines beside 11px body text
+- Poster composition starts from a named archetype instead of an invented grid; `justify-content: space-between` over percentage bands is called out as the direct cause of band voids
+- The interaction protocol is now `S/A/B/C/T/E/G/F`. `S` is asked first and presets the rest; the original `A/B/C/T/E/F` dimensions are all retained and remain user-overridable
+- The `D` menu label was corrected to `T` to match its `T1-T4` codes
+- `quality_check.py` gained `[FONT]` checks (generic fallback, `display=swap`, loaded-but-unused families, family count, CJK coverage), a `[TYPO]` type-scale check that tightens to 8:1 and ERROR for `--type T4`, a new `--type` flag, and contrast detection for `.poster` / `.canvas` page roots
+- Single-hue alpha-ramp gradients (`to top`) are now recognised as readability scrims instead of being reported as unexplained decoration
+- `project.py` accepts optional `--S` and `--G` and validates them against the schema; the recorded tool version is now `1.6.0`
+- `base-skeleton.html` now ships preconnect + `display=swap` font loading, full-bleed utilities, and B10 chromatic-offset / bottom-scrim shortcuts
+
+### Fixed
+- Web-font families declared through CSS variables are no longer reported as "loaded but unused", and CJK stacks declared the same way are now detected correctly
+- `examples/b10-poster.example.html` demonstrates a passing `S4 · A4 · B10 · C1 · T4 · E2 · G4` poster — 21/21 checks, zero warnings — with its render at `examples/b10-poster.example.png`
+
 ## [1.5.0] - 2026-08-08
 
 ### Added

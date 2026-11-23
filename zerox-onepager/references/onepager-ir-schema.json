@@ -30,13 +30,16 @@
       "additionalProperties": false,
       "required": ["A", "B", "C", "T", "E", "F"],
       "properties": {
+        "S": {"enum": ["S1", "S2", "S3", "S4", "S5", "S6"]},
         "A": {"enum": ["A1", "A2", "A3", "A4"]},
-        "B": {"enum": ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9"]},
-        "B_mode": {"enum": ["Light", "Dark", "Poster"]},
+        "B": {"enum": ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10"]},
+        "B_mode": {"enum": ["Light", "Dark", "Poster", "Paper"]},
         "C": {"enum": ["C1", "C2", "C3"]},
         "T": {"enum": ["T1", "T2", "T3", "T4"]},
         "focus": {"enum": ["product", "solution", "steps", "spec"]},
         "E": {"enum": ["E1", "E2"]},
+        "G": {"enum": ["G1", "G2", "G3", "G4", "G5", "G6", "G7"]},
+        "G_font": {"type": "string", "minLength": 1, "description": "Resolved custom font name when G7 is selected"},
         "F": {"type": "string", "minLength": 1}
       }
     },
@@ -128,6 +131,24 @@
         },
         "color_role": {"enum": ["spice", "main"]},
         "type_ratio": {"type": "number", "minimum": 3}
+      }
+    },
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display", "body", "mono", "origin"],
+      "properties": {
+        "display": {"type": "string", "minLength": 1},
+        "body": {"type": "string", "minLength": 1},
+        "mono": {"type": "string", "minLength": 1},
+        "origin": {"enum": ["system", "google-fonts", "custom-cdn", "local"]},
+        "weights": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {"type": "integer", "minimum": 100, "maximum": 900}
+        },
+        "fallback_chain": {"type": "string"},
+        "cdn_url": {"type": "string"}
       }
     },
     "brand_ref": {"type": ["string", "null"]}

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Manage reproducible zerox-onepager project assets.
 
-The CLI does not generate content. It persists the user-confirmed A/B/C/T/E/F
-configuration, build artifacts, quality reports, and hashes.
+The CLI does not generate content. It persists the user-confirmed configuration
+(A/B/C/T/E/F plus the optional scene S and font scheme G), build artifacts,
+quality reports, and hashes.
 """
 
 import argparse
@@ -17,14 +18,18 @@ from typing import Dict, List, Sequence
 
 VALID_OPTIONS = {
     "A": {"A1", "A2", "A3", "A4"},
-    "B": {f"B{index}" for index in range(1, 10)},
+    "B": {f"B{index}" for index in range(1, 11)},
     "C": {"C1", "C2", "C3"},
     "T": {"T1", "T2", "T3", "T4"},
     "E": {"E1", "E2"},
 }
+OPTIONAL_OPTIONS = {
+    "S": {f"S{index}" for index in range(1, 7)},
+    "G": {f"G{index}" for index in range(1, 8)},
+}
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 VERSION_RE = re.compile(r"^v(\d{3})$")
-TOOL_VERSION = "1.5.0"
+TOOL_VERSION = "1.6.0"
 
 
 class ProjectError(Exception):
@@ -77,6 +82,10 @@ def validate_configuration(configuration: dict) -> List[str]:
     errors = []
     for key, allowed in VALID_OPTIONS.items():
         if configuration.get(key) not in allowed:
+            errors.append(f"configuration.{key} must be one of {sorted(allowed)}")
+    for key, allowed in OPTIONAL_OPTIONS.items():
+        value = configuration.get(key)
+        if value is not None and value not in allowed:
             errors.append(f"configuration.{key} must be one of {sorted(allowed)}")
     signature = configuration.get("F")
     if not isinstance(signature, str) or not signature.strip():
@@ -298,6 +307,10 @@ def command_record_build(args: argparse.Namespace) -> dict:
         "E": args.E,
         "F": args.F,
     }
+    for key in ("S", "G"):
+        value = getattr(args, key, None)
+        if value:
+            configuration[key] = value
     configuration_errors = validate_configuration(configuration)
     if configuration_errors:
         raise ProjectError("; ".join(configuration_errors))
@@ -402,11 +415,23 @@ def command_next_version(args: argparse.Namespace) -> dict:
 
 def add_configuration_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--A", required=True, choices=sorted(VALID_OPTIONS["A"]))
-    parser.add_argument("--B", required=True, choices=sorted(VALID_OPTIONS["B"]))
+    parser.add_argument(
+        "--B", required=True, choices=sorted(VALID_OPTIONS["B"], key=lambda code: int(code[1:]))
+    )
     parser.add_argument("--C", required=True, choices=sorted(VALID_OPTIONS["C"]))
     parser.add_argument("--T", required=True, choices=sorted(VALID_OPTIONS["T"]))
     parser.add_argument("--E", required=True, choices=sorted(VALID_OPTIONS["E"]))
     parser.add_argument("--F", required=True, help="Confirmed signature or '无'")
+    parser.add_argument(
+        "--S",
+        choices=sorted(OPTIONAL_OPTIONS["S"]),
+        help="Confirmed usage scene, e.g. S1 产品介绍 (optional)",
+    )
+    parser.add_argument(
+        "--G",
+        choices=sorted(OPTIONAL_OPTIONS["G"]),
+        help="Confirmed font scheme, e.g. G1 自动匹配 (optional)",
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
