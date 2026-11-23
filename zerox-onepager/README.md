@@ -11,7 +11,7 @@
 
 > A Claude Agent Skill for converting text content into high-quality OnePage infographics.
 
-![Onepager Demo](./onepager-A4-B10-T4-20261123.png)
+![zerox-onepager product poster showing how text, Markdown, and PDF become editable HTML and shareable PNG](./onepager-readme-A4-B10-20261123.png)
 
 ## Overview
 
@@ -156,7 +156,7 @@ Apache License 2.0
 
 > 将文字内容转化为高品质 OnePage 介绍图的 Agent Skill。
 
-![Onepager Demo](./onepager-A4-B10-T4-20261123.png)
+![zerox-onepager 产品海报：把文字、Markdown 和 PDF 变成可编辑的 HTML 和可分享的 PNG](./onepager-readme-A4-B10-20261123.png)
 
 ## 功能概述
 

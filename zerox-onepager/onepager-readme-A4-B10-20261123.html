@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>zerox-onepager · 一页成图</title>
+  <!-- design intent: 字体驱动，144:14 ≈ 10.3:1。P1 巨字与 P4 大号数字；青色连接输入和输出，红色落在底部行动带。 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;700&amp;family=Noto+Sans+SC:wght@400;700;900&amp;display=swap">
+  <style>
+    :root {
+      --bg: #0B0B10;
+      --screen: #16161C;
+      --card: #1C1E2A;
+      --line: #3A3D52;
+      --white: #F5F5F7;
+      --muted: #AEB2C0;
+      --cyan: #25F4EE;
+      --red: #FE2C55;
+      --ink: #161823;
+      --display: 'Anton', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', Consolas, 'PingFang SC', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body, h1, h2, h3, p, figure, dl, dd, ol { margin: 0; }
+    body { background: var(--bg); }
+    .poster {
+      display: grid;
+      grid-template-rows: 760px 224px 280px 96px 80px;
+      align-content: start;
+      width: 1080px;
+      height: 1440px;
+      margin-inline: auto;
+      color: var(--white);
+      background: var(--bg);
+      font-family: var(--body);
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .hero, .bignum-module, .workflow, .cta, .footer { padding-inline: 64px; }
+    .hero { padding-top: 48px; }
+    .masthead, .cta, .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    .wordmark, .eyebrow, .signature, .cta code {
+      font-family: var(--mono);
+    }
+    .wordmark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .wordmark::before {
+      content: "";
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--cyan);
+    }
+    .eyebrow {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 26px 0 14px -8px;
+      font-family: var(--display);
+      font-size: 136px;
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -.05em;
+    }
+    .offset {
+      display: inline-block;
+      position: relative;
+      z-index: 0;
+    }
+    .offset::before, .offset::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .offset::before {
+      color: var(--cyan);
+      transform: translate(-3px, -2px);
+      z-index: -1;
+    }
+    .offset::after {
+      color: var(--red);
+      transform: translate(3px, 2px);
+      z-index: -2;
+    }
+    .value {
+      font-size: 40px;
+      line-height: 1.3;
+      font-weight: 700;
+      letter-spacing: -.035em;
+    }
+    .intro { margin-top: 12px; color: var(--muted); }
+
+    .preview {
+      display: grid;
+      grid-template-columns: 208px 104px minmax(0, 1fr) 152px;
+      grid-template-rows: 216px;
+      align-content: start;
+      align-items: center;
+      gap: 24px;
+      margin-top: 38px;
+      padding: 16px 32px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--screen);
+    }
+    .preview dt {
+      margin-bottom: 12px;
+      color: var(--cyan);
+    }
+    .preview dd {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.6;
+    }
+    .preview dd + dd { margin-top: 8px; }
+    .preview dd span { color: var(--muted); font-size: 14px; }
+    .formats dd { font-family: var(--mono); font-weight: 700; }
+    .formats dd span { font-family: var(--body); font-weight: 400; }
+    .icon {
+      display: block;
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .flow-arrow { width: 104px; height: 24px; color: var(--cyan); }
+    .preview-visual { display: block; width: 100%; height: 216px; }
+
+    .bignum-module {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: 176px;
+      align-content: start;
+      gap: 32px;
+      padding-top: 0;
+    }
+    .bignum-item {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      border-top: 2px solid var(--line);
+    }
+    .bignum-value {
+      color: var(--red);
+      font-family: var(--mono);
+      font-size: 144px;
+      font-weight: 700;
+      line-height: .95;
+      letter-spacing: -.09em;
+    }
+    .bignum-item + .bignum-item .bignum-value { color: var(--cyan); }
+    .bignum-item h2, .workflow h3 {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .bignum-item p { margin-top: 8px; color: var(--muted); }
+
+    .workflow { padding-top: 8px; }
+    .workflow h2 {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -.035em;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: 134px;
+      align-content: start;
+      gap: 24px;
+      margin-top: 28px;
+      padding: 0;
+      list-style: none;
+    }
+    .steps li { border-top: 2px solid var(--line); padding-top: 14px; }
+    .steps h3 { display: flex; align-items: baseline; gap: 12px; }
+    .steps h3 span { color: var(--cyan); }
+    .steps p { margin-top: 10px; color: var(--muted); }
+
+    .cta { background: var(--red); color: var(--ink); }
+    .cta strong { font-size: 28px; font-weight: 700; }
+    .cta .command { display: flex; align-items: center; gap: 12px; }
+    .cta code { font-size: 18px; font-weight: 700; }
+    .footer { color: var(--muted); }
+    .signature { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:none">
+    <symbol id="document" viewBox="0 0 24 24">
+      <path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6m-6 4h6"/>
+    </symbol>
+    <symbol id="command" viewBox="0 0 24 24">
+      <path d="m4 6 6 6-6 6m9 0h7"/>
+    </symbol>
+  </svg>
+
+  <main class="poster">
+    <header class="hero">
+      <div class="masthead">
+        <p class="wordmark">zerox-onepager</p>
+        <p class="eyebrow">Agent Skill / Product Intro</p>
+      </div>
+      <h1>一页成<span class="offset" data-text="图">图</span></h1>
+      <p class="value">把文字、Markdown 和 PDF 变成可分享的海报</p>
+      <p class="intro">先提炼要讲的重点，再排进一张图里。</p>
+
+      <figure class="preview" aria-label="输入素材，生成可编辑 HTML 和可分享 PNG">
+        <dl>
+          <dt class="eyebrow">输入素材</dt>
+          <dd><svg class="icon" aria-hidden="true"><use href="#document"></use></svg>文字</dd>
+          <dd><svg class="icon" aria-hidden="true"><use href="#document"></use></svg>Markdown</dd>
+          <dd><svg class="icon" aria-hidden="true"><use href="#document"></use></svg>PDF</dd>
+        </dl>
+        <svg class="icon flow-arrow" viewBox="0 0 104 24" aria-hidden="true">
+          <path d="M2 12h96m-9-8 9 8-9 8"/>
+        </svg>
+        <svg class="preview-visual" viewBox="0 0 320 216" aria-hidden="true">
+          <rect x="11" y="7" width="298" height="202" rx="8" fill="var(--bg)" stroke="var(--line)" stroke-width="2"/>
+          <path d="M12 38h296" stroke="var(--line)" stroke-width="2"/>
+          <path d="M27 23h10m7 0h10m7 0h10" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
+          <rect x="28" y="56" width="264" height="135" rx="8" fill="var(--card)"/>
+          <path d="M48 78h106v18H48zM48 104h84v18H48z" fill="var(--cyan)"/>
+          <path d="M48 140h103m-103 12h80m-80 12h90" stroke="var(--muted)" stroke-width="2"/>
+          <path d="M176 78v90h94" fill="none" stroke="var(--line)" stroke-width="2"/>
+          <path d="M187 136h16v30h-16zM211 111h16v55h-16zM235 86h16v80h-16z" fill="var(--white)"/>
+        </svg>
+        <dl class="formats">
+          <dt class="eyebrow">生成海报</dt>
+          <dd>HTML <span>可编辑</span></dd>
+          <dd>PNG <span>可分享</span></dd>
+        </dl>
+      </figure>
+    </header>
+
+    <section class="bignum-module" aria-label="产品能力">
+      <article class="bignum-item">
+        <strong class="bignum-value">11</strong>
+        <div>
+          <h2>种设计风格</h2>
+          <p>从瑞士精密到短视频潮流</p>
+        </div>
+      </article>
+      <article class="bignum-item">
+        <strong class="bignum-value">6</strong>
+        <div>
+          <h2>个使用场景</h2>
+          <p>从产品介绍到工作汇报</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="workflow" aria-labelledby="workflow-title">
+      <h2 id="workflow-title">从内容蓝图到成图</h2>
+      <ol class="steps">
+        <li>
+          <h3><span class="eyebrow" aria-hidden="true">01</span>确认蓝图</h3>
+          <p>先定给谁看、要讲什么，再决定哪些素材值得留。</p>
+        </li>
+        <li>
+          <h3><span class="eyebrow" aria-hidden="true">02</span>挑选版式</h3>
+          <p>场景带出默认配置，尺寸、风格和密度都能调。</p>
+        </li>
+        <li>
+          <h3><span class="eyebrow" aria-hidden="true">03</span>检查成图</h3>
+          <p>检查文字对比、版面留白和裁切，再导出 PNG。</p>
+        </li>
+      </ol>
+    </section>
+
+    <div class="cta">
+      <strong>用你的素材做一张</strong>
+      <div class="command">
+        <svg class="icon" aria-hidden="true"><use href="#command"></use></svg>
+        <code>/zerox-onepager</code>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p class="eyebrow">本图配置 · S1 / A4 / B10 / C2 / T4</p>
+      <p class="signature">Zerox</p>
+    </footer>
+  </main>
+</body>
+</html>
