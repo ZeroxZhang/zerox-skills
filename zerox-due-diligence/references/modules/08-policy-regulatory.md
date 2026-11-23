@@ -1,6 +1,6 @@
 # 08 政策与监管
 
-通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。
+通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。制裁和出口管制名单只在跨境、制裁、授信、供应商或并购投资问题触发后列入计划，触发本身不是已经完成筛查。
 
 ## 核心问题
 

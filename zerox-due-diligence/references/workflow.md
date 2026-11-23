@@ -92,7 +92,7 @@
 1. 用 `init_project.py` 在技能包外新建工作区；品牌目标加 `--target-type brand`。目标、目的、日期写入配置，关键问题写入 `key_questions`。`scoring_enabled` 默认 false；公司研究和目的未定不评分。
 2. `entity-map.csv` 一行一实体；多层/多关系用 `entity-relations.csv` 一行一边。公司、品牌等身份 resolved 需注册号（品牌用商标注册号，分部用可核验内部标识）与证据；自然人仅作关联角色，以公开身份依据及 identity_notes 核实，不填写个人证件号码，详见品牌追溯方法；待核实关系可保留未知的 effective_from，作为线索登记；关系 verified 仍需证据和真实生效日期。未知起日不会被当作确认的经营或控制关系。区间采用 `[effective_from, effective_to)`，终止日即不再控制；拟议交易不算已控制。品牌角色关系的方向是“主体 → 品牌”，含义见[从品牌到公司](brand-to-company.md)。
 3. `control_chain_checked` 与 `control_evidence_ids` 记录核验依据，不能靠一次无结果自动勾选。登记事件、行业词、语言和模块适用性；用 `sync-coverage` 预建必要类别与缺口。
-4. `search_plan.py` 输出计划后再实际检索，成功/未找到/失败分别写入 `search-log.csv`。未执行计划不能作为执行日志。
+4. `search_plan.py` 输出计划后再实际检索，成功/未找到/失败分别写入 `search-log.csv`。计划含按问题选择的来源能力任务和必要的反证任务，未执行计划不能作为执行日志。预算没排上的来源保持未执行，不写成无风险。
 5. 原件存 `materials/` 或授权定位；真实图片建议存 `materials/images/`，记录可用原页URL或本地材料出处、本次取得/读取日期与使用范围。证据和声明通过关联表连接。互相引用的数据用批量 JSON 一次校验写入；每次更新保留 `.ledger-backup-*`，多文件写入非数据库事务，中断时从完整快照恢复。
 6. 模块结论写入 `modules/01-名称.md` 等；资料请求和访谈围绕开放缺口定制。估算写入 `estimates/`，用 `triangulate.py` 计算；财务计算按需运行。专项启用评分前，确认 `scoring_override` 的项目权重和关键维度。
 7. 按[报告设计](report-design.md)编辑 `report-content.json`，用 `build_report.py --project <工作区> --content <工作区>/report-content.json --output <工作区>/reports/report.html` 生成离线 HTML 和同目录 `report-audit.md`。

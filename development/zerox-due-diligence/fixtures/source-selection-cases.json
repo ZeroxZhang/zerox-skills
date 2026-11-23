@@ -1,0 +1,171 @@
+{
+  "notice": "合成场景，只用于离线测试来源选择。不对应真实公司，不含证据，也不表示任何外部来源已被访问或接通。",
+  "cases": [
+    {
+      "id": "domestic_consumer",
+      "init": {"target": "合成饮品甲", "geography": "中国大陆", "purpose": "company_research"},
+      "focus": "消费者零售与门店口碑",
+      "questions": ["用户评价集中在哪些问题？"],
+      "expect_roles": {
+        "cn.gsxt": "discover",
+        "social.weibo.official": "social",
+        "social.wechat.official_account": "social",
+        "cn.local_registry_credit": "fallback"
+      },
+      "expect_absent": ["us.ofac.sdn", "social.reddit", "social.maimai", "social.x", "social.douyin"],
+      "expect_deferred": ["social.xiaohongshu", "social.douyin"],
+      "expect_counterevidence": true,
+      "expect_notes": ["sanctions_not_triggered"]
+    },
+    {
+      "id": "overseas_product",
+      "init": {"target": "合成产品乙", "geography": "美国", "purpose": "company_research"},
+      "focus": "面向消费者的产品",
+      "questions": ["公开评价在说什么？"],
+      "expect_roles": {
+        "us.state_company_registry": "discover",
+        "reviews.global_consumer": "deepen",
+        "social.reddit": "social"
+      },
+      "expect_absent": ["cn.gsxt", "social.weibo.official", "social.douyin", "us.ofac.sdn"],
+      "expect_deferred": ["social.youtube"],
+      "expect_counterevidence": true,
+      "expect_notes": ["sanctions_not_triggered"]
+    },
+    {
+      "id": "b2b_tech",
+      "init": {"target": "合成软件丙", "geography": "美国", "purpose": "company_research"},
+      "focus": "企业软件与开发者工具",
+      "questions": ["专利和公开代码能否相互对照？"],
+      "expect_roles": {
+        "us.state_company_registry": "discover",
+        "ip.uspto_epo": "deepen",
+        "social.linkedin.public": "social"
+      },
+      "expect_absent": ["social.weibo.official", "social.xiaohongshu", "social.douyin", "social.maimai"],
+      "expect_deferred": ["reviews.b2b_software", "tech.public_code"],
+      "expect_counterevidence": true,
+      "expect_notes": ["sanctions_not_triggered"]
+    },
+    {
+      "id": "listed_company",
+      "init": {
+        "target": "合成上市丁",
+        "geography": "中国大陆",
+        "purpose": "company_research",
+        "listing_status": "listed",
+        "exchange": "合成交易所",
+        "security_code": "SYN001"
+      },
+      "focus": "定期报告",
+      "questions": ["最新定期报告覆盖哪些收入口径？"],
+      "expect_roles": {
+        "cn.gsxt": "discover",
+        "cn.sse": "discover",
+        "cn.cninfo": "fallback"
+      },
+      "expect_absent": ["social.weibo.official", "us.ofac.sdn"],
+      "expect_deferred": ["professional.cn_research_terminals"],
+      "expect_counterevidence": false,
+      "expect_notes": ["social_not_triggered", "sanctions_not_triggered"]
+    },
+    {
+      "id": "controversy",
+      "init": {"target": "合成公司戊", "geography": "中国大陆", "purpose": "company_research"},
+      "focus": "产品质量",
+      "questions": ["是否存在行政处罚？"],
+      "expect_roles": {"cn.court.public_records": "deepen"},
+      "expect_absent": ["us.ofac.sdn", "social.weibo.official", "social.douyin"],
+      "expect_deferred": ["cn.regulator_portals"],
+      "expect_counterevidence": true,
+      "expect_notes": ["social_not_triggered", "sanctions_not_triggered"]
+    },
+    {
+      "id": "sanctions_screen",
+      "init": {"target": "合成公司己", "geography": "中国大陆", "purpose": "supplier"},
+      "focus": "供应商准入",
+      "questions": ["限制名单是否命中？"],
+      "expect_roles": {"us.ofac.sdn": "deepen", "cn.court.public_records": "deepen"},
+      "expect_absent": ["social.weibo.official"],
+      "expect_deferred": ["un.sc.consolidated", "eu.fsf.consolidated"],
+      "expect_counterevidence": true,
+      "expect_notes": ["social_not_triggered"]
+    },
+    {
+      "id": "profile_geography_mismatch",
+      "init": {"target": "合成公司庚", "geography": "美国", "purpose": "company_research"},
+      "focus": "消费品",
+      "questions": ["谁在销售？"],
+      "profile": "domestic_consumer",
+      "expect_roles": {},
+      "expect_absent": ["cn.gsxt", "social.weibo.official", "us.state_company_registry"],
+      "expect_deferred": [],
+      "expect_counterevidence": false,
+      "expect_notes": ["profile_geography_mismatch"]
+    },
+    {
+      "id": "budget_zero",
+      "init": {"target": "合成公司辛", "geography": "中国大陆", "purpose": "company_research"},
+      "focus": "消费者零售",
+      "questions": ["门店评价如何？"],
+      "budgets": {
+        "max_discover_tasks": 0,
+        "max_deepen_tasks": 0,
+        "max_social_tasks": 0,
+        "max_capability_tasks": 0
+      },
+      "expect_roles": {},
+      "expect_absent": ["cn.gsxt", "social.weibo.official"],
+      "expect_deferred": ["cn.gsxt", "social.weibo.official"],
+      "expect_counterevidence": false,
+      "expect_notes": ["counterevidence_deferred"]
+    },
+    {
+      "id": "exclude_primary",
+      "init": {"target": "合成饮品甲", "geography": "中国大陆", "purpose": "company_research"},
+      "focus": "消费者零售",
+      "questions": ["评价如何？"],
+      "exclude": ["cn.gsxt"],
+      "expect_roles": {"cn.trademark": "discover"},
+      "expect_absent": ["cn.gsxt"],
+      "expect_deferred": ["cn.local_registry_credit"],
+      "expect_counterevidence": true,
+      "expect_notes": ["sanctions_not_triggered"]
+    },
+    {
+      "id": "include_untriggered",
+      "init": {"target": "合成公司壬", "geography": "中国大陆", "purpose": "company_research"},
+      "focus": "一般经营",
+      "questions": ["主体是谁？"],
+      "include": ["us.ofac.sdn"],
+      "expect_roles": {"cn.gsxt": "discover", "us.ofac.sdn": "include"},
+      "expect_absent": ["social.weibo.official"],
+      "expect_deferred": [],
+      "expect_counterevidence": false,
+      "expect_notes": ["sanctions_not_triggered"]
+    },
+    {
+      "id": "geography_unspecified",
+      "init": {"target": "合成公司癸", "geography": "", "purpose": "company_research"},
+      "focus": "",
+      "questions": ["它做什么？"],
+      "expect_roles": {},
+      "expect_absent": ["cn.gsxt", "us.ofac.sdn", "social.weibo.official"],
+      "expect_deferred": [],
+      "expect_counterevidence": false,
+      "expect_notes": ["geography_unspecified"]
+    },
+    {
+      "id": "brand_registration_depends_on_resolution",
+      "init": {"target": "合成品牌子", "target_type": "brand", "geography": "中国大陆", "purpose": "company_research"},
+      "focus": "消费者零售",
+      "questions": ["谁经营？"],
+      "expect_roles": {"cn.gsxt": "discover", "cn.trademark": "discover"},
+      "expect_absent": ["us.ofac.sdn"],
+      "expect_deferred": ["social.xiaohongshu"],
+      "expect_counterevidence": true,
+      "expect_notes": ["sanctions_not_triggered"],
+      "expect_depends": {"cn.gsxt": ["brand:ENT-0001:resolution"]}
+    }
+  ]
+}

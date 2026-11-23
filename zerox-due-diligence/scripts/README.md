@@ -22,7 +22,7 @@ python3 scripts/init_project.py --output /tmp/dd-brand --target "品牌名" --ta
 
 `identity_status=resolved` 要与实体台账一致；`control_chain_checked=true` 和 `control_evidence_ids` 需实证。关系表记录多条边；待核实边允许 effective_from 为空，verified 则须真实生效日期与证据。有效区间为左闭右开，proposed 不等于已交割。品牌角色关系 `trademark_holder/operator/brand_of/licensee/manufacturer/distributor` 的下层（child）须为品牌或业务单元；主体角色、自然人权利人和子品牌例外统一见[从品牌到公司](../references/brand-to-company.md)。前三种参与相关主体的控制链检索；商标归属与经营控制分开解释，授权、生产和经销不构成控制。`category_exemptions` 仅可用于制度不适用或尚无相应期的官方中期材料，必须说明依据；不能豁免难取得的研报。
 
-旧配置缺少新增字段时只读补默认（评分关闭、范围审核为空、关键问题为空），不自动重写文件。数据契约 1.0.0 的工作区可以继续使用。旧项目要重新声明完成或发布评分，应按当前规则复核。
+旧配置缺少新增字段时只读补默认（评分关闭、范围审核为空、关键问题为空、来源选择使用模板预算），不自动重写文件。数据契约 1.0.0 的工作区可以继续使用。旧项目要重新声明完成或发布评分，应按当前规则复核。
 
 `report_status` 为 draft/limited/complete；complete 只表示约定研究范围完成，需 `completion_review` 复核。`research_gate` 独立记录研报资料覆盖，仍有未读或未取得资料时保持 partial/incomplete。`declared_complete` 更严格，表示全部工作完成，有开放缺口或计划动作时不得设为 true。`last_refresh_at` 是实际最后复查的带时区时间。`published_score` 仅记录经检查可发布的实际总分。
 
@@ -34,7 +34,15 @@ python3 scripts/init_project.py --output /tmp/dd-brand --target "品牌名" --ta
 python3 scripts/search_plan.py --project /tmp/dd-example --output /tmp/dd-plan.json
 ```
 
-计划按优先级排列：未回答的关键问题、关键声明与开放缺口的核验、官网基础阅读（含网页存档）、品牌追溯（`brand_trace`，仅品牌目标）与品牌层信号（`brand_signal`）、管理层言行追踪（`guidance_tracking`，上市主体另含业绩说明会与互动平台），最后是按模块、别名和语言展开的候选关键词、研报滚动时间窗与事件后检索。`deferred` 与 `not_applicable` 模块不生成候选关键词。所有任务都是 not_executed，不会写搜索日志；Agent 实际访问后另填 `search-log.csv`，发现新问题再更新计划。
+计划按优先级排列：未回答的关键问题、关键声明与开放缺口的核验、官网基础阅读（含网页存档）、品牌追溯（`brand_trace`，仅品牌目标）与品牌层信号（`brand_signal`）、管理层言行追踪（`guidance_tracking`，上市主体另含业绩说明会与互动平台），然后是按问题、主体和地域选择的来源能力任务，最后才是按模块、别名和语言展开的候选关键词、研报滚动时间窗与事件后检索。`deferred` 与 `not_applicable` 模块不生成候选关键词；没有问题信号的能力任务也同样跳过。所有任务都是 not_executed，不会写搜索日志；Agent 实际访问后另填 `search-log.csv`，发现新问题再更新计划。
+
+`source_selection` 可选。缺省时按辖区和问题自动选择，并使用模板里的预算：发现 3、深化 2、社交 2、能力任务合计 8。`profile` 可指定 `domestic_consumer`、`overseas_product`、`b2b_tech`、`listed_company` 或 `controversy`；`social` 为 auto/on/off。`include_capability_ids` 会额外列入并保持未执行，`exclude_capability_ids` 会移除。放不下的来源出现在计划的 `deferred`，不是已检索。目录核验日期不是本次访问。旧项目没有该字段时，读取会补上默认值且不改写文件。校验登记本身：
+
+```bash
+python3 scripts/source_registry.py --validate
+```
+
+该命令只检查本地 JSON，不访问网络，也不表示所列来源当前可用。社交和评价的读取边界见[社交证据](../references/sources/social-evidence.md)。
 
 ## 估算与三角验证
 

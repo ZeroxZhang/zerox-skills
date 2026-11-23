@@ -3,6 +3,7 @@ import argparse
 from datetime import timedelta
 
 from common import CONTRACT, cli, emit, iso_date, listed_entities, project_events, read_project, requirements
+from source_registry import build_source_plan
 
 
 MODULE_TERMS = {
@@ -251,8 +252,10 @@ def plan(cfg, data):
     listed, _ = listed_entities(cfg, data)
     # 顺序即优先级：约定的关键问题与核验任务，其次官网与品牌追溯，再是管理层言行与泛化候选。
     # 官网基础阅读独立于模块裁剪；栏目不存在不等于已完成其他页面的阅读。
+    source_plan = build_source_plan(cfg, data)
+    # 能力任务按问题、主体和辖区裁剪，插在泛化关键词之前；它们仍是未执行计划。
     tasks = (question_tasks(cfg, data) + verification_tasks(cfg, data) + official_site_tasks(cfg, data)
-             + brand_tasks(cfg, data) + statement_tasks(cfg, data, listed))
+             + brand_tasks(cfg, data) + statement_tasks(cfg, data, listed) + source_plan["tasks"])
     for entity in data["entity-map"]:
         aliases = [entity["legal_name"], *(entity["aliases"] or [])]
         if entity["security_code"]:
@@ -295,9 +298,10 @@ def plan(cfg, data):
                       "source": "官方公告/事件后券商研究", "goal": "未找到事件后报告则登记覆盖滞后"})
     return {"type": "plan_only", "target": cfg["target"], "as_of_date": cfg["as_of_date"],
             "listed_entities": listed, "network": cfg["constraints"]["network"], "tasks": tasks,
+            "source_selection": source_plan["summary"],
             "estimation_note": "未披露的规模、营收或份额若影响关键问题，按 references/estimation-triangulation.md 用至少两种独立方法估算区间，结果标为【推断】。",
-            "stop_rule": "按约定核心问题审核证据、重大冲突和剩余缺口；研报检索须真实执行，资料取得不足保持原状态。关键问题仍不可判则受限，不能靠缩小范围宣称完成。",
-            "warning": "此输出不是检索记录，未访问任何外部来源。"}
+            "stop_rule": "按约定核心问题审核证据、重大冲突和剩余缺口；研报检索须真实执行，资料取得不足保持原状态。关键问题仍不可判则受限，不能靠缩小范围宣称完成。来源能力任务另有预算和触发条件，未选项不能写成已检索或无风险。",
+            "warning": "此输出不是检索记录，未访问任何外部来源。source_capability 任务同样尚未执行；能力登记里的核验日期不是本次访问。"}
 
 
 def main():

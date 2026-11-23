@@ -85,7 +85,9 @@ def build(project, output, sections=None, overwrite=False):
     gate = research_gate(cfg, data)
     gate_name = CONTRACT["research"]["status_names"][gate]
     score = project_score(cfg, data)
+    from source_registry import search_log_preamble
     limits = "离线材料分析；未执行在线补查。" if cfg["constraints"]["network"] == "offline" else "工具能力和访问范围以实际检索记录为准。"
+    limits += "重大缺口见信息缺口表；独立印证看来源是否分别形成，并使用同源组，不看来源类型本身。"
     if gate in ("partial", "incomplete"):
         limits += " 研报资料覆盖仍有缺口；具体结论及研究范围是否完成，以证据和缺口影响复核为准。"
     legal_name = next(r["legal_name"] for r in data["entity-map"] if r["entity_id"] == cfg["target_id"])
@@ -139,7 +141,7 @@ def build(project, output, sections=None, overwrite=False):
                           [("reference", "引用"), ("source_id", "来源"), ("entity_id", "主体"), ("scope", "范围"), ("attribute", "数据属性"), ("locator", "定位"), ("excerpt", "短摘录/释义"), ("limitations", "限制")])
                     + "\n\n" + table(data["source-register"], [("source_id", "来源"), ("title", "标题"), ("locator", "URL/本地文件"), ("published_date", "发布日期"), ("accessed_date", "访问日"), ("origin_group", "同源组"), ("access_status", "取得状态"), ("time_scope", "时点范围")]),
         "research_appendix": table(data["research-register"], [("research_id", "报告"), ("title", "标题"), ("publisher", "机构"), ("report_date", "发布日期"), ("categories", "类别"), ("access_status", "获取"), ("reading_status", "阅读"), ("relevant_sections", "目标章节"), ("interests", "利益披露"), ("key_views", "观点"), ("assumptions", "假设"), ("decision_impact", "对本项目影响"), ("limitations", "局限")]),
-        "searches": table(data["search-log"], [("search_id", "检索"), ("searched_at", "时间"), ("channel", "渠道"), ("query", "查询"), ("status", "结果"), ("limitations", "覆盖限制")]),
+        "searches": search_log_preamble(data["search-log"]) + table(data["search-log"], [("search_id", "检索"), ("searched_at", "时间"), ("channel", "渠道"), ("query", "查询"), ("status", "结果"), ("limitations", "覆盖限制")]),
         "limitations": limits + "\n\n结构检查不能证明事实真实。公开资料研究、待执行访谈与实际完成的专业核查分别记录。",
     }
     modules = []

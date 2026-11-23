@@ -33,7 +33,7 @@ description: 全面研究一家公司或品牌如何经营、赚钱、竞争和�
 ## 执行步骤
 
 1. [init_project.py](scripts/init_project.py) 在技能包外新建工作区；品牌目标加 `--target-type brand`。把关键问题写入 `key_questions`。
-2. 锁定实体与有效控制关系（品牌先完成追溯），登记重大事件，运行 [sync-coverage](scripts/evidence_ledger.py)。用 [search_plan.py](scripts/search_plan.py) 生成计划：关键问题、核验任务、官网、品牌追溯、管理层言行与候选检索依次排列；计划不等于执行。
+2. 锁定实体与有效控制关系（品牌先完成追溯），登记重大事件，运行 [sync-coverage](scripts/evidence_ledger.py)。用 [search_plan.py](scripts/search_plan.py) 生成计划：关键问题、核验任务、官网、品牌追溯、管理层言行、按问题选择的来源能力任务，然后才是候选检索。能力登记不是已连接的数据库；所有任务在实际访问前都是未执行。
 3. 先直接阅读官网相关页面，再取得登记、披露、财报、监管司法和业务原件，执行触发的研报流程，真实记录访问与阅读。按模块01–03建立公司画像与业务机制，补查营收盈利、营销与品牌、竞品；其他模块按适用性加载，行业差异见[行业适配](references/industry-adapters.md)。
 4. 对每个关键问题比较当前解释与替代解释，寻找能区分它们的证据；处理同源、预测、范围与冲突。财务计算用 [financial_ratios.py](scripts/financial_ratios.py)，未披露规模用 [triangulate.py](scripts/triangulate.py)。
 5. 分开评价业务、风险与证据。公司研究不评分；专项需要比较时才按[评分框架](references/scoring-framework.md)启用。决策部分对照有来源的主流看法说明判断与依据；一致时说明为何同意，不强造分歧。
@@ -65,6 +65,6 @@ description: 全面研究一家公司或品牌如何经营、赚钱、竞争和�
 ## 支持文件
 
 - 方法：[从品牌到公司](references/brand-to-company.md)、[估算与三角验证](references/estimation-triangulation.md)、[行业适配](references/industry-adapters.md)、[评分框架](references/scoring-framework.md)。
-- 来源：[来源策略](references/sources/source-strategy.md)、[中国及港澳](references/sources/sources-china.md)、[海外](references/sources/sources-global.md)、[研报方法](references/sources/broker-research-guide.md)、[访谈方法](references/sources/interview-guide.md)。
+- 来源：[来源策略](references/sources/source-strategy.md)、[能力登记](references/sources/source-capabilities.json)、[社交证据](references/sources/social-evidence.md)、[中国及港澳](references/sources/sources-china.md)、[海外](references/sources/sources-global.md)、[研报方法](references/sources/broker-research-guide.md)、[访谈方法](references/sources/interview-guide.md)。
 - 示例：[虚构品牌的完整示范](examples/README.md)，演示品牌追溯、估算区间和部分未知的写法。
 - 工具：[CLI 用法与退出码](scripts/README.md)；Python 3.10+、仅标准库。无代码环境时按契约人工处理，并说明自动检查未执行；未取得资料或未执行工作不得宣称完成。

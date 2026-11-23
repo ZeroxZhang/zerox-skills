@@ -5,6 +5,7 @@ from pathlib import Path
 
 from common import (InputError, brand_resolution, cli, completion_errors, emit, finite, indices, iso_time, load_json,
                     read_project, research_errors, research_gate, semantic_errors, structural_errors)
+from source_registry import search_log_warnings, summarize_search_log
 from scoring import project_score
 from report_model import READER_TOPICS
 from triangulate import project_estimates
@@ -37,6 +38,7 @@ MANUAL_REVIEW = [
     "完成审核对照最初约定的核心问题；不得事后缩小范围、降低缺口重大性或把关键未知改成非关键来取得完成状态。",
     "核验关键解释的竞争性解释、区分证据及改判条件；资料覆盖和来源数量不能代替假设检验。",
     "抽样说明总体、选样方、覆盖期间和异常/流失样本；便利样本和未响应不能被外推为总体。",
+    "来源能力登记不是已检索清单。核对实际检索日志里已检索、已取得、不可访问和未执行的区别；社交或争议门禁只在触发后适用，不要求每个平台都有记录。负向样本占比不是客户不满率，没有结果不是没有风险。",
 ]
 
 
@@ -170,6 +172,8 @@ def check(project=None, report=None, mode="draft"):
             warnings.append(f"来源 {[r['source_id'] for r in rows]} 定位相同但同源组不同；核对是否重复登记，合并或统一 origin_group")
     if gate in ("partial", "incomplete"):
         warnings.append("研报资料覆盖未满足；须保留缺口与判断限制，约定研究范围是否完成另由 completion_review 核验")
+    source_execution = summarize_search_log(data["search-log"])
+    warnings.extend(search_log_warnings(data["search-log"]))
     # 如存在财务结果输入，验证证据 ID；空模板允许留在项目内。
     financial = Path(project) / "financial-input.json"
     if financial.exists():
@@ -195,6 +199,7 @@ def check(project=None, report=None, mode="draft"):
     return {"status": "invalid" if errors else "structure_passed", "errors": errors, "warnings": warnings,
             "research_gate": gate, "score": score, "manual_review": MANUAL_REVIEW,
             "brand_resolution": brand,
+            "source_execution": source_execution,
             "key_questions": [{k: q[k] for k in ("kq_id", "question", "status")} for q in cfg["key_questions"]],
             "visual_review": visual_review,
             "reading_review": {"status": "requires_independent_reading",

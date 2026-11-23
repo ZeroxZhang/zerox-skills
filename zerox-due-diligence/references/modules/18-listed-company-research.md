@@ -7,7 +7,7 @@
 - **M18-03**：分开官方事实、公司指引、券商预测与本项目判断；检验关键假设，不以机构评级替代分析。
 - **M18-04**：保留最新发现/全文/已读三个指针、目标相关章节、利益披露和覆盖缺口。
 
-通用口径、同源、反证、冲突与缺失规则沿用[证据标准](../evidence-standard.md)，合法替代路径见[来源策略](../sources/source-strategy.md)。本模块的 `research_gate` 只表示资料获取阅读覆盖；约定范围是否完成另按[质量门槛](../quality-gates.md)复核。
+通用口径、同源、反证、冲突与缺失规则沿用[证据标准](../evidence-standard.md)，合法替代路径见[来源策略](../sources/source-strategy.md)。交易所和披露入口按上市地从[来源能力登记](../sources/source-capabilities.json)选择；付费终端未接入时保持未接入，计划任务不是已读全文。本模块的 `research_gate` 只表示资料获取阅读覆盖；约定范围是否完成另按[质量门槛](../quality-gates.md)复核。
 
 ## 专门流程
 

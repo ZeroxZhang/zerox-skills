@@ -19,7 +19,7 @@
 
 `branch-tea/` 是完整示例工作区：十三张台账、项目配置、七份合成原材料、七个适用模块底稿、估算输入、报告内容、HTML 和独立底稿。其他模块按约定范围标为 `deferred`，上市研报在合成设定下不适用。未提供实际财务数据，所以没有运行财务比率或把估算收入填入财务输入。
 
-各来源的 `origin_group` 用来演示不同形成路径；它们全部出自本示例作者，**不证明现实中的来源独立性**。`resolved`、`verified` 和 `actual` 等字段只表示合成场景内的角色与记录类型，不能当作真实外部核验。搜索日志只记录读取包内材料，没有声称真实联网、访谈、现场或审计。
+各来源的 `origin_group` 用来演示不同形成路径；它们全部出自本示例作者，**不证明现实中的来源独立性**。`resolved`、`verified` 和 `actual` 等字段只表示合成场景内的角色与记录类型，不能当作真实外部核验。搜索日志只记录读取包内材料，没有声称真实联网、访谈、现场或审计。来源能力登记和其中的平台名单也没有在本示例里执行。
 
 ### 重建与检查
 
@@ -57,7 +57,7 @@ The example demonstrates four practices:
 
 `branch-tea/` is a complete sample workspace: thirteen ledgers, configuration, seven synthetic source documents, seven applicable module workpapers, an estimate, report content, HTML and the audit workpaper. Other modules are explicitly `deferred`; listed-company research is inapplicable within the fictional setup. There are no actual financial statements, so no financial ratios are calculated and estimated revenue is not inserted as financial input.
 
-The `origin_group` values demonstrate distinct hypothetical source paths. Every source was written by the example author, so **they do not establish real-world independence**. Statuses such as `resolved`, `verified` and `actual` apply only inside the fixture. Search logs record local file reading, not real web research, interviews, site visits or audits.
+The `origin_group` values demonstrate distinct hypothetical source paths. Every source was written by the example author, so **they do not establish real-world independence**. Statuses such as `resolved`, `verified` and `actual` apply only inside the fixture. Search logs record local file reading, not real web research, interviews, site visits or audits. The source capability registry and its platform list were not executed for this example.
 
 ### Rebuild and check
 

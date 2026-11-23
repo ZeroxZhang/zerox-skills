@@ -1,6 +1,6 @@
 # 15 风险与红旗
 
-通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。
+通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。没有检索结果不是没有风险。社交和投诉样本只在问题触发后使用，负向占比不能写成客户不满率。
 
 ## 核心问题
 

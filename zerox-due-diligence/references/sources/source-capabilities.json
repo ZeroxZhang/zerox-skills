@@ -1,0 +1,4474 @@
+{
+  "registry_version": "1.0.0",
+  "catalog_note": "这是来源系统的能力登记，不是项目里的 source-register。它不证明本仓库已连接、已检索或已验证任何公司。verification 只保留既有目录里记录过的入口检查；没有做过的检查保持未执行。",
+  "grade_rule": "能力登记不分配 S、A、B、C、D。来源等级只在项目 source-register 里按具体文件评定；所有权形式和证据适用性都不能单独决定真伪。",
+  "distinct_from": "source-register",
+  "vocabulary": {
+    "ownership_form": [
+      "official_registry",
+      "official_disclosure",
+      "official_regulator",
+      "official_court",
+      "official_statistics",
+      "international_organization",
+      "professional_database",
+      "professional_research",
+      "company_owned",
+      "media",
+      "social_platform",
+      "user_review",
+      "employee_discussion",
+      "commercial_estimate",
+      "web_archive"
+    ],
+    "evidence_applicability": [
+      "identity_registration",
+      "control_filing",
+      "securities_disclosure",
+      "financial_statement",
+      "legal_proceeding",
+      "sanction_list_hit",
+      "export_control_hit",
+      "intellectual_property",
+      "regulatory_action",
+      "market_statistic",
+      "professional_opinion",
+      "company_statement",
+      "user_report",
+      "employee_statement",
+      "attention_index",
+      "sales_estimate",
+      "media_report"
+    ],
+    "access_kind": [
+      "official_api",
+      "browser_public",
+      "authorized_login",
+      "paid_terminal",
+      "user_material"
+    ],
+    "access_available": [
+      "reported_entry",
+      "documented_untested",
+      "public_entry_unverified",
+      "user_supplied",
+      "not_available"
+    ],
+    "maturity": [
+      "catalog_only",
+      "entry_recorded",
+      "not_connected"
+    ],
+    "verification_result": [
+      "not_executed",
+      "entry_read",
+      "access_blocked",
+      "timeout",
+      "empty_body",
+      "not_connected"
+    ],
+    "verification_depth": [
+      "none",
+      "homepage_or_entry",
+      "service_navigation"
+    ],
+    "lane": [
+      "discover",
+      "deepen",
+      "counterevidence",
+      "reference_only"
+    ],
+    "profile": [
+      "general",
+      "domestic_consumer",
+      "overseas_product",
+      "b2b_tech",
+      "listed_company",
+      "controversy"
+    ],
+    "geography": [
+      "CN",
+      "HK",
+      "MO",
+      "US",
+      "GB",
+      "SG",
+      "EU",
+      "UN",
+      "global"
+    ],
+    "research_use": [
+      "identity",
+      "registration",
+      "control",
+      "securities_filing",
+      "financials",
+      "legal_case",
+      "sanction_screen",
+      "export_control",
+      "intellectual_property",
+      "regulatory",
+      "procurement",
+      "market_stat",
+      "professional_opinion",
+      "company_statement",
+      "social_official",
+      "user_review",
+      "employee_discussion",
+      "attention_index",
+      "sales_estimate",
+      "media_report",
+      "brand_trace",
+      "guidance",
+      "funding"
+    ]
+  },
+  "sources": [
+    {
+      "capability_id": "cn.gsxt",
+      "name": "国家企业信用信息公示系统",
+      "operator": "市场监管总局及登记机关",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "identity",
+        "registration",
+        "control"
+      ],
+      "coverage": "主体登记、年报和经营异常等公示。申报内容不等于机关已核验全部事实。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "identity_registration",
+        "control_filing"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "不含完整受益所有人。公示系统可能验证或限流。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.gsxt.gov.cn/",
+          "notes": "公开查询入口。2026-10-20 这次检查返回 403，本仓库没有连接器。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "access_blocked",
+        "detail": "2026-10-20 访问返回 403，入口正文未读。该记录不是任何目标公司检索。",
+        "blockers": [
+          "http_403"
+        ]
+      },
+      "fallback_capability_id": "cn.local_registry_credit",
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 10,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.local_registry_credit",
+      "name": "信用中国与地方市场监管公示",
+      "operator": "信用中国及地方登记或监管机关",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "identity",
+        "registration",
+        "regulatory"
+      ],
+      "coverage": "信用公示、地方登记和行政处罚线索。覆盖和撤下规则不统一。",
+      "ownership_form": "official_regulator",
+      "evidence_applicability": [
+        "identity_registration",
+        "regulatory_action"
+      ],
+      "applicability_note": "主管机关公开信息只覆盖其发布范围，没有检索结果不能推断没有监管问题。",
+      "evidence_limits": "不能代替国家企业信用信息公示系统的登记原件，也不是完整征信。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按机关全称查找正式公示入口。本仓库未做入口核验。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 70,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.commercial_registry_aggregators",
+      "name": "企查查、天眼查、启信宝、爱企查",
+      "operator": "各商业信息机构",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "identity",
+        "registration",
+        "legal_case"
+      ],
+      "coverage": "工商、司法和股权关系的聚合线索。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "identity_registration",
+        "legal_proceeding"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "聚合页不是登记或裁判原件。付费层级、同名和滞后都要单列。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按产品正式名称查找其合法站点。本仓库未核验入口，也未登录。"
+        },
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "cn.gsxt",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 85,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.court.public_records",
+      "name": "中国裁判文书、执行公开与法院公告",
+      "operator": "最高人民法院及各法院",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "legal_case"
+      ],
+      "coverage": "公开裁判、执行和公告中的案件状态。",
+      "ownership_form": "official_court",
+      "evidence_applicability": [
+        "legal_proceeding"
+      ],
+      "applicability_note": "司法公开记录只覆盖当时可检索的案件和状态，撤下、不公开和同名都要单独处理。",
+      "evidence_limits": "不公开、撤下、匿名和仲裁保密都不等于没有争议。同名必须先消歧。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "从法院或公开司法平台的正式入口进入。本仓库未执行检索。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "legal_trigger"
+        ],
+        "priority": 20,
+        "social": false,
+        "module": "13",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.regulator_portals",
+      "name": "税务、市监、生态环境、海关、网信、工信等主管机关",
+      "operator": "对应行政机关",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "regulatory"
+      ],
+      "coverage": "许可、处罚、政策和公开信用信息。按行为发生地选择机关。",
+      "ownership_form": "official_regulator",
+      "evidence_applicability": [
+        "regulatory_action"
+      ],
+      "applicability_note": "主管机关公开信息只覆盖其发布范围，没有检索结果不能推断没有监管问题。",
+      "evidence_limits": "纳税申报和完整许可档案通常不公开。信用等级不能反推收入。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按机关名称和文号查找正式发布。本仓库未逐一核验入口。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "legal_trigger"
+        ],
+        "priority": 27,
+        "social": false,
+        "module": "08",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.sse",
+      "name": "上海证券交易所",
+      "operator": "上海证券交易所",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "securities_filing",
+        "financials"
+      ],
+      "coverage": "定期报告、临时公告、债券和上市审核披露。",
+      "ownership_form": "official_disclosure",
+      "evidence_applicability": [
+        "securities_disclosure",
+        "financial_statement"
+      ],
+      "applicability_note": "法定披露形式只覆盖该文件写明的主体、期间和口径，未读全文不能当成已核验。",
+      "evidence_limits": "首页或栏目可读不代表所需全文已经取得。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.sse.com.cn/",
+          "notes": "2026-10-20 已读首页和公告入口，没有读取任何公司全文。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "entry_read",
+        "detail": "2026-10-20 已读取首页与公告入口，不代表公告全文可取得。",
+        "blockers": []
+      },
+      "fallback_capability_id": "cn.cninfo",
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 11,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.szse",
+      "name": "深圳证券交易所",
+      "operator": "深圳证券交易所",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "securities_filing",
+        "financials"
+      ],
+      "coverage": "定期报告、临时公告和上市审核披露。",
+      "ownership_form": "official_disclosure",
+      "evidence_applicability": [
+        "securities_disclosure",
+        "financial_statement"
+      ],
+      "applicability_note": "法定披露形式只覆盖该文件写明的主体、期间和口径，未读全文不能当成已核验。",
+      "evidence_limits": "2026-10-20 的入口失败不能写成该所不可用，也不能写成已经读过公告。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.szse.cn/",
+          "notes": "该 URL 是 2026-10-20 尝试的入口，当次没有取得有效正文。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "access_blocked",
+        "detail": "2026-10-20 访问失败，入口待验证。",
+        "blockers": [
+          "entry_unreachable"
+        ]
+      },
+      "fallback_capability_id": "cn.cninfo",
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 12,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.cninfo",
+      "name": "巨潮资讯",
+      "operator": "巨潮资讯平台",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "securities_filing",
+        "financials"
+      ],
+      "coverage": "上市公司法定披露文件的集中入口。",
+      "ownership_form": "official_disclosure",
+      "evidence_applicability": [
+        "securities_disclosure",
+        "financial_statement"
+      ],
+      "applicability_note": "法定披露形式只覆盖该文件写明的主体、期间和口径，未读全文不能当成已核验。",
+      "evidence_limits": "超时只说明那次访问没有完成。使用时仍要和交易所或发行人原文核对。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.cninfo.com.cn/",
+          "notes": "2026-10-20 访问超时，本仓库没有连接器。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "timeout",
+        "detail": "2026-10-20 访问超时，不能据此称为可用或不可用。",
+        "blockers": [
+          "timeout"
+        ]
+      },
+      "fallback_capability_id": "cn.sse",
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 13,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.bse_neeq_csrc",
+      "name": "北京证券交易所、全国股转系统与证监会",
+      "operator": "北交所、全国股转系统、中国证监会",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "securities_filing",
+        "regulatory"
+      ],
+      "coverage": "招股、问询、挂牌、公告和监管文件。",
+      "ownership_form": "official_disclosure",
+      "evidence_applicability": [
+        "securities_disclosure",
+        "regulatory_action"
+      ],
+      "applicability_note": "法定披露形式只覆盖该文件写明的主体、期间和口径，未读全文不能当成已核验。",
+      "evidence_limits": "股转挂牌不能自动写成交易所上市。本仓库未核验这三个入口。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按机构全称分别查找正式站点。本仓库未执行入口核验。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 40,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "hk.hkexnews",
+      "name": "港交所披露易",
+      "operator": "香港交易所",
+      "geography": [
+        "HK"
+      ],
+      "research_uses": [
+        "securities_filing",
+        "financials"
+      ],
+      "coverage": "香港上市发行人公告和定期文件。",
+      "ownership_form": "official_disclosure",
+      "evidence_applicability": [
+        "securities_disclosure",
+        "financial_statement"
+      ],
+      "applicability_note": "法定披露形式只覆盖该文件写明的主体、期间和口径，未读全文不能当成已核验。",
+      "evidence_limits": "2026-10-20 只读了首页导航，没有打开具体发行人文件。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.hkexnews.hk/",
+          "notes": "只记录首页导航检查，不表示深层文件可下载。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "service_navigation",
+        "date": "2026-10-20",
+        "result": "entry_read",
+        "detail": "2026-10-20 已读取首页导航，未验证深层文件。",
+        "blockers": []
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "HK"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 11,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "hkmo.company_registry",
+      "name": "香港公司注册处与澳门商业登记",
+      "operator": "香港、澳门登记机关",
+      "geography": [
+        "HK",
+        "MO"
+      ],
+      "research_uses": [
+        "identity",
+        "registration"
+      ],
+      "coverage": "当地允许公开的公司登记资料。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "identity_registration"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "部分文件收费或需授权。交易所公告不能代替公司登记摘录。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按登记机关全称查找正式查询入口。本仓库未核验，也未购买摘录。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "HK",
+          "MO"
+        ],
+        "requires_any_signal": [],
+        "priority": 10,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.cnipa",
+      "name": "国家知识产权局",
+      "operator": "国家知识产权局",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "intellectual_property"
+      ],
+      "coverage": "专利、商标制度导航和机关首页。首页不是权利检索本身。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "intellectual_property"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "首页可读不代表商标或专利检索系统已经授权或可自动访问。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.cnipa.gov.cn/",
+          "notes": "2026-10-20 只读首页，没有查询任何权利。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "entry_read",
+        "detail": "2026-10-20 已读取首页，未验证商标或专利检索系统。",
+        "blockers": []
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 44,
+        "social": false,
+        "module": "11",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.trademark",
+      "name": "中国商标检索、转让与许可备案",
+      "operator": "国家知识产权局商标局",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "intellectual_property",
+        "brand_trace"
+      ],
+      "coverage": "商标注册人、申请日、类别、状态、转让和许可备案。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "intellectual_property",
+        "identity_registration"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "注册人不是当然的经营者。境外权利和马德里体系要另查。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "从知识产权机关进入商标检索。本仓库未执行检索，不虚构查询 URL。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "cn.cnipa",
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 18,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.icp_app_filing",
+      "name": "网站 ICP 备案与 App 备案",
+      "operator": "工业和信息化部及通信管理部门",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "identity",
+        "brand_trace"
+      ],
+      "coverage": "网站主办单位、备案号和 App 备案主体。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "identity_registration"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "备案主体只说明谁登记了网站或应用，不等于经营、收款或控制主体。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "从工信部门正式备案系统查询。本仓库未执行查询。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer",
+          "b2b_tech",
+          "overseas_product",
+          "general"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 36,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.product_filing",
+      "name": "化妆品、食品、医疗器械、药品等产品备案",
+      "operator": "药监、市场监管等主管机关",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "regulatory",
+        "brand_trace"
+      ],
+      "coverage": "注册人或备案人、生产企业、受托方和批准文号。",
+      "ownership_form": "official_regulator",
+      "evidence_applicability": [
+        "regulatory_action",
+        "identity_registration"
+      ],
+      "applicability_note": "主管机关公开信息只覆盖其发布范围，没有检索结果不能推断没有监管问题。",
+      "evidence_limits": "备案不说明销量或收入。品类制度不同，不能共用一个批准结论。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按品类从主管机关数据查询入口进入。本仓库未核验。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer",
+          "overseas_product"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "consumer"
+        ],
+        "priority": 50,
+        "social": false,
+        "module": "10",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.franchise_filing",
+      "name": "商业特许经营备案",
+      "operator": "商务主管部门",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "brand_trace",
+        "registration"
+      ],
+      "coverage": "特许人、备案品牌和时间。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "identity_registration"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "未备案不等于没有加盟。备案不说明门店数或单店经营。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "从商务部门特许经营信息入口查询。本仓库未执行。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "consumer"
+        ],
+        "priority": 60,
+        "social": false,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.ecommerce_store_qualification",
+      "name": "电商平台店铺经营者资质",
+      "operator": "各电商平台",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "brand_trace",
+        "identity"
+      ],
+      "coverage": "店铺公示的经营者名称和执照信息。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "identity_registration",
+        "company_statement"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "自营、授权和经销要分开。部分页面需登录。店铺经营者不是当然的品牌方。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "查看店铺公示的资质页。本仓库未登录任何平台，也未读取店铺。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的账号会话。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "consumer"
+        ],
+        "priority": 32,
+        "social": false,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.ccgp",
+      "name": "中国政府采购网",
+      "operator": "财政部政府采购信息平台",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "procurement"
+      ],
+      "coverage": "采购公告和结果等公开采购资料。",
+      "ownership_form": "official_disclosure",
+      "evidence_applicability": [
+        "company_statement",
+        "regulatory_action"
+      ],
+      "applicability_note": "法定披露形式只覆盖该文件写明的主体、期间和口径，未读全文不能当成已核验。",
+      "evidence_limits": "中标公告不证明收入确认或回款。地方公共资源交易平台要另查，本登记不逐个列出。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.ccgp.gov.cn/",
+          "notes": "2026-10-20 已读首页，没有查询项目。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "entry_read",
+        "detail": "2026-10-20 已读取首页，没有查询任何采购项目。",
+        "blockers": []
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "procurement"
+        ],
+        "priority": 46,
+        "social": false,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "us.sec.edgar",
+      "name": "SEC EDGAR",
+      "operator": "美国证券交易委员会",
+      "geography": [
+        "US"
+      ],
+      "research_uses": [
+        "securities_filing",
+        "financials"
+      ],
+      "coverage": "10-K/10-Q/8-K、20-F/6-K、S-1/F-1 及修订。",
+      "ownership_form": "official_disclosure",
+      "evidence_applicability": [
+        "securities_disclosure",
+        "financial_statement"
+      ],
+      "applicability_note": "法定披露形式只覆盖该文件写明的主体、期间和口径，未读全文不能当成已核验。",
+      "evidence_limits": "证券申报和州注册不是同一件事。本仓库读过检索说明，没有调用数据接口。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.sec.gov/search-filings",
+          "notes": "2026-10-20 已读官方检索说明，没有打开具体申报。"
+        },
+        {
+          "kind": "official_api",
+          "available": "documented_untested",
+          "url": "https://www.sec.gov/edgar/sec-api-documentation",
+          "notes": "公开文档描述 EDGAR 数据接口。本仓库未实现调用，也未在核验日请求该接口。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "entry_read",
+        "detail": "2026-10-20 已读取官方检索说明，未调用数据接口。",
+        "blockers": []
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "US"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 11,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "us.state_company_registry",
+      "name": "美国各州公司登记",
+      "operator": "各州登记机关",
+      "geography": [
+        "US"
+      ],
+      "research_uses": [
+        "identity",
+        "registration"
+      ],
+      "coverage": "州法上的法律主体和该州公开的登记材料。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "identity_registration"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "没有单一的全国商业登记处。各州费用和公开范围不同。本仓库未逐州验证。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按注册州查找该州正式登记入口。未识别州时不猜测站点。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "overseas_product",
+          "general",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "US"
+        ],
+        "requires_any_signal": [],
+        "priority": 10,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "gb.companies_house",
+      "name": "Companies House",
+      "operator": "英国公司注册机关",
+      "geography": [
+        "GB"
+      ],
+      "research_uses": [
+        "identity",
+        "registration",
+        "financials"
+      ],
+      "coverage": "公司档案、账目和任职资料。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "identity_registration",
+        "financial_statement"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "申报内容不自动等于登记机关已核验其真实性。接口需要申请者自己的密钥。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://find-and-update.company-information.service.gov.uk/",
+          "notes": "2026-10-20 已读检索页，没有查询公司，也没有调用接口。"
+        },
+        {
+          "kind": "official_api",
+          "available": "documented_untested",
+          "url": "https://developer.company-information.service.gov.uk/",
+          "notes": "公开开发文档描述 REST 接口并要求申请者自备密钥。本仓库未配置密钥，也未调用。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "entry_read",
+        "detail": "2026-10-20 已读取检索页，未调用需密钥的接口。",
+        "blockers": []
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "GB"
+        ],
+        "requires_any_signal": [],
+        "priority": 10,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "sg.acra",
+      "name": "ACRA",
+      "operator": "新加坡会计与企业管制局",
+      "geography": [
+        "SG"
+      ],
+      "research_uses": [
+        "identity",
+        "registration"
+      ],
+      "coverage": "新加坡公司登记和企业信息产品入口。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "identity_registration"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "具体报告可能收费。2026-10-20 只读了服务入口，没有购买或提取档案。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.acra.gov.sg/",
+          "notes": "已读官网服务入口，未验证付费产品。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "service_navigation",
+        "date": "2026-10-20",
+        "result": "entry_read",
+        "detail": "2026-10-20 已读取官网服务入口，未购买企业信息产品。",
+        "blockers": []
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "discover",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "SG"
+        ],
+        "requires_any_signal": [],
+        "priority": 10,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "us.pacer_courts",
+      "name": "PACER 与美国法院记录",
+      "operator": "美国联邦法院及相关地方法院",
+      "geography": [
+        "US"
+      ],
+      "research_uses": [
+        "legal_case"
+      ],
+      "coverage": "联邦案件和法院文书；州法院需另找该州入口。",
+      "ownership_form": "official_court",
+      "evidence_applicability": [
+        "legal_proceeding"
+      ],
+      "applicability_note": "司法公开记录只覆盖当时可检索的案件和状态，撤下、不公开和同名都要单独处理。",
+      "evidence_limits": "PACER 等可能收费，密封文件不公开。本仓库未登录、未付费、未查询案件。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "从法院或 PACER 的正式入口进入。本仓库未执行，也不记录收费是否成功。"
+        },
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "US"
+        ],
+        "requires_any_signal": [
+          "legal_trigger"
+        ],
+        "priority": 21,
+        "social": false,
+        "module": "13",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "us.courtlistener",
+      "name": "CourtListener",
+      "operator": "Free Law Project",
+      "geography": [
+        "US"
+      ],
+      "research_uses": [
+        "legal_case"
+      ],
+      "coverage": "美国公开法律文书的检索线索。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "legal_proceeding"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "聚合覆盖不完整。2026-10-20 没有取得正文。使用时回到法院原件。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.courtlistener.com/",
+          "notes": "当次访问失败，不能把站点写成当前可用。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "access_blocked",
+        "detail": "2026-10-20 访问失败，正文未取得。",
+        "blockers": [
+          "entry_unreachable"
+        ]
+      },
+      "fallback_capability_id": "us.pacer_courts",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "US"
+        ],
+        "requires_any_signal": [
+          "legal_trigger"
+        ],
+        "priority": 48,
+        "social": false,
+        "module": "13",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "us.ofac.sdn",
+      "name": "OFAC SDN 及制裁名单检索",
+      "operator": "美国财政部海外资产控制办公室",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "sanction_screen"
+      ],
+      "coverage": "SDN 等限制名单和官方检索。命中只是身份线索。",
+      "ownership_form": "official_regulator",
+      "evidence_applicability": [
+        "sanction_list_hit"
+      ],
+      "applicability_note": "主管机关公开信息只覆盖其发布范围，没有检索结果不能推断没有监管问题。",
+      "evidence_limits": "所有权、控制和具体交易禁令需要按当时规则专业核对。本仓库未调用接口，也未筛查任何主体。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": "https://sanctionssearch.ofac.treas.gov/",
+          "notes": "公开检索页地址来自机关已知入口，本仓库没有打开或提交查询。"
+        },
+        {
+          "kind": "official_api",
+          "available": "documented_untested",
+          "url": "https://ofac.treasury.gov/sanctions-list-service",
+          "notes": "公开页面描述制裁名单服务。本仓库未实现、未调用，也没有筛查结果。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行 OFAC 入口访问，也没有对任何名称做名单比对。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "sanctions_trigger"
+        ],
+        "priority": 22,
+        "social": false,
+        "module": "13",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "un.sc.consolidated",
+      "name": "联合国安理会综合制裁名单",
+      "operator": "联合国安全理事会",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "sanction_screen"
+      ],
+      "coverage": "安理会综合名单中的个人和实体。",
+      "ownership_form": "international_organization",
+      "evidence_applicability": [
+        "sanction_list_hit"
+      ],
+      "applicability_note": "国际组织名单或数据只覆盖其制度范围，命中或未命中都要回到官方条目核对身份。",
+      "evidence_limits": "名单覆盖其自身制度。未命中不等于其他国家名单未命中。本仓库未下载名单。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": "https://www.un.org/securitycouncil/content/un-sc-consolidated-list",
+          "notes": "该地址未被本次登记访问验证。使用前仍要打开官方页面确认。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未下载或检索联合国综合名单。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "sanctions_trigger"
+        ],
+        "priority": 23,
+        "social": false,
+        "module": "13",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "eu.fsf.consolidated",
+      "name": "欧盟金融制裁综合名单",
+      "operator": "欧盟委员会及相关制裁主管",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "sanction_screen"
+      ],
+      "coverage": "欧盟金融制裁综合名单中的对象。",
+      "ownership_form": "official_regulator",
+      "evidence_applicability": [
+        "sanction_list_hit"
+      ],
+      "applicability_note": "主管机关公开信息只覆盖其发布范围，没有检索结果不能推断没有监管问题。",
+      "evidence_limits": "以官方页面当时链出的名单文件为准。本仓库未下载，也未做名称匹配。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": "https://finance.ec.europa.eu/eu-and-world/sanctions-restrictive-measures_en",
+          "notes": "概述页地址未在本仓库打开。具体名单文件以页面当时的官方链接为准。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未打开欧盟制裁概述页，也未下载综合名单。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "sanctions_trigger"
+        ],
+        "priority": 24,
+        "social": false,
+        "module": "13",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "uk.ofsi.sanctions_list",
+      "name": "英国 OFSI 制裁名单",
+      "operator": "英国财政部金融制裁实施办公室",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "sanction_screen"
+      ],
+      "coverage": "英国制裁名单中的指定对象。",
+      "ownership_form": "official_regulator",
+      "evidence_applicability": [
+        "sanction_list_hit"
+      ],
+      "applicability_note": "主管机关公开信息只覆盖其发布范围，没有检索结果不能推断没有监管问题。",
+      "evidence_limits": "与欧盟名单不再是同一份文件。本仓库未检索。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": "https://www.gov.uk/government/publications/the-uk-sanctions-list",
+          "notes": "出版物页面未在本仓库打开，不把链接写成已核对的现行文件。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未打开英国制裁名单出版物，也未做名称比对。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "sanctions_trigger"
+        ],
+        "priority": 25,
+        "social": false,
+        "module": "13",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "us.bis.entity_list",
+      "name": "美国 BIS 实体清单等关注方名单",
+      "operator": "美国商务部工业与安全局",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "export_control"
+      ],
+      "coverage": "出口管制关注方名单，不是 OFAC 制裁名单的别名。",
+      "ownership_form": "official_regulator",
+      "evidence_applicability": [
+        "export_control_hit"
+      ],
+      "applicability_note": "主管机关公开信息只覆盖其发布范围，没有检索结果不能推断没有监管问题。",
+      "evidence_limits": "清单命中要核对条目、许可政策和物项。本仓库未查询。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": "https://www.bis.doc.gov/index.php/policy-guidance/lists-of-parties-of-concern/entity-list",
+          "notes": "清单说明页未在本仓库打开。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未查询 BIS 关注方名单。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "sanctions_trigger"
+        ],
+        "priority": 26,
+        "social": false,
+        "module": "08",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "ip.uspto_epo",
+      "name": "USPTO 与 EPO 专利检索",
+      "operator": "美国专利商标局、欧洲专利局",
+      "geography": [
+        "US",
+        "EU"
+      ],
+      "research_uses": [
+        "intellectual_property"
+      ],
+      "coverage": "专利申请、授权和法律状态线索。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "intellectual_property"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "申请和授权、专利家族、地域效力要分开。本仓库未查询。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "从 USPTO、EPO 各自的正式检索入口进入。本仓库未核验深层检索。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "b2b_tech",
+          "overseas_product",
+          "general"
+        ],
+        "geographies": [
+          "US",
+          "EU"
+        ],
+        "requires_any_signal": [
+          "b2b_tech"
+        ],
+        "priority": 30,
+        "social": false,
+        "module": "11",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "ip.wipo",
+      "name": "WIPO",
+      "operator": "世界知识产权组织",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "intellectual_property"
+      ],
+      "coverage": "国际知识产权检索导航。",
+      "ownership_form": "international_organization",
+      "evidence_applicability": [
+        "intellectual_property"
+      ],
+      "applicability_note": "国际组织名单或数据只覆盖其制度范围，命中或未命中都要回到官方条目核对身份。",
+      "evidence_limits": "2026-10-20 返回空正文，具体数据库没有验证。有效权利仍回到国家或地区原件。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "reported_entry",
+          "url": "https://www.wipo.int/",
+          "notes": "当次页面没有可读正文，不能写成数据库已可用。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "entry_recorded",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "homepage_or_entry",
+        "date": "2026-10-20",
+        "result": "empty_body",
+        "detail": "2026-10-20 返回空正文，具体数据库未验证。",
+        "blockers": [
+          "empty_body"
+        ]
+      },
+      "fallback_capability_id": "trademark.us_eu_wipo",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "b2b_tech",
+          "overseas_product"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "b2b_tech"
+        ],
+        "priority": 33,
+        "social": false,
+        "module": "11",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "trademark.us_eu_wipo",
+      "name": "USPTO、EUIPO 与 WIPO 全球品牌数据库",
+      "operator": "美国专利商标局、欧盟知识产权局、世界知识产权组织",
+      "geography": [
+        "US",
+        "EU",
+        "GB"
+      ],
+      "research_uses": [
+        "intellectual_property",
+        "brand_trace"
+      ],
+      "coverage": "海外商标注册人、类别、状态和转让。",
+      "ownership_form": "official_registry",
+      "evidence_applicability": [
+        "intellectual_property",
+        "identity_registration"
+      ],
+      "applicability_note": "官方登记形式只覆盖该机关公示的注册事项，不能据此证明收入、控制实质或风险不存在。",
+      "evidence_limits": "注册人不是当然的经营者。各司法辖区的权利相互独立。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "分别从各机构商标检索入口查询。本仓库未执行。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "overseas_product",
+          "general",
+          "b2b_tech"
+        ],
+        "geographies": [
+          "US",
+          "EU",
+          "GB"
+        ],
+        "requires_any_signal": [],
+        "priority": 28,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "appstore.developer_whois",
+      "name": "应用商店开发者信息与域名登记",
+      "operator": "应用商店运营方及域名登记机构",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "identity",
+        "brand_trace"
+      ],
+      "coverage": "应用开发者或发行方名称，以及域名登记中未被隐藏的信息。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "identity_registration"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "隐私保护常隐藏域名登记人。开发者不等于品牌经营主体。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "查看应用详情页公开的开发者信息和正式域名查询服务。本仓库未查询。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "digital_product"
+        ],
+        "priority": 45,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "web.archive",
+      "name": "网页存档",
+      "operator": "Internet Archive Wayback Machine 等存档服务",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "company_statement"
+      ],
+      "coverage": "官网历史快照，用于观察页面如何变化。",
+      "ownership_form": "web_archive",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "网页存档只证明某一快照当时的页面，快照日期不是事件日期，缺页也不是当时不存在。",
+      "evidence_limits": "抓取不完整。快照日期不是事件日期，缺页不证明当时没有该页。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": "https://web.archive.org/",
+          "notes": "已知存档站点。本仓库这次没有按目标 URL 取快照。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "来源目录未对存档服务做入口核验。官网计划里的存档任务也尚未执行。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "reference_only",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [],
+        "priority": 5,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "company.official_site",
+      "name": "目标官网",
+      "operator": "目标或其授权运营方",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "company_statement",
+        "identity"
+      ],
+      "coverage": "公司自己的站点：关于、产品、团队、条款和投资者页面。",
+      "ownership_form": "company_owned",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "公司自己发布的内容只证明它如此陈述，发布主体不能自动提高真实性。",
+      "evidence_limits": "不猜测域名。搜索排名和自称不能确认归属。具体页面任务由官网阅读计划生成。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "先用用户提供的入口、登记披露或可靠的双向关联确认归属。本登记不含某个目标的 URL。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "能力登记不保存目标 URL，也不把官网任务标成已执行。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "reference_only",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [],
+        "priority": 1,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "professional.cn_research_terminals",
+      "name": "券商原文、Wind、Choice、iFinD",
+      "operator": "券商及终端运营机构",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "professional_opinion",
+        "financials"
+      ],
+      "coverage": "公司或行业研究、金融数据。",
+      "ownership_form": "professional_research",
+      "evidence_applicability": [
+        "professional_opinion",
+        "financial_statement"
+      ],
+      "applicability_note": "专业研究是观点或方法产品，预测、评级和目标价不等于已经发生的事实。",
+      "evidence_limits": "多数全文需要授权。本仓库未接入任何终端，也未核验某份报告。",
+      "access_paths": [
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        },
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "券商自己的正式发布页可以公开存在。本仓库未逐家核验。"
+        }
+      ],
+      "implementation": {
+        "maturity": "not_connected",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_connected",
+        "detail": "未接入终端，未核验账号、全文或具体报告。",
+        "blockers": [
+          "no_connector",
+          "permission_unverified"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 75,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "professional.cn_research_repost",
+      "name": "东方财富研报、慧博、萝卜投研、发现报告",
+      "operator": "各转载或聚合平台",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "professional_opinion"
+      ],
+      "coverage": "研报发现、摘要或经授权的全文。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "professional_opinion"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "摘要和转载不是当然可引用的全文。上传日不是发布日。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按平台正式名称查找。本仓库未登录，也未核对某份报告的授权。"
+        },
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "not_connected",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_connected",
+        "detail": "未接入这些平台，未验证全文权限。",
+        "blockers": [
+          "no_connector",
+          "permission_unverified"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 76,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "professional.global_terminals",
+      "name": "Bloomberg、LSEG、S&P Capital IQ、FactSet 与券商原文",
+      "operator": "金融信息机构及券商",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "professional_opinion",
+        "financials"
+      ],
+      "coverage": "金融数据、公司研究和预测。",
+      "ownership_form": "professional_research",
+      "evidence_applicability": [
+        "professional_opinion",
+        "financial_statement"
+      ],
+      "applicability_note": "专业研究是观点或方法产品，预测、评级和目标价不等于已经发生的事实。",
+      "evidence_limits": "不假定存在订阅。预测不是实际业绩。",
+      "access_paths": [
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "not_connected",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_connected",
+        "detail": "未接入这些终端，未核验权限。",
+        "blockers": [
+          "no_connector",
+          "permission_unverified"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 77,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "professional.startup_databases",
+      "name": "Crunchbase、PitchBook、CB Insights、Dealroom",
+      "operator": "各商业数据机构",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "funding"
+      ],
+      "coverage": "融资、投资方和企业线索。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "库内记录不是到账证明。宣布、签约和交割要分开。",
+      "access_paths": [
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "产品入口未在本仓库核验。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "not_connected",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_connected",
+        "detail": "未接入这些数据库，未核验订阅。",
+        "blockers": [
+          "no_connector",
+          "permission_unverified"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "funding"
+        ],
+        "priority": 72,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "cn.funding_databases",
+      "name": "企业公告、IT桔子、投中、清科",
+      "operator": "公告方及商业数据库",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "funding"
+      ],
+      "coverage": "中国融资和并购事件线索。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "商业库可以付费且口径不一。双方公告和工商变更优先于数据库条目。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "公告方正式页面优先。商业库未接入。"
+        },
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "funding"
+        ],
+        "priority": 71,
+        "social": false,
+        "module": "01",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "stats.cn_official",
+      "name": "中国统计机关、行业协会与研究机构",
+      "operator": "各统计或研究发布方",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "market_stat"
+      ],
+      "coverage": "行业原始统计或机构估算。",
+      "ownership_form": "official_statistics",
+      "evidence_applicability": [
+        "market_statistic"
+      ],
+      "applicability_note": "官方统计只说明其样本、地域和修订版本，不能直接换成某一家企业的收入。",
+      "evidence_limits": "协会样本可能不覆盖总体。宏观或行业数不是企业收入。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按统计系列查找正式发布和修订说明。本仓库未提取数据。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "market_question"
+        ],
+        "priority": 68,
+        "social": false,
+        "module": "04",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "stats.official_global",
+      "name": "官方统计、World Bank 与 OECD",
+      "operator": "统计机关及国际组织",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "market_stat"
+      ],
+      "coverage": "宏观或行业原始统计。",
+      "ownership_form": "official_statistics",
+      "evidence_applicability": [
+        "market_statistic"
+      ],
+      "applicability_note": "官方统计只说明其样本、地域和修订版本，不能直接换成某一家企业的收入。",
+      "evidence_limits": "修订版、估计值和发布日期要分开。宏观数据不是公司规模。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "从机构正式数据入口进入。本仓库未提取序列。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "market_question"
+        ],
+        "priority": 69,
+        "social": false,
+        "module": "04",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "research.commercial_analysts",
+      "name": "Gartner、IDC、Forrester",
+      "operator": "各商业研究机构",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "professional_opinion",
+        "market_stat"
+      ],
+      "coverage": "市场研究和预测。",
+      "ownership_form": "professional_research",
+      "evidence_applicability": [
+        "professional_opinion",
+        "market_statistic"
+      ],
+      "applicability_note": "专业研究是观点或方法产品，预测、评级和目标价不等于已经发生的事实。",
+      "evidence_limits": "公开摘要不是付费全文。不同口径不能相加。",
+      "access_paths": [
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        },
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "原机构发布页未核验权限。"
+        }
+      ],
+      "implementation": {
+        "maturity": "not_connected",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_connected",
+        "detail": "未接入这些研究机构，未核验全文授权。",
+        "blockers": [
+          "no_connector",
+          "permission_unverified"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "b2b_tech"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "market_question",
+          "b2b_tech"
+        ],
+        "priority": 64,
+        "social": false,
+        "module": "04",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "company.ir_transcripts",
+      "name": "业绩说明、电话会与投资者问答",
+      "operator": "上市公司及交易所互动渠道",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "guidance",
+        "company_statement"
+      ],
+      "coverage": "管理层指引和问答，用于和后续正式披露对照。",
+      "ownership_form": "company_owned",
+      "evidence_applicability": [
+        "company_statement",
+        "professional_opinion"
+      ],
+      "applicability_note": "公司自己发布的内容只证明它如此陈述，发布主体不能自动提高真实性。",
+      "evidence_limits": "这些是管理层陈述，不是审计后的实际业绩。第三方纪要可能不完整或需付费。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "优先找公司投资者页面、交易所互动记录或法定附件。本仓库未读取任何会议。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        },
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "listed_company"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "listed"
+        ],
+        "priority": 38,
+        "social": false,
+        "module": "18",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "tech.public_code",
+      "name": "公开代码仓库与技术文档",
+      "operator": "代码托管平台及项目本身",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "intellectual_property",
+        "company_statement"
+      ],
+      "coverage": "公开仓库、许可证和技术文档能说明的范围。",
+      "ownership_form": "professional_database",
+      "evidence_applicability": [
+        "intellectual_property",
+        "company_statement"
+      ],
+      "applicability_note": "专业或商业数据库是线索或授权产品，供应商名称不能把它变成原件。",
+      "evidence_limits": "公开贡献不等于商业归属，星标和下载量不是收入。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "只阅读公开仓库和文档。本仓库没有克隆或扫描任何目标项目。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "b2b_tech"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "b2b_tech"
+        ],
+        "priority": 34,
+        "social": false,
+        "module": "11",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "estimates.ecommerce_sales",
+      "name": "电商销量估算服务",
+      "operator": "第三方电商和内容数据服务商",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "sales_estimate"
+      ],
+      "coverage": "店铺或商品销量、直播和达人数据的商业估算。",
+      "ownership_form": "commercial_estimate",
+      "evidence_applicability": [
+        "sales_estimate"
+      ],
+      "applicability_note": "商业估算只可当作估算输入，不能写成公司披露的收入或销量。",
+      "evidence_limits": "方法、退货和平台覆盖通常不透明。只能作为估算输入，不是公司收入。",
+      "access_paths": [
+        {
+          "kind": "paid_terminal",
+          "available": "not_available",
+          "url": null,
+          "notes": "本仓库未接入付费终端，也没有可用密钥或订阅。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "not_connected",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_connected",
+        "detail": "未接入电商估算服务，未核验账号或导出数据。",
+        "blockers": [
+          "no_connector",
+          "permission_unverified"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "consumer"
+        ],
+        "priority": 80,
+        "social": false,
+        "module": "12",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "media.attributable_reporting",
+      "name": "有作者和出版机构的新闻报道",
+      "operator": "通讯社、报纸和可归因的新闻机构",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "media_report"
+      ],
+      "coverage": "可回溯到作者、出版机构和原文的事件报道。",
+      "ownership_form": "media",
+      "evidence_applicability": [
+        "media_report"
+      ],
+      "applicability_note": "有归属的报道是线索，采信前要回到被引用原件、当事人回应和后续更正。",
+      "evidence_limits": "媒体品牌不是真实性等级。付费墙后的正文视为未取得，直到用户有权提供。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "打开原文发布页。本仓库没有订阅，也没有绕过付费墙。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "controversy"
+        ],
+        "priority": 24,
+        "social": false,
+        "module": "15",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "reviews.cn_consumer",
+      "name": "中国电商评价、点评与投诉平台",
+      "operator": "电商、点评、投诉和应用商店运营方",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "user_review"
+      ],
+      "coverage": "用户公开评价、投诉主题和处理状态的样本。",
+      "ownership_form": "user_review",
+      "evidence_applicability": [
+        "user_report"
+      ],
+      "applicability_note": "用户评价只覆盖被抽到的帖子，负向样本占比不是客户不满率。",
+      "evidence_limits": "存在选择偏差、激励评价和删除。样本主题可以记录，样本占比不能写成满意度、NPS 或复购率。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "只看无需绕过即可阅读的公开评价。本仓库未抽样任何商品。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "consumer"
+        ],
+        "priority": 30,
+        "social": false,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "reviews.global_consumer",
+      "name": "Amazon 评价与 Trustpilot 等公开评价",
+      "operator": "各电商和评价平台",
+      "geography": [
+        "US",
+        "EU",
+        "GB"
+      ],
+      "research_uses": [
+        "user_review"
+      ],
+      "coverage": "海外消费者公开评价和评分分布的样本。",
+      "ownership_form": "user_review",
+      "evidence_applicability": [
+        "user_report"
+      ],
+      "applicability_note": "用户评价只覆盖被抽到的帖子，负向样本占比不是客户不满率。",
+      "evidence_limits": "只代表可看到的样本。刷评、删除和排序都会改变样本，不能换成总体不满率。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "按商品或品牌页的公开评价抽样。本仓库未抽样。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "overseas_product"
+        ],
+        "geographies": [
+          "US",
+          "EU",
+          "GB"
+        ],
+        "requires_any_signal": [
+          "consumer"
+        ],
+        "priority": 30,
+        "social": false,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "reviews.b2b_software",
+      "name": "G2、Capterra 等软件评价",
+      "operator": "各企业软件评价平台",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "user_review"
+      ],
+      "coverage": "企业软件用户的公开评价线索。",
+      "ownership_form": "user_review",
+      "evidence_applicability": [
+        "user_report"
+      ],
+      "applicability_note": "用户评价只覆盖被抽到的帖子，负向样本占比不是客户不满率。",
+      "evidence_limits": "评价可能带有商业激励。样本不能写成市场份额或续约率。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "只阅读公开评价页。本仓库未抽取评价。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "b2b_tech"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "b2b_tech"
+        ],
+        "priority": 31,
+        "social": false,
+        "module": "11",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "employee.public_reviews",
+      "name": "Glassdoor、Indeed 等公开雇主评价",
+      "operator": "各招聘与雇主评价平台",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "employee_discussion"
+      ],
+      "coverage": "公开的雇主评价和招聘信息线索。",
+      "ownership_form": "employee_discussion",
+      "evidence_applicability": [
+        "employee_statement"
+      ],
+      "applicability_note": "员工或求职者的公开讨论只覆盖该样本，不能换成全体雇员或管理层事实。",
+      "evidence_limits": "匿名评价需要独立核验。不收集与目标商业角色无关的私人生活。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "只看公开页面。本仓库未检索雇主或个人。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "general",
+          "domestic_consumer",
+          "overseas_product",
+          "b2b_tech",
+          "listed_company",
+          "controversy"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "employee"
+        ],
+        "priority": 42,
+        "social": false,
+        "module": "02",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.weibo.official",
+      "name": "微博上的机构公开账号",
+      "operator": "微博平台及账号运营者",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "机构在微博公开主页和帖子中的陈述。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "认证标识不是工商身份。转发不增加独立来源。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 10,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.wechat.official_account",
+      "name": "微信公众号公开文章",
+      "operator": "微信公众平台及账号运营者",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "已公开的公众号文章。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "未发布到公开网页的内容和私人聊天不在范围内。公众号主体要和登记主体核对。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 11,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.xiaohongshu",
+      "name": "小红书公开笔记",
+      "operator": "小红书平台及作者",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "公开笔记中的产品、渠道和体验线索。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "商业合作和算法排序会影响看见什么。笔记不是销量。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 12,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.douyin",
+      "name": "抖音公开账号与视频",
+      "operator": "抖音平台及账号运营者",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "公开短视频和机构账号中的陈述。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "播放和点赞不是转化。只看公开视频，不进入私密账号或群。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 13,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.zhihu",
+      "name": "知乎公开问答与机构号",
+      "operator": "知乎平台及作者",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "公开问题和回答中的可归因陈述。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "匿名回答只是线索。机构号内容仍是该账号的陈述。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "domestic_consumer",
+          "b2b_tech"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [],
+        "priority": 15,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.x",
+      "name": "X 上的机构公开账号",
+      "operator": "X 平台及账号运营者",
+      "geography": [
+        "US",
+        "EU",
+        "GB",
+        "SG"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "机构公开帖子中的陈述。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "平台标识不是法律身份。转帖要回到最早公开文本。不私信。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "overseas_product"
+        ],
+        "geographies": [
+          "US",
+          "EU",
+          "GB",
+          "SG"
+        ],
+        "requires_any_signal": [],
+        "priority": 10,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.reddit",
+      "name": "Reddit 公开版面",
+      "operator": "Reddit 及版面用户",
+      "geography": [
+        "US",
+        "EU",
+        "GB"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "公开帖子中的用户或机构陈述。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "版面规则和排序决定样本。删除后的帖子不能从没有结果反推。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "overseas_product"
+        ],
+        "geographies": [
+          "US",
+          "EU",
+          "GB"
+        ],
+        "requires_any_signal": [],
+        "priority": 12,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.linkedin.public",
+      "name": "LinkedIn 公开职业页面",
+      "operator": "LinkedIn 及页面主体",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "公司主页和公开任职信息。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "自述任职要和公司或登记披露核对。不发送站内消息，不查看非公开关系。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "b2b_tech"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [
+          "b2b_tech"
+        ],
+        "priority": 10,
+        "social": true,
+        "module": "02",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.youtube",
+      "name": "YouTube 公开频道",
+      "operator": "YouTube 及频道运营者",
+      "geography": [
+        "US",
+        "EU",
+        "GB",
+        "SG"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "公开视频和频道说明中的陈述。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "观看量不是收入。只使用公开视频。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "overseas_product",
+          "b2b_tech"
+        ],
+        "geographies": [
+          "US",
+          "EU",
+          "GB",
+          "SG"
+        ],
+        "requires_any_signal": [],
+        "priority": 20,
+        "social": true,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "social.maimai",
+      "name": "脉脉上的公开职场讨论",
+      "operator": "脉脉平台及作者",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "social_official",
+        "company_statement"
+      ],
+      "coverage": "公开可见的职场讨论线索。",
+      "ownership_form": "social_platform",
+      "evidence_applicability": [
+        "company_statement"
+      ],
+      "applicability_note": "社交平台记录只说明该账号当时公开呈现的内容，平台类型不决定真伪。",
+      "evidence_limits": "不进入未授权圈子或私信。匿名帖不能单独认定公司事实。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "不猜测账号 URL。只计划查看公开主页或帖子；登录墙后的内容保持未取得。"
+        },
+        {
+          "kind": "authorized_login",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "只使用用户自己已获授权的会话，不得代为绕过验证。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "候选平台。本仓库没有账号、连接器，也没有读取任何主页。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": "company.official_site",
+      "selection": {
+        "lane": "deepen",
+        "profiles": [
+          "b2b_tech",
+          "general",
+          "listed_company"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "employee"
+        ],
+        "priority": 16,
+        "social": true,
+        "module": "02",
+        "entity_types": []
+      },
+      "lawful_access": "仅可使用无需绕过验证即可阅读的公开页面，或用户有权提供的材料与其自行授权的登录会话。不得绕过登录、验证码或付费墙，不得私信、加入未授权群组，也不得购买来源不明的数据。"
+    },
+    {
+      "capability_id": "attention.cn_indexes",
+      "name": "百度指数、微信指数、巨量算数、微博热度",
+      "operator": "各平台指数产品",
+      "geography": [
+        "CN"
+      ],
+      "research_uses": [
+        "attention_index"
+      ],
+      "coverage": "平台内关键词相对关注。",
+      "ownership_form": "commercial_estimate",
+      "evidence_applicability": [
+        "attention_index"
+      ],
+      "applicability_note": "商业估算只可当作估算输入，不能写成公司披露的收入或销量。",
+      "evidence_limits": "指数不是销量，不同平台的指数不能相加或比较绝对值。品牌信号任务已另行列出。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "指数产品入口未核验。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "reference_only",
+        "profiles": [
+          "domestic_consumer"
+        ],
+        "geographies": [
+          "CN"
+        ],
+        "requires_any_signal": [
+          "consumer"
+        ],
+        "priority": 8,
+        "social": false,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    },
+    {
+      "capability_id": "attention.google_trends",
+      "name": "Google Trends",
+      "operator": "Google",
+      "geography": [
+        "global"
+      ],
+      "research_uses": [
+        "attention_index"
+      ],
+      "coverage": "关键词相对关注和地区分布。",
+      "ownership_form": "commercial_estimate",
+      "evidence_applicability": [
+        "attention_index"
+      ],
+      "applicability_note": "商业估算只可当作估算输入，不能写成公司披露的收入或销量。",
+      "evidence_limits": "0–100 的相对指数不能跨查询比较成绝对需求，也不是销量。",
+      "access_paths": [
+        {
+          "kind": "browser_public",
+          "available": "public_entry_unverified",
+          "url": null,
+          "notes": "官方趋势产品未在本仓库按关键词查询。"
+        },
+        {
+          "kind": "user_material",
+          "available": "user_supplied",
+          "url": null,
+          "notes": "仅在用户有权提供该材料时使用，不代替公开原件的定位。"
+        }
+      ],
+      "implementation": {
+        "maturity": "catalog_only",
+        "connector": false,
+        "automated_retrieval": false
+      },
+      "verification": {
+        "depth": "none",
+        "date": null,
+        "result": "not_executed",
+        "detail": "本仓库未执行入口访问，不能据此称来源可用或不可用。",
+        "blockers": [
+          "not_checked_in_this_release"
+        ]
+      },
+      "fallback_capability_id": null,
+      "selection": {
+        "lane": "reference_only",
+        "profiles": [
+          "overseas_product",
+          "general"
+        ],
+        "geographies": [
+          "global"
+        ],
+        "requires_any_signal": [],
+        "priority": 8,
+        "social": false,
+        "module": "09",
+        "entity_types": []
+      },
+      "lawful_access": "只使用无需绕过控制即可阅读的公开页面，或用户有权提供的材料。不得绕过登录、验证码或付费墙，不得把未执行的入口写成已访问。"
+    }
+  ]
+}

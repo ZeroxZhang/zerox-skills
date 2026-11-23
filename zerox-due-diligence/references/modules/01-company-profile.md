@@ -1,6 +1,6 @@
 # 01 公司概况、股权与关联方
 
-通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。
+通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。登记机关按[来源能力登记](../sources/source-capabilities.json)和辖区选择，计划在实际检索前保持未执行。
 
 ## 核心问题
 
