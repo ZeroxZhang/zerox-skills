@@ -1,6 +1,6 @@
 # 13 法律与合规
 
-通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。
+通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。OFAC、联合国、欧盟、英国 OFSI 和美国 BIS 等名单是未接入的候选入口；命中和未命中都要核对身份、日期与制度范围。
 
 ## 核心问题
 

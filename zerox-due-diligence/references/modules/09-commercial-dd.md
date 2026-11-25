@@ -1,6 +1,6 @@
 # 09 商业尽调
 
-通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。
+通用的主体/期间口径、证据与缺失、反证及权限规则见[证据标准](../evidence-standard.md)与[来源策略](../sources/source-strategy.md)；展开深度按[目的手册](../purpose-playbooks.md)和[行业适配](../industry-adapters.md)裁剪。口碑和社交只在相关问题触发后选择少量候选，不要求查遍每个平台；抽样边界见[社交证据](../sources/social-evidence.md)。
 
 ## 核心问题
 

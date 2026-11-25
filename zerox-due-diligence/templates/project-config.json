@@ -115,5 +115,18 @@
   "last_refresh_at": null,
   "completed_actions": [],
   "scoring_enabled": false,
-  "completion_review": null
+  "completion_review": null,
+  "source_selection": {
+    "profile": null,
+    "social": "auto",
+    "budgets": {
+      "max_discover_tasks": 3,
+      "max_deepen_tasks": 2,
+      "max_social_tasks": 2,
+      "max_capability_tasks": 8
+    },
+    "require_counterevidence_when_triggered": true,
+    "include_capability_ids": [],
+    "exclude_capability_ids": []
+  }
 }

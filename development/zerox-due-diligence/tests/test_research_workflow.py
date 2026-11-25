@@ -219,7 +219,7 @@ class ResearchWorkflowTests(unittest.TestCase):
     def test_old_config_defaults_are_read_only(self):
         old = copy.deepcopy(self.cfg)
         old["contract_version"] = "1.0.0"
-        for key in ("key_questions", "completion_review", "scoring_enabled"):
+        for key in ("key_questions", "completion_review", "scoring_enabled", "source_selection"):
             old.pop(key)
         project = self.write_config(old)
         before = (project / "project-config.json").read_bytes()
@@ -227,6 +227,8 @@ class ResearchWorkflowTests(unittest.TestCase):
         self.assertEqual(loaded["key_questions"], [])
         self.assertIsNone(loaded["completion_review"])
         self.assertFalse(loaded["scoring_enabled"])
+        self.assertIsNone(loaded["source_selection"]["profile"])
+        self.assertEqual(loaded["source_selection"]["social"], "auto")
         self.assertEqual(before, (project / "project-config.json").read_bytes())
 
     def test_brand_initialization_is_pending_and_does_not_claim_research(self):

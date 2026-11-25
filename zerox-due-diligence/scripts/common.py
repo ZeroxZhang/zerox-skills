@@ -1,6 +1,7 @@
 """共享数据契约、实体关系、台账校验和安全文件操作。仅依赖标准库。"""
 from __future__ import annotations
 
+import copy
 import csv
 import io
 import json
@@ -235,8 +236,9 @@ def load_config(project):
     baseline = load_json(ROOT / "templates/project-config.json")
     # 兼容旧项目只补新增的安全默认值；不写盘，也不据已有评分推定启用。
     if isinstance(cfg, dict):
-        for key in ("scoring_enabled", "completion_review", "key_questions"):
-            cfg.setdefault(key, baseline[key])
+        for key in ("scoring_enabled", "completion_review", "key_questions", "source_selection"):
+            if key not in cfg:
+                cfg[key] = copy.deepcopy(baseline[key])
     if not isinstance(cfg, dict) or set(cfg) != set(baseline):
         fail("项目配置字段与模板不一致")
     for key in ("target", "target_id", "timezone", "version", "confidentiality"):
@@ -323,6 +325,8 @@ def load_config(project):
         if event["date"] > cfg["as_of_date"]:
             fail("基准日之后的事件不得作为当时已知事件")
     check_key_questions(cfg["key_questions"])
+    from source_registry import validate_selection_config
+    validate_selection_config(cfg["source_selection"])
     return cfg
 
 

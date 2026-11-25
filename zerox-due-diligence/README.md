@@ -173,7 +173,7 @@ python3 scripts/search_plan.py \
 ### 能力边界
 
 - **有证据才下结论。** 实际、预测、估算和未知分别标注；估算区间来自输入假设与区间运算，不是统计置信区间，也不是审计后的财务数据。
-- **脚本不替代研究。** 工具不自动联网搜索、购买资料或执行访谈，不自带付费数据库；资料访问取决于 Agent 环境及已有授权。
+- **脚本不替代研究。** 工具不自动联网搜索、购买资料或执行访谈，不自带付费数据库；资料访问取决于 Agent 环境及已有授权。来源能力登记只帮助选择候选入口，不表示这些入口已经接通或已经查过。
 - **检查通过不等于研究完成。** 自动检查覆盖结构、引用和部分一致性；原文含义、可比口径、因果解释与结论仍须实质复核。关键问题无法回答时保留受限状态，资料获取与阅读覆盖另行记录。
 - **图文必须有依据。** 使用真实企业图片时记录来源与使用范围；虚构示例不拿生成图片冒充真实素材。HTML 可离线阅读，PDF 通过浏览器打印生成，不提供原生 Word 导出。
 
@@ -184,6 +184,7 @@ python3 scripts/search_plan.py \
 | --- | --- |
 | [技能入口](./SKILL.md) · [完整工作流](./references/workflow.md) | Agent 执行顺序、研究模块与质量要求。 |
 | [品牌追溯](./references/brand-to-company.md) · [区间估算](./references/estimation-triangulation.md) | 品牌与公司关系、估算依据及独立性规则。 |
+| [来源策略](./references/sources/source-strategy.md) · [能力登记](./references/sources/source-capabilities.json) · [社交证据](./references/sources/social-evidence.md) | 按问题选择来源；登记不是已连接的数据库，社交平台也不是必查清单。 |
 | [CLI 说明](./scripts/README.md) | 初始化、台账、计算、构建与检查命令。 |
 | [报告设计](./references/report-design.md) · [视觉配方](./references/visual-examples.json) | 章节组织、图文选择与可改写的图表示例。 |
 | [台账契约](./schemas/data-contract.json) · [报告内容契约](./schemas/report-content.schema.json) | CSV / JSON 字段与约束；当前报告内容版本为 1.2。 |
@@ -353,7 +354,7 @@ Add `--target-type brand` for a brand target. Initialization creates unverified 
 ### Limits
 
 - **Conclusions require evidence.** Actuals, forecasts, estimates, and unknowns are labeled separately. Estimated ranges reflect input assumptions and interval arithmetic; they are neither statistical confidence intervals nor audited financial results.
-- **Scripts do not replace research.** They do not automatically search the web, buy materials, or conduct interviews, and include no paid database access. Available materials depend on the agent's environment and granted permissions.
+- **Scripts do not replace research.** They do not automatically search the web, buy materials, or conduct interviews, and include no paid database access. Available materials depend on the agent's environment and granted permissions. The source capability registry only helps choose candidate entries; it does not mean those entries are connected or have been searched.
 - **Passing checks does not mean research is complete.** Automated checks cover structure, references, and some consistency rules. Source meaning, comparable definitions, causal explanations, and conclusions still need substantive review. Unanswerable key questions keep the report limited; material access and reading coverage are recorded separately.
 - **Visuals need support.** Real company images require source and usage records; fictional examples do not pass generated images off as real assets. HTML works offline, PDF comes from browser printing, and native Word export is not provided.
 
@@ -364,6 +365,7 @@ Add `--target-type brand` for a brand target. Initialization creates unverified 
 | --- | --- |
 | [Skill entry](./SKILL.md) · [Full workflow](./references/workflow.md) | Agent execution order, research modules, and quality requirements. |
 | [Brand tracing](./references/brand-to-company.md) · [Range estimation](./references/estimation-triangulation.md) | Brand-to-company relationships, estimation support, and independence rules. |
+| [Source strategy](./references/sources/source-strategy.md) · [Capability registry](./references/sources/source-capabilities.json) · [Social evidence](./references/sources/social-evidence.md) | Choose sources from the question. The registry is not a connected database, and social platforms are not a mandatory checklist. |
 | [CLI guide](./scripts/README.md) | Initialization, ledgers, calculations, report building, and checking. |
 | [Report design](./references/report-design.md) · [Visual recipes](./references/visual-examples.json) | Chapter structure, visual choices, and adaptable chart examples. |
 | [Ledger contract](./schemas/data-contract.json) · [Report content contract](./schemas/report-content.schema.json) | CSV / JSON fields and constraints; current report content version: 1.2. |
