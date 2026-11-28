@@ -14,6 +14,7 @@ python3 -m venv .venv && .venv/bin/pip install -r scripts/requirements.txt   # �
 .venv/bin/python scripts/tc_render.py a.json b.json c.json -o deck.pptx --png pngs/ --html deck.html   # 多张合成一个 deck
 .venv/bin/python scripts/tc_render.py examples/waterfall.json --html report.html   # 只写 HTML
 ```
+运行环境已预装依赖（或无法联网装包）时，跳过第一行建 venv，直接用 `python3 scripts/tc_render.py …`。
 一个 JSON 可以是单个图表对象，也可以是 `{"slides":[...]}`。渲染至少提供 `-o` 或 `--html`；`--png` 仍要求 `-o`。HTML 为离线单文件，无 CDN，不需要 LibreOffice / Poppler；省略 `-o` 时只写 HTML，不改已有 PPTX / PNG。CLI 未指定 `--html` 时保持原有输出。Skill 常规交付 PPTX、PNG、可编辑 HTML 三份；用户明确只要部分格式时按其要求，HTML 不替代前两份。
 
 给真正使用者的「什么时候用、怎么给数据、怎么写 prompt、交付物是什么」见 [README.md · 如何使用与怎么写 prompt](README.md#how-to-use)；多图拼版字段见 [docs/DASHBOARD.md](docs/DASHBOARD.md)。

@@ -4,11 +4,10 @@
 
 ## 安装与环境
 
-构建需要 Node 20+、Chrome、Playwright、Poppler、Python/fontTools 和随包字体。首次使用、依赖或浏览器环境变化时执行：
+构建需要 Node 20+、Chrome、Playwright、Poppler、Python/fontTools 和随包字体。**这些依赖与随包字体已由运行镜像预装，`node_modules` 已链接进包目录，运行环境没有外网**：不要执行 `npm ci`、`npm install`、`npm run setup-fonts`、`playwright install`，它们只会失败并耗尽预算。整条任务只做一次能力探测：
 
 ```sh
-npm ci
-npm run setup-fonts
+node -e "require.resolve('echarts');require.resolve('playwright')" && echo deps-ok
 node scripts/probe_capabilities.cjs /任务/probe
 ```
 
@@ -18,7 +17,7 @@ node scripts/probe_capabilities.cjs /任务/probe
 node scripts/probe_capabilities.cjs /任务/probe --verify /任务/probe/response.json
 ```
 
-响应结构为 `{"code":"图中六字符","shape_left_to_right":["颜色 形状","颜色 形状","颜色 形状"]}`。不能读取答案文件代替看图。已验证且未变化的环境不重复安装。字体环境按 `FONT_PYTHON` 或可用 Python ≥3.10 建立，不修改系统解释器；没有 Chrome 时安装 Playwright Chromium 并设置 `CHROME_CHANNEL=chromium`。
+响应结构为 `{"code":"图中六字符","shape_left_to_right":["颜色 形状","颜色 形状","颜色 形状"]}`。不能读取答案文件代替看图。探测结论写入 `work/env.md`，同一任务内不再重复；断网或组件缺失导致的探测失败不重试，按可行替代继续并在交付说明里写明受限项。
 
 测试产物放任务目录，避免在副本中保留会被扫描器发现的第二份 `SKILL.md`。无法查看实际图像时如实标为未视觉验收。
 
